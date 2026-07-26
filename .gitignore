@@ -32,6 +32,11 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...except the 1Password reference file, which holds pointers, not secrets.
+!.env.op
+
+# generated media staging (raw renders from scripts/generate-media.mjs)
+scripts/.generated/
 
 # vercel
 .vercel
