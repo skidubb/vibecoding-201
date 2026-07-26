@@ -1,26 +1,154 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ==========================================================================
+   Crossing the Gap — design tokens
+
+   Two chapter themes carved from the same material. Every neumorphic surface
+   reads its shadows from CSS vars, so a single [data-theme] flip on a section
+   restyles every panel inside it without prop plumbing.
+   ========================================================================== */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-navy: #1a1f36;
+  --color-navy-deep: #12162a;
+  --color-lavender: #cec6f4;
+  --color-lavender-mid: #aba4dc;
+  --color-lavender-pale: #ece9f7;
+  --color-magenta: #df285b;
+  --color-slate: #3a3f5c;
+  --color-muted: #6e6a9e;
+  --color-fog: #8a8fa3;
+
+  --font-display: var(--font-poppins);
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* --- Chapter themes ------------------------------------------------------ */
+
+[data-theme="dark"] {
+  --surface: #1a1f36;
+  --surface-raised: #1e2440;
+  --surface-sunken: #161a2e;
+  --shadow-dark: #0e1120;
+  --shadow-light: rgba(206, 198, 244, 0.055);
+  --edge: rgba(206, 198, 244, 0.09);
+  --text: #f3f1fb;
+  --text-dim: #9a9db4;
+  --text-faint: #6b7090;
+  --accent: #df285b;
+  --accent-soft: #cec6f4;
+  --glow-a: rgba(206, 198, 244, 0.16);
+  --glow-b: rgba(223, 40, 91, 0.14);
+  --neu-blur: 34px;
+  --neu-dist: 16px;
+  /* Chart lines: stepped per theme, not flipped. Both pairs pass the six
+     checks (CVD ΔE 22.6, contrast >= 3:1) against their own surface. */
+  --chart-line: #8e7bef;
+  --chart-accent: #df285b;
+  --chart-grid: rgba(206, 198, 244, 0.12);
+}
+
+[data-theme="light"] {
+  --surface: #e9e6f5;
+  --surface-raised: #edeaf8;
+  --surface-sunken: #e2def1;
+  --shadow-dark: #c2bcd9;
+  --shadow-light: #ffffff;
+  --edge: rgba(26, 31, 54, 0.06);
+  --text: #1a1f36;
+  --text-dim: #5a5a7e;
+  --text-faint: #8a8fa3;
+  --accent: #df285b;
+  --accent-soft: #6e6a9e;
+  --glow-a: rgba(171, 164, 220, 0.4);
+  --glow-b: rgba(223, 40, 91, 0.1);
+  --neu-blur: 30px;
+  --neu-dist: 14px;
+  --chart-line: #6b57d8;
+  --chart-accent: #c41e4e;
+  --chart-grid: rgba(26, 31, 54, 0.1);
+}
+
+/* --- Base ---------------------------------------------------------------- */
+
+html {
+  scroll-behavior: auto; /* Lenis owns scrolling; never let CSS smooth fight it */
+  background: #12162a;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background: #12162a;
+  color: #f3f1fb;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #df285b;
+  color: #fff;
+}
+
+/* --- Neumorphic material ------------------------------------------------- */
+
+.neu-raised {
+  background: var(--surface-raised);
+  box-shadow:
+    var(--neu-dist) var(--neu-dist) var(--neu-blur) var(--shadow-dark),
+    calc(var(--neu-dist) * -1) calc(var(--neu-dist) * -1) var(--neu-blur)
+      var(--shadow-light);
+}
+
+.neu-inset {
+  background: var(--surface-sunken);
+  box-shadow:
+    inset calc(var(--neu-dist) * 0.55) calc(var(--neu-dist) * 0.55)
+      calc(var(--neu-blur) * 0.6) var(--shadow-dark),
+    inset calc(var(--neu-dist) * -0.55) calc(var(--neu-dist) * -0.55)
+      calc(var(--neu-blur) * 0.6) var(--shadow-light);
+}
+
+.neu-flat {
+  background: var(--surface);
+  box-shadow:
+    calc(var(--neu-dist) * 0.4) calc(var(--neu-dist) * 0.4)
+      calc(var(--neu-blur) * 0.5) var(--shadow-dark),
+    calc(var(--neu-dist) * -0.4) calc(var(--neu-dist) * -0.4)
+      calc(var(--neu-blur) * 0.5) var(--shadow-light);
+}
+
+/* A hairline that catches the light along the edge of a raised panel. */
+.neu-edge {
+  position: relative;
+}
+.neu-edge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--edge);
+  pointer-events: none;
+}
+
+/* --- Atmosphere ---------------------------------------------------------- */
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.3;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --- Motion hygiene ------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }
