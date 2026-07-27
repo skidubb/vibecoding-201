@@ -17,6 +17,7 @@ import { CtaLayout } from "@/components/layouts/CtaLayout";
 import { PromptLayout } from "@/components/layouts/PromptLayout";
 import { PollLayout } from "@/components/layouts/PollLayout";
 import { ExerciseLayout } from "@/components/layouts/ExerciseLayout";
+import { PipelineLayout } from "@/components/layouts/PipelineLayout";
 
 type LayoutComponent = (props: { section: Section; index: number }) => React.ReactNode;
 
@@ -33,6 +34,7 @@ const LAYOUTS: Record<LayoutKind, LayoutComponent> = {
   prompt: PromptLayout,
   poll: PollLayout,
   exercise: ExerciseLayout,
+  pipeline: PipelineLayout,
 };
 
 /**

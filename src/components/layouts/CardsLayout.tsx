@@ -5,6 +5,7 @@ import { Glow, ImageBackdrop } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
 import { CONTAINER, Footnote, Kicker, SectionHeader, Strip, type LayoutProps } from "./shared";
 import { EventFeed } from "@/components/interactive/EventFeed";
+import { Logo } from "@/components/layouts/Logo";
 import { PromptBlock } from "@/components/interactive/PromptBlock";
 
 /**
@@ -54,11 +55,19 @@ export function CardsLayout({ section }: LayoutProps) {
                   className="flex h-full flex-col p-6 md:p-7"
                   radius="rounded-[24px]"
                 >
-                  <span
-                    className="font-display text-2xl font-semibold tabular-nums"
-                    style={{ color: "var(--accent)", opacity: 0.85 }}
-                  >
-                    {card.label}
+                  {/* The mark sits with the number, not above the title, so a
+                      row of cards where only some name a product still lines
+                      its headlines up. A layout that ignored `brand` would
+                      delete it from the deck with nothing failing anywhere —
+                      which is how Jordan's authorization rules once vanished. */}
+                  <span className="flex items-center justify-between gap-3">
+                    <span
+                      className="font-display text-2xl font-semibold tabular-nums"
+                      style={{ color: "var(--accent)", opacity: 0.85 }}
+                    >
+                      {card.label}
+                    </span>
+                    {card.brand && <Logo brand={card.brand} height={22} />}
                   </span>
                   <h3
                     className="mt-4 font-display text-[1.06rem] font-semibold leading-snug tracking-tight"
@@ -130,7 +139,7 @@ export function CardsLayout({ section }: LayoutProps) {
 
         {section.strip && <Strip {...section.strip} />}
         {section.kicker && <Kicker>{section.kicker}</Kicker>}
-        {section.footnote && <Footnote>{section.footnote}</Footnote>}
+        {section.footnote && <Footnote href={section.footnoteHref}>{section.footnote}</Footnote>}
       </div>
     </>
   );

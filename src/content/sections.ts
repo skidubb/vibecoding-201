@@ -1,4 +1,5 @@
 import type { StaticImageData } from "next/image";
+import type { BrandKey } from "@/components/layouts/Logo";
 
 import threshold from "@/assets/threshold.webp";
 import recordRefreshB from "@/assets/record-refresh-b.webp";
@@ -20,7 +21,8 @@ export type LayoutKind =
   | "cta"
   | "prompt"
   | "poll"
-  | "exercise";
+  | "exercise"
+  | "pipeline";
 
 export type Media = {
   image?: StaticImageData;
@@ -46,6 +48,17 @@ export type Card = {
   href?: string;
   /** false renders the item as honestly unmet rather than quietly omitted. */
   met?: boolean;
+  /** A brand mark for the card, where the deck names a product. */
+  brand?: BrandKey;
+  /**
+   * What this site actually did at this step.
+   *
+   * Only on the pipeline, and load-bearing there: the stack slide recommends
+   * six tools, and a receipt under each is the difference between a
+   * recommendation and a demonstration. It is also where the slide has to
+   * admit that this site skipped step one.
+   */
+  receipt?: string;
 };
 
 export type TimelineStop = {
@@ -469,17 +482,47 @@ export const sections: Section[] = [
   {
     id: "build-stack",
     theme: "light",
-    layout: "cards",
+    layout: "pipeline",
     eyebrow: "Build · step 3 of 6",
     title: "Recommended build stack and minimum standard",
     accent: "minimum standard",
     cards: [
-      { label: "01", title: "Lovable or Artifact" },
-      { label: "02", title: "GitHub" },
-      { label: "03", title: "Claude Code or Codex" },
-      { label: "04", title: "Supabase" },
-      { label: "05", title: "Vercel preview" },
-      { label: "06", title: "Production" },
+      {
+        label: "01",
+        title: "Lovable or Artifact",
+        brand: "lovable",
+        receipt: "This site skipped it — create-next-app, then a written spec.",
+      },
+      {
+        label: "02",
+        title: "GitHub",
+        brand: "github",
+        receipt: "skidubb/vibecoding-201, public, every commit readable.",
+      },
+      {
+        label: "03",
+        title: "Claude Code or Codex",
+        brand: "claude",
+        receipt: "Claude Code, working from an approved plan.",
+      },
+      {
+        label: "04",
+        title: "Supabase",
+        brand: "supabase",
+        receipt: "Six migrations. Row-level security on every table.",
+      },
+      {
+        label: "05",
+        title: "Vercel preview",
+        brand: "vercel",
+        receipt: "Every push builds one before production sees it.",
+      },
+      {
+        label: "06",
+        title: "Production",
+        brand: "vercel",
+        receipt: "The page you are reading.",
+      },
     ],
     strip: {
       label: "Minimum standard before colleagues depend on it",
@@ -508,6 +551,7 @@ export const sections: Section[] = [
       {
         label: "01",
         title: "GitHub",
+        brand: "github",
         body: "The system of record for the application and its changes.",
         meta: "repository · branch · pull request · merge",
       },
@@ -679,12 +723,14 @@ export const sections: Section[] = [
       {
         label: "04",
         title: "MCP",
+        brand: "mcp",
         body: "Governed agent access to tools and context.",
         meta: "Connector quality and permissions",
       },
       {
         label: "05",
         title: "CLI",
+        brand: "github",
         body: "The agent's operating surface for GitHub, Vercel, Supabase, tests, logs.",
         meta: "Powerful access needs strong guardrails",
       },
@@ -965,6 +1011,8 @@ export const sections: Section[] = [
     ],
     kicker:
       "You don't cross this by becoming an engineer. You cross it by knowing which work you are not doing, and directing it.",
+    footnote: "The kit — checklist, prompt pack, agent instructions, ownership card, CLI reference — is at /kit. No email required.",
+    footnoteHref: "/kit",
   },
   {
     id: "poll-priya",
@@ -1077,6 +1125,8 @@ export const sections: Section[] = [
     accent: "Make sure it gets used.",
     lede: "Pick one workflow. Give it a job, a memory, and a way in. Ship it before the next session.",
     kicker: "Scott Ewalt · Cardinal Element",
+    footnote: "Take the kit: /kit",
+    footnoteHref: "/kit",
     media: { image: agentA, speed: -0.16 },
   },
 ];

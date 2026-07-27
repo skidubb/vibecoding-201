@@ -156,5 +156,19 @@ check(
 
 await a.from("submissions").update({ shared_at: null, surfaced_at: null }).eq("exercise_id", EX);
 
+// ------------------------------------------------------------------ export
+//
+// The export is the one place emails appear, so the gate is asked of the
+// database in each function's own body rather than trusted to the route. These
+// are the calls an attendee could make with the publishable key in their
+// browser console: each has to come back empty, not merely be hard to find.
+console.log("\nthe export, from an attendee's session");
+for (const fn of ["admin_poll_results", "admin_submissions", "admin_kit_requests"]) {
+  const { data, error } = await a.rpc(fn);
+  check(!error && (data ?? []).length === 0, `${fn}() returns nothing (${error?.message ?? `${(data ?? []).length} rows`})`);
+}
+const { data: anonExport } = await anon.rpc("admin_kit_requests");
+check((anonExport ?? []).length === 0, "and nothing to a reader with no account at all");
+
 console.log(failures === 0 ? "\nall good\n" : `\n${failures} failed\n`);
 process.exit(failures === 0 ? 0 : 1);

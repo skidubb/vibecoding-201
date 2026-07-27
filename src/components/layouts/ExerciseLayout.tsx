@@ -67,7 +67,7 @@ export function ExerciseLayout({ section }: LayoutProps) {
 
         {section.strip && <Strip {...section.strip} />}
         {section.kicker && <Kicker>{section.kicker}</Kicker>}
-        {section.footnote && <Footnote>{section.footnote}</Footnote>}
+        {section.footnote && <Footnote href={section.footnoteHref}>{section.footnote}</Footnote>}
       </div>
     </>
   );

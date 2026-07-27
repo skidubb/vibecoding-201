@@ -54,14 +54,46 @@ export function SectionHeader({
   );
 }
 
-/** Small print: source citations and stage notes from the deck. */
-export function Footnote({ children }: { children: React.ReactNode }) {
+/**
+ * Small print: source citations and stage notes from the deck.
+ *
+ * `href` lives here rather than in each layout. It was handled in exactly one
+ * of them, so adding `footnoteHref` to a cards section produced grey text where
+ * a link was meant to be — the reader is told the kit is at /kit and given
+ * nothing to press. Every caller passes `section.footnoteHref`; a layout that
+ * forgets loses the link, which is why they all read the same now.
+ */
+export function Footnote({
+  children,
+  href,
+}: {
+  children: React.ReactNode;
+  href?: string;
+}) {
+  const className =
+    "mt-10 max-w-4xl font-sans text-[13px] uppercase tracking-[0.14em]";
+
+  if (!href) {
+    return (
+      <p className={className} style={{ color: "var(--text-faint)" }}>
+        {children}
+      </p>
+    );
+  }
+
+  const external = !href.startsWith("/");
   return (
-    <p
-      className="mt-10 max-w-4xl font-sans text-[13px] uppercase tracking-[0.14em]"
-      style={{ color: "var(--text-faint)" }}
-    >
-      {children}
+    <p className={className}>
+      <a
+        href={href}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noreferrer noopener" : undefined}
+        data-deck-keys="off"
+        className="underline-offset-4 hover:underline"
+        style={{ color: "var(--accent)" }}
+      >
+        {children} <span aria-hidden>{external ? "↗" : "→"}</span>
+      </a>
     </p>
   );
 }

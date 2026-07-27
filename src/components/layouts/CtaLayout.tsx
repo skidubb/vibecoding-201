@@ -86,6 +86,21 @@ export function CtaLayout({ section }: LayoutProps) {
           >
             {section.kicker}
           </span>
+
+          {/* The last slide is where the room is told where to take the kit
+              from, so this layout can no longer be the one that ignores a
+              footnote. Centred, unlike the shared Footnote, because everything
+              else on this slide is. */}
+          {section.footnote && (
+            <a
+              href={section.footnoteHref ?? "#"}
+              data-deck-keys="off"
+              className="font-sans text-[12px] uppercase tracking-[0.16em] underline-offset-4 hover:underline"
+              style={{ color: "var(--accent)" }}
+            >
+              {section.footnote} <span aria-hidden>→</span>
+            </a>
+          )}
         </motion.div>
       </div>
     </>

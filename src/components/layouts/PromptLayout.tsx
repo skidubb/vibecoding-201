@@ -33,7 +33,7 @@ export function PromptLayout({ section }: LayoutProps) {
 
       {section.links && <LinkChips links={section.links} />}
       {section.kicker && <Kicker>{section.kicker}</Kicker>}
-      {section.footnote && <Footnote>{section.footnote}</Footnote>}
+      {section.footnote && <Footnote href={section.footnoteHref}>{section.footnote}</Footnote>}
     </div>
   );
 }
