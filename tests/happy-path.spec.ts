@@ -92,17 +92,28 @@ test("every presenter key press moves the deck", async ({ page }) => {
 
 test("the chrome layer mirrors the active section's theme", async ({ page }) => {
   const chrome = page.locator("#deck-chrome");
-  const themes = new Set<string>();
+  const sections = page.locator("main section[id]");
+  const count = await sections.count();
 
-  for (const i of [0, 3, 6, 9]) {
+  // Every section is checked against its own theme rather than a handful of
+  // fixed indices. Index-pinned assertions pass until someone inserts a
+  // section, then fail for a reason that has nothing to do with the invariant.
+  const seen = new Set<string>();
+
+  for (let i = 0; i < count; i++) {
+    const expected = await sections.nth(i).getAttribute("data-theme");
     await page.locator(RAIL).nth(i).click();
     await expect(page.locator("div.fixed.bottom-6")).toContainText(
       String(i + 1).padStart(2, "0"),
     );
-    themes.add((await chrome.getAttribute("data-theme")) ?? "");
+    await expect(chrome, `section ${i} is ${expected}`).toHaveAttribute(
+      "data-theme",
+      expected!,
+    );
+    seen.add(expected!);
   }
 
-  // The deck alternates chapters, so walking it must surface both themes —
-  // otherwise the mirror is stuck and every piece of fixed UI is mis-coloured.
-  expect([...themes].sort()).toEqual(["dark", "light"]);
+  // And the deck really does alternate, so the mirror is being exercised in
+  // both directions rather than sitting on one value the whole way down.
+  expect([...seen].sort()).toEqual(["dark", "light"]);
 });

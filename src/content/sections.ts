@@ -19,7 +19,8 @@ export type LayoutKind =
   | "chart"
   | "loop"
   | "cta"
-  | "prompt";
+  | "prompt"
+  | "poll";
 
 export type Media = {
   image?: StaticImageData;
@@ -43,6 +44,17 @@ export type TimelineStop = {
   image?: StaticImageData;
   tone?: "neutral" | "bad";
 };
+
+/** One answer in a poll. `id` matches poll_options.id in Postgres. */
+export type PollOption = { id: string; label: string; body: string };
+
+/**
+ * A live poll. The registry carries the question and the options and nothing
+ * else — the correct answer and the debrief live in Postgres behind a column
+ * grant, because this file is imported by client code and everything in it
+ * ships to the browser.
+ */
+export type Poll = { slug: string; options: PollOption[] };
 
 /** A prompt the reader copies into their own agent. Quoted from the deck verbatim. */
 export type Prompt = {
@@ -83,6 +95,7 @@ export type Section = {
   loopSteps?: string[];
   prompts?: Prompt[];
   links?: LinkRef[];
+  poll?: Poll;
 };
 
 export const sections: Section[] = [
@@ -310,6 +323,31 @@ export const sections: Section[] = [
       poster: "/media/workflow-loop-poster.jpg",
       speed: -0.1,
     },
+  },
+  {
+    id: "poll-debugging",
+    slide: "20",
+    theme: "dark",
+    layout: "poll",
+    eyebrow: "Poll 1 · single choice",
+    title: "The first build works except for one repeatable error.",
+    accent: "one repeatable error.",
+    lede: "What is the highest-leverage next move?",
+    poll: {
+      slug: "debugging",
+      options: [
+        { id: "debugging:a", label: "A", body: "Rewrite the original prompt" },
+        { id: "debugging:b", label: "B", body: "Regenerate it in another platform" },
+        {
+          id: "debugging:c",
+          label: "C",
+          body: "Provide the error, reproduction steps, and expected behavior; ask the agent to diagnose and test a fix",
+        },
+        { id: "debugging:d", label: "D", body: "Read every line of code" },
+      ],
+    },
+    kicker:
+      "Debugging is delegation with evidence attached. The trap is believing you have to read the code yourself.",
   },
   {
     id: "director-mode",
