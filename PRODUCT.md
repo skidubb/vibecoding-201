@@ -50,10 +50,11 @@ looked good.
 
 **As an artifact.** Slide 18 of the deck argues that a repository should carry a harness of
 files explaining it. An attendee who opens this repo should find that claim true rather than
-aspirational. `SPEC.md`, `PRODUCT.md`, `OWNERSHIP.md`, `README.md`, `CLAUDE.md`, and
-`AGENTS.md` are here. `ARCHITECTURE.md`, `DATA_MODEL.md`, `SECURITY.md`, and `.env.example`
-are not. Anyone counting will notice, so the gap is stated here instead of hidden.
+aspirational. `PRODUCT.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `AGENTS.md`, and `.env.example`
+are here, alongside `SPEC.md`, `OWNERSHIP.md`, and `README.md`. `DATA_MODEL.md` and
+`SECURITY.md` are absent, because there is no schema for them to describe yet. Anyone
+counting will notice, so the gap is stated here instead of hidden.
 
-**As a build.** `npm run build` type-checks, and `npm test` runs five Playwright specs
+**As a build.** `npm run build` type-checks, and `npm test` runs six Playwright specs
 against a production build. Both have to pass before anything ships. Passing does not mean
 the page reads well; that still takes a person looking at it.

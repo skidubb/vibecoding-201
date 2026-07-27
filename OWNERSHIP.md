@@ -86,16 +86,15 @@ Verified against the repository as it stands, not inferred from the plan.
   holds one page.
 - **The progress rail disappears below the `md` breakpoint** (`ProgressRail.tsx:39`). On a
   phone there is no position readout and no chapter navigation.
-- **Four of slide 18's six harness files are missing:** `ARCHITECTURE.md`, `DATA_MODEL.md`,
-  `SECURITY.md`, and `.env.example`. `.gitignore` already carries a `!.env.example` exception
-  with a comment saying the file has to exist in the repo, and it does not.
-- **`README.md` and `CLAUDE.md` both still say "There is no test or lint script."** There is
-  a test script, added in the same commit as the Playwright suite.
+- **Two of slide 18's six harness files are absent:** `DATA_MODEL.md` and `SECURITY.md`.
+  Both are deliberately deferred until there is a schema for them to describe truthfully;
+  see the closing section of `ARCHITECTURE.md`. An attendee counting files will still come
+  up two short, so the reason is written down rather than left to inference.
+- **`CLAUDE.md` still says "There is no test or lint script."** There is a test script,
+  added alongside the Playwright suite. `README.md` has been corrected; `CLAUDE.md` line 12
+  has not.
 - **The Playwright suite covers presenter mechanics only, in Chromium only.** Nothing asserts
   that a section reads correctly, and no second browser is exercised.
-- **`IMAGES-REVIEW/` is 9.9 MB of untracked renders sitting inside the repository** and is
-  not matched by any `.gitignore` rule. A `git add -A` before making the repo public would
-  commit all of it.
 - **No accessibility audit has been done.** On a keyboard-driven site, that is the gap most
   likely to matter.
 

@@ -9,8 +9,13 @@ operational rules that don't belong in it.
 - **`AGENTS.md` is generated.** Never hand-edit between the `BEGIN/END:nextjs-agent-rules`
   markers — a tool regenerates that block and will clobber anything added there. Durable
   rules go in the README, or here.
-- **There is no test or lint script.** `npm run build` is the verification gate; it runs
-  TypeScript, so a type error fails the build. Never claim a change works without running it.
+- **Two gates, and there is no lint script.** `npm run build` runs TypeScript, so a type
+  error fails it. `npm test` runs Playwright against a *production* build — `next dev`'s
+  HMR socket fails under Playwright and takes hydration with it, so dev-mode runs report
+  false negatives on every interaction. Never claim a change works without running both.
+- **A regression test is not accepted until it has been seen failing** against the code it
+  guards. Two in `tests/` were, and one earlier version passed against a deliberately
+  broken guard because a stale `next start` was still serving the previous build.
 - **Secrets resolve through 1Password, never inline.** `.env.op` holds `op://` pointers only
   and is intentionally committed. Anything needing a real key goes through
   `op run --env-file=.env.op -- …` (see `npm run gen:media`), which requires `op signin`.

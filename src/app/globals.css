@@ -130,6 +130,17 @@ body {
   pointer-events: none;
 }
 
+/* --- Brand marks --------------------------------------------------------- */
+
+/* Both variants are in the DOM; the section's theme decides which one shows.
+   Verified by rasterising every mark onto both surfaces: the colour wordmarks
+   are near-black and vanish on navy, the mono ones are white and vanish on
+   lavender. Swapping these selectors makes every logo invisible. */
+[data-theme="dark"] .logo-color,
+[data-theme="light"] .logo-mono {
+  display: none;
+}
+
 /* --- Focus --------------------------------------------------------------- */
 
 /* Neumorphism has no borders for a default outline to sit against, and this
