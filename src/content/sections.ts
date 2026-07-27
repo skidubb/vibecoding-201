@@ -18,7 +18,8 @@ export type LayoutKind =
   | "timeline"
   | "chart"
   | "loop"
-  | "cta";
+  | "cta"
+  | "prompt";
 
 export type Media = {
   image?: StaticImageData;
@@ -43,6 +44,24 @@ export type TimelineStop = {
   tone?: "neutral" | "bad";
 };
 
+/** A prompt the reader copies into their own agent. Quoted from the deck verbatim. */
+export type Prompt = {
+  /** Stable across edits — it identifies the prompt in copy analytics. */
+  id: string;
+  label: string;
+  text: string;
+  caption?: string;
+};
+
+/** An outbound reference. `install` renders as a second, copyable line. */
+export type LinkRef = {
+  label: string;
+  href: string;
+  note?: string;
+  /** A one-line install command, for CLI entries. */
+  install?: string;
+};
+
 export type Section = {
   id: string;
   /** Display number in the rail — mirrors the source deck's slide numbering. */
@@ -62,6 +81,8 @@ export type Section = {
   chart?: "ladder" | "scurve" | "gap";
   split?: { label: string; title: string; body: string; image: StaticImageData }[];
   loopSteps?: string[];
+  prompts?: Prompt[];
+  links?: LinkRef[];
 };
 
 export const sections: Section[] = [
@@ -289,6 +310,56 @@ export const sections: Section[] = [
       poster: "/media/workflow-loop-poster.jpg",
       speed: -0.1,
     },
+  },
+  {
+    id: "director-mode",
+    slide: "14",
+    theme: "light",
+    layout: "prompt",
+    eyebrow: "Plan · step 2 of 6",
+    title: "Approve the plan before any code changes.",
+    accent: "before any code changes.",
+    lede: "You are not pretending to be an engineer. You are directing AI as your engineer — which moves the expertise from typing syntax to defining, testing, and judging the work.",
+    prompts: [
+      {
+        id: "plan-approval",
+        label: "The plan prompt",
+        text: "Inspect the current project. Propose the smallest coherent implementation for this specification. Identify the data model, permissions, environment variables, failure states, tests, and files involved. Do not change anything until I approve the plan.",
+        caption:
+          "The last sentence is the whole prompt. Without it the agent writes code you then have to review; with it, the artifact you review is a plan, which is far cheaper to change.",
+      },
+      {
+        id: "branch-and-pr",
+        label: "The delegation prompt",
+        text: "Create a branch, make the approved change, run the tests, summarize the diff, and open a draft pull request. Do not merge it.",
+        caption:
+          "GitHub is the layer most GTM leaders have never touched. This prompt means you never have to — the agent drives it, and you review the diff.",
+      },
+    ],
+    links: [
+      {
+        label: "GitHub Spec Kit",
+        href: "https://github.com/github/spec-kit",
+        note: "124K+ stars. Each phase produces an artifact that feeds the next.",
+      },
+      {
+        label: "Claude Code",
+        href: "https://code.claude.com/docs/en/overview",
+        install: "npm i -g @anthropic-ai/claude-code",
+      },
+      {
+        label: "Codex CLI",
+        href: "https://learn.chatgpt.com/docs/codex/cli",
+        install: "npm i -g @openai/codex",
+      },
+      {
+        label: "GitHub CLI",
+        href: "https://cli.github.com/",
+        install: "brew install gh",
+      },
+    ],
+    kicker:
+      "Five questions to ask of any plan: does it solve the stated job, what did it invent, what data and permissions does it need, how will the workflow be tested, and what is deliberately excluded?",
   },
   {
     id: "close",

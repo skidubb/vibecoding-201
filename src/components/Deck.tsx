@@ -13,6 +13,7 @@ import { TimelineLayout } from "@/components/layouts/TimelineLayout";
 import { ChartLayout } from "@/components/layouts/ChartLayout";
 import { LoopLayout } from "@/components/layouts/LoopLayout";
 import { CtaLayout } from "@/components/layouts/CtaLayout";
+import { PromptLayout } from "@/components/layouts/PromptLayout";
 
 type LayoutComponent = (props: { section: Section; index: number }) => React.ReactNode;
 
@@ -26,6 +27,7 @@ const LAYOUTS: Record<LayoutKind, LayoutComponent> = {
   chart: ChartLayout,
   loop: LoopLayout,
   cta: CtaLayout,
+  prompt: PromptLayout,
 };
 
 /**
