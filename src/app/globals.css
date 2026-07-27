@@ -146,10 +146,16 @@ body {
 /* Neumorphism has no borders for a default outline to sit against, and this
    deck is driven from the keyboard, so the ring is drawn explicitly. Offset
    keeps it clear of the soft shadow that would otherwise swallow it. */
+/* No `border-radius` here. `outline` already follows the element's own radius
+   in every browser this ships to, and setting it reshaped the *element* rather
+   than the ring: every rounded-full control — the copy button, the presenter
+   bar, the pills — squared off to 4px the moment it took keyboard focus, which
+   is the one moment it is being looked at. Measured, the ring clears WCAG
+   1.4.11 without help: magenta on the dark theme runs 3.32:1 (raised) to
+   3.91:1 (page ground), and on the light theme 3.47:1 (sunken) to 3.86:1. */
 :focus-visible {
   outline: 2px solid var(--accent, #df285b);
   outline-offset: 3px;
-  border-radius: 4px;
 }
 
 /* --- Atmosphere ---------------------------------------------------------- */
@@ -173,4 +179,76 @@ body {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* ==========================================================================
+   Accessibility floor
+
+   Appended rather than merged into the blocks above, so the theme tokens stay
+   one reviewable unit. Every ratio quoted here was measured against the actual
+   token values, not estimated.
+   ========================================================================== */
+
+/* --- Skip link ----------------------------------------------------------- */
+
+/* Off-screen by transform, not by `display: none` — a hidden-that-way link is
+   removed from the accessibility tree and can never be focused, which makes it
+   decoration. This one is always reachable and only ever seen.
+
+   Colours are literals, deliberately. The link sits outside every `[data-theme]`
+   section, so there is nothing for `var(--surface)` to resolve against; it is
+   drawn in the dark theme's values because the page ground is `#12162a` and the
+   opening section is dark. Text is 14.5:1 on its own panel. */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100; /* above the rail and the presenter bar, both z-50 */
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: #1e2440;
+  border: 1px solid rgba(206, 198, 244, 0.22);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  color: #f3f1fb;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 24px));
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* The skip target takes focus so the next Tab continues into the deck rather
+   than restarting at the rail. It is a wrapper around the whole page, so a ring
+   around it would outline the viewport. */
+#main-content:focus {
+  outline: none;
+}
+
+/* --- Status colour ------------------------------------------------------- */
+
+/* A success/pass green, stepped per theme the way the chart lines are, because
+   one green cannot clear 4.5:1 against both a near-black navy and a pale
+   lavender.
+
+   `#0ca30c` — the obvious first reach for "it passed" — is 2.73:1 on
+   `--surface` in the light theme, 2.83:1 raised and 2.55:1 sunken. It fails AA
+   on all three. These do not:
+
+     dark   #3fbf6a   6.86:1 surface · 6.42:1 raised · 7.26:1 sunken
+     light  #0f6b31   5.40:1 surface · 5.60:1 raised · 5.04:1 sunken
+
+   Use `var(--status-ok)`; it resolves correctly under either theme without a
+   prop or a conditional. */
+[data-theme="dark"] {
+  --status-ok: #3fbf6a;
+}
+
+[data-theme="light"] {
+  --status-ok: #0f6b31;
 }
