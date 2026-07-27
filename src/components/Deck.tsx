@@ -5,6 +5,7 @@ import { DeckProvider } from "@/lib/deck-context";
 import { SectionShell } from "@/components/core/SectionShell";
 import { ProgressRail } from "@/components/core/ProgressRail";
 import { DeckChrome } from "@/components/core/DeckChrome";
+import { PresenterBar } from "@/components/interactive/PresenterBar";
 import { HeroLayout } from "@/components/layouts/HeroLayout";
 import { SplitLayout } from "@/components/layouts/SplitLayout";
 import { ClaimLayout } from "@/components/layouts/ClaimLayout";
@@ -47,6 +48,7 @@ export function Deck() {
     <DeckProvider>
       <DeckChrome>
         <ProgressRail />
+        <PresenterBar />
       </DeckChrome>
       <main>
         {sections.map((section, index) => {

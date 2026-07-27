@@ -311,9 +311,20 @@ create policy "authors write their own submissions" on public.submissions
 create policy "authors edit their own submissions" on public.submissions
   for update to authenticated
   using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-create policy "admins may surface, within the author's consent" on public.submissions
+-- An admin sees a submission only once its author has shared it, and may only
+-- surface what they can see. Both halves matter, and the SELECT half is not
+-- redundant: Postgres applies SELECT policies to the rows an UPDATE reads, so
+-- without it an admin could see nothing to moderate and the update silently
+-- affected zero rows. A private submission is not merely un-publishable by an
+-- admin — it is invisible to them.
+create policy "admins read what authors shared" on public.submissions
+  for select to authenticated
+  using ((select public.is_admin()) and shared_at is not null);
+
+create policy "admins surface what authors shared" on public.submissions
   for update to authenticated
-  using ((select public.is_admin())) with check ((select public.is_admin()));
+  using ((select public.is_admin()) and shared_at is not null)
+  with check ((select public.is_admin()) and shared_at is not null);
 
 create policy "anyone may log an event" on public.events
   for insert to anon, authenticated with check (true);
@@ -321,18 +332,57 @@ create policy "only admins read raw events" on public.events
   for select to authenticated using ((select public.is_admin()));
 
 -- --------------------------------------------------------------------- grants
+--
+-- Stated explicitly rather than inherited. A Supabase project grants new public
+-- tables to anon and authenticated by default, so leaving this out appears to
+-- work — until the schema is rebuilt somewhere that default is not configured,
+-- and every policy starts returning "permission denied" for reasons no policy
+-- explains. A migration that only runs correctly inside one project's ambient
+-- settings is not a migration you can hand to anyone.
+grant usage on schema public to anon, authenticated;
+
+grant select, update on public.profiles     to authenticated;
+grant select          on public.poll_options to anon, authenticated;
+grant select          on public.poll_tallies to anon, authenticated;
+grant select          on public.votes        to authenticated;
+grant update          on public.polls        to authenticated;
+grant select, insert, update on public.submissions to authenticated;
+grant insert          on public.events       to anon, authenticated;
+grant execute on all functions in schema public to anon, authenticated;
+
 -- The correct answer and the debrief are withheld at the column level. RLS
 -- filters rows; only a grant can withhold a field of a row that is otherwise
 -- public, and the question and state have to stay readable for the poll to
 -- render at all. poll_reveal() is the sanctioned way through.
-revoke select on public.polls from anon, authenticated;
 grant select (slug, question, scenario, state, auto_close_at, sort)
   on public.polls to anon, authenticated;
 
 -- Same shape for events: the tail is public, the identity behind it is not.
-revoke select on public.events from anon, authenticated;
 grant select (id, name, section_id, created_at) on public.events to authenticated;
 
 -- ------------------------------------------------------------------- realtime
 alter publication supabase_realtime add table public.poll_tallies;
 alter publication supabase_realtime add table public.polls;
+
+-- Integrity readout for the presenter.
+--
+-- One vote per account is enforced by the primary key on votes, but accounts
+-- are free while anonymous sign-in is on, so the honest claim is "per account"
+-- and the honest safeguard is being able to see when someone tests it. This
+-- returns totals only — never who — and is admin-only, so it cannot become a
+-- side channel onto individual votes.
+create or replace function public.poll_integrity(p_poll_slug text)
+returns table (total_votes bigint, distinct_accounts bigint, new_accounts_60s bigint)
+language sql
+security definer
+set search_path = ''
+stable
+as $$
+  select
+    count(*)::bigint,
+    count(distinct v.user_id)::bigint,
+    count(*) filter (where v.created_at > now() - interval '60 seconds')::bigint
+  from public.votes v
+  where v.poll_slug = p_poll_slug
+    and (select public.is_admin());
+$$;
