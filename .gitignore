@@ -56,3 +56,6 @@ blob-report/
 # scripts/.generated/: raw renders stay out of git, derivatives get committed.
 IMAGES-REVIEW/
 scripts/.probe-brand.mjs
+
+# Local only. Move to 1Password and delete.
+.supabase-db-password

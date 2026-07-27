@@ -1,3 +1,13 @@
+-- The four polls, as a migration rather than a seed file.
+--
+-- They are reference data the app cannot run without: a poll section renders
+-- from the registry but votes against these rows, and a missing option id is a
+-- foreign key violation at the moment someone taps it. Seeds only run on a
+-- local `db reset`, so shipping them that way would leave every deployed
+-- environment one manual step from broken.
+--
+-- Idempotent, so re-applying is safe.
+
 -- The four polls, quoted from Vibecoding-201-Production-GTM-Tools-v6.pptx.
 --
 -- Wording is verbatim from the slides, including the option text. The room
@@ -48,7 +58,8 @@ values
     'priya:c',
     'Current rung is Prototype. The binding constraints are persistence and identity. The next move is a three-line spec with a checkable Done, then a plan — not more polish, and not a rebuild.',
     4
-  );
+  )
+on conflict (slug) do nothing;
 
 insert into public.poll_options (id, poll_slug, label, body, sort) values
   ('cold-open:a', 'cold-open', 'A', 'Screen A — built in 12 minutes. Sample data. Open link.', 1),
@@ -67,9 +78,11 @@ insert into public.poll_options (id, poll_slug, label, body, sort) values
   ('priya:a', 'priya', 'A', 'Ship it; it is only 40 partners', 1),
   ('priya:b', 'priya', 'B', 'Polish the interface first', 2),
   ('priya:c', 'priya', 'C', 'Hold. It needs real storage, controlled access, and a review before anything external-facing ships', 3),
-  ('priya:d', 'priya', 'D', 'Rebuild it from scratch in the terminal', 4);
+  ('priya:d', 'priya', 'D', 'Rebuild it from scratch in the terminal', 4)
+on conflict (id) do nothing;
 
 -- Tally rows exist from the start so a poll renders a complete set of bars at
 -- zero rather than growing rows in as the first votes arrive.
 insert into public.poll_tallies (poll_slug, option_id, votes)
-select poll_slug, id, 0 from public.poll_options;
+select poll_slug, id, 0 from public.poll_options
+on conflict (poll_slug, option_id) do nothing;

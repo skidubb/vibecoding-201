@@ -44,6 +44,21 @@ export default defineConfig({
   // that actually ships.
   webServer: {
     command: `npm run build && npx next start --port ${PORT}`,
+    // The suite runs with the backend switched off, deliberately.
+    //
+    // Two things fall out of that. The degradation specs stay meaningful — a
+    // poll with no backend has to render its question and say so, and that is
+    // only tested if the backend is actually absent. And the kill switch gets
+    // exercised on every run rather than being a flag nobody has ever set,
+    // which is the difference between a kill switch and a comment.
+    //
+    // The live path is verified separately, against the real project, by
+    // `npm run smoke`.
+    env: {
+      NEXT_PUBLIC_BACKEND_DISABLED: "1",
+      NEXT_PUBLIC_SUPABASE_URL: "",
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "",
+    },
     url: `http://127.0.0.1:${PORT}`,
     // Never reuse. A surviving `next start` serves the previous build, so a
     // source change silently is not under test — which once made a deliberately

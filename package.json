@@ -8,7 +8,8 @@
     "start": "next start",
     "gen:media": "op run --env-file=.env.op -- node scripts/generate-media.mjs",
     "assets": "node scripts/optimize-assets.mjs",
-    "test": "playwright test"
+    "test": "playwright test",
+    "smoke": "node --env-file=.env.local scripts/smoke.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
