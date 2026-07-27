@@ -31,9 +31,14 @@ export default function VotePage() {
     let cancelled = false;
 
     const read = async () => {
+      // Restricted to polls the deck actually renders. The `rehearsal` poll is
+      // permanently open so the vote path can be checked before class, and it
+      // must never be what an attendee is shown — relying on it having no
+      // section to keep it hidden works, but only by accident.
       const { data } = await client
         .from("polls")
         .select("slug, state")
+        .in("slug", POLLS.map((p) => p.poll.slug))
         .in("state", ["open", "revealed"])
         .order("sort", { ascending: true });
       if (cancelled) return;
