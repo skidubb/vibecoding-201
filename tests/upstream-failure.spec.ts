@@ -85,3 +85,31 @@ test("the correct answer is not in the page when no poll is revealed", async ({ 
   expect(html).not.toContain("Debugging is delegation with evidence attached. A throws away");
   expect(html).not.toContain("planted distractor");
 });
+
+test("the vote page says what is happening when there is no backend", async ({
+  page,
+}) => {
+  await page.goto("/vote");
+  await expect(page.getByRole("heading")).toContainText("Voting is offline");
+  // No spinner left running, and no dead question to answer into nothing.
+  await expect(page.locator("button[data-option]")).toHaveCount(0);
+});
+
+test("sign-in says accounts are offline rather than failing on submit", async ({
+  page,
+}) => {
+  await page.goto("/signin");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Sign in");
+  await expect(page.locator("main")).toContainText("Accounts are offline");
+  // The offer to sign in is withdrawn, not left there to fail when tapped.
+  await expect(page.getByText("Continue with Google")).toHaveCount(0);
+});
+
+test("a failed sign-in lands somewhere that explains itself", async ({ page }) => {
+  await page.goto("/auth/error");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "did not sign you in",
+  );
+  // And offers the route that does not depend on the thing that just broke.
+  await expect(page.locator("main")).toContainText("do not need an account to vote");
+});
