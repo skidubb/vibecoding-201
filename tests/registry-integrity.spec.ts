@@ -119,3 +119,28 @@ test("no layout silently drops content it was handed", async ({ page }) => {
     [],
   );
 });
+
+test("every section given a backdrop actually renders one", async ({ page }) => {
+  // Media was the fourth registry field to be silently dropped by a layout that
+  // did not know about it — after `strip`, `footnoteHref` and `brand`. Eight of
+  // fourteen layouts ignored it, so assigning a backdrop to a claim or a poll
+  // shipped the file in the bundle and put nothing on the screen. Nothing
+  // failed: not the build, not a type, not a test.
+  await page.goto("/");
+
+  const missing: string[] = [];
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    if (!id) continue;
+    if (!/media: \{/.test(block)) continue;
+
+    const isVideo = /video: /.test(block);
+    const selector = isVideo ? `#${id} video` : `#${id} img`;
+    if ((await page.locator(selector).count()) === 0) {
+      missing.push(`${id} carries media and renders no ${isVideo ? "video" : "img"}`);
+    }
+  }
+
+  expect(missing, missing.join("\n")).toEqual([]);
+});

@@ -2,8 +2,56 @@
 
 import type { Section } from "@/content/sections";
 import { AccentTitle, NeuBadge, Reveal } from "@/components/neu/Neu";
+import { ImageBackdrop, VideoBackdrop } from "@/components/core/ParallaxLayer";
 
 export type LayoutProps = { section: Section; index: number };
+
+/**
+ * The section's backdrop, if it was given one.
+ *
+ * Eight of the fourteen layouts used to ignore `media` outright, so assigning a
+ * backdrop to a claim or a poll put a file in the bundle and nothing on the
+ * screen — the same silent drop that has now cost this deck `strip`,
+ * `footnoteHref` and `brand`. One helper means adding a backdrop to a layout is
+ * one line rather than an import, a conditional and a set of remembered
+ * defaults, and `tests/registry-integrity.spec.ts` fails if any section
+ * carrying media renders no image.
+ *
+ * Must stay a sibling of the content container — `absolute inset-0` resolves
+ * against the nearest positioned ancestor, and the container is narrower and
+ * padded. Every caller renders it before `<div className={CONTAINER}>`.
+ */
+export function SectionBackdrop({
+  section,
+  opacity,
+  ...rest
+}: {
+  section: Section;
+  opacity?: number;
+  focal?: string;
+  sideScrim?: "left" | "right";
+  preload?: boolean;
+}) {
+  const media = section.media;
+  if (!media) return null;
+
+  if (media.video) {
+    return (
+      <VideoBackdrop src={media.video} poster={media.poster} speed={media.speed} />
+    );
+  }
+  if (!media.image) return null;
+
+  return (
+    <ImageBackdrop
+      src={media.image}
+      speed={media.speed}
+      opacity={opacity ?? (section.theme === "dark" ? 0.3 : 0.24)}
+      scrim={section.theme}
+      {...rest}
+    />
+  );
+}
 
 /** Consistent eyebrow → headline → lede stack used by most layouts. */
 export function SectionHeader({

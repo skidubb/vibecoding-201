@@ -1,6 +1,6 @@
 "use client";
 
-import { CONTAINER, Footnote, Kicker, SectionHeader, type LayoutProps } from "./shared";
+import { CONTAINER, Footnote, Kicker, SectionBackdrop, SectionHeader, type LayoutProps } from "./shared";
 import { PollWidget } from "@/components/interactive/PollWidget";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
 
@@ -14,6 +14,8 @@ export function PollLayout({ section }: LayoutProps) {
   if (!poll) return null;
 
   return (
+    <>
+      <SectionBackdrop section={section} />
     <div className={CONTAINER}>
       <SectionHeader section={section} />
 
@@ -39,5 +41,6 @@ export function PollLayout({ section }: LayoutProps) {
 
       {section.kicker && <Kicker>{section.kicker}</Kicker>}
     </div>
+    </>
   );
 }

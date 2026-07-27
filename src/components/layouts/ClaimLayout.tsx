@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import { Glow } from "@/components/core/ParallaxLayer";
 import { AccentTitle, NeuBadge } from "@/components/neu/Neu";
-import { CONTAINER, Strip, type LayoutProps } from "./shared";
+import { CONTAINER, SectionBackdrop, Strip, type LayoutProps } from "./shared";
 
 /**
  * A pure typographic beat. No panel, no image — the page goes quiet so one
@@ -16,6 +16,7 @@ export function ClaimLayout({ section }: LayoutProps) {
 
   return (
     <>
+      <SectionBackdrop section={section} opacity={0.34} />
       <Glow className="left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" size={70} />
 
       <div className={`${CONTAINER} mx-auto max-w-5xl text-center`}>

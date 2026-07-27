@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, SectionHeader, type LayoutProps } from "./shared";
+import { CONTAINER, SectionBackdrop, SectionHeader, type LayoutProps } from "./shared";
 
 /**
  * Jordan's week. The spine draws itself as you scroll and turns magenta once
@@ -19,6 +19,8 @@ export function TimelineLayout({ section }: LayoutProps) {
   const spineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
+    <>
+      <SectionBackdrop section={section} />
     <div className={CONTAINER}>
       <SectionHeader section={section} />
 
@@ -114,5 +116,6 @@ export function TimelineLayout({ section }: LayoutProps) {
         </div>
       </div>
     </div>
+    </>
   );
 }

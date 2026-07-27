@@ -1,6 +1,6 @@
 "use client";
 
-import { CONTAINER, Footnote, Kicker, SectionHeader, type LayoutProps } from "./shared";
+import { CONTAINER, Footnote, Kicker, SectionBackdrop, SectionHeader, type LayoutProps } from "./shared";
 import { LinkChips } from "./LinkChips";
 import { PromptBlock } from "@/components/interactive/PromptBlock";
 import { Reveal } from "@/components/neu/Neu";
@@ -16,6 +16,8 @@ export function PromptLayout({ section }: LayoutProps) {
   const prompts = section.prompts ?? [];
 
   return (
+    <>
+      <SectionBackdrop section={section} />
     <div className={CONTAINER}>
       <SectionHeader section={section} />
 
@@ -35,5 +37,6 @@ export function PromptLayout({ section }: LayoutProps) {
       {section.kicker && <Kicker>{section.kicker}</Kicker>}
       {section.footnote && <Footnote href={section.footnoteHref}>{section.footnote}</Footnote>}
     </div>
+    </>
   );
 }

@@ -4,8 +4,11 @@
  * Two sources feed this, and both still work:
  *   1. `../images/` — the original Midjourney exports, matched by filename
  *      fragment through MANIFEST below.
- *   2. `../IMAGES-REVIEW/0-raw-renders/` — output of `generate-media.mjs`,
- *      already named semantically, so it skips the fragment matching.
+ *   2. `../IMAGES-REVIEW/<folder>/` — output of `generate-media.mjs`, already
+ *      named semantically, so it skips the fragment matching. Which folder
+ *      follows `--manifest`, exactly as it does for the generator: the two
+ *      scripts are two halves of one pipeline and a stage that read a different
+ *      directory than the stage before it wrote would silently process nothing.
  *
  * Source PNGs are ~1.3-1.5MB each at full resolution. These are used as
  * full-bleed parallax layers, so 2560w is the practical ceiling; next/image
@@ -23,7 +26,21 @@ const run = promisify(execFile);
 
 const SRC = resolve(process.cwd(), "..", "images");
 const OUT = resolve(process.cwd(), "src", "assets");
-const GENERATED = resolve(import.meta.dirname, "..", "IMAGES-REVIEW", "0-raw-renders");
+/** Mirrors MANIFESTS in generate-media.mjs — same flag, same folders. */
+const RENDER_DIRS = { site: "0-raw-renders", "deck-v6": "deck-v6" };
+const manifestArg = (() => {
+  const i = process.argv.indexOf("--manifest");
+  return i === -1 ? "site" : process.argv[i + 1];
+})();
+if (!(manifestArg in RENDER_DIRS)) {
+  console.error(
+    `unknown manifest ${JSON.stringify(manifestArg)}\n` +
+      `known: ${Object.keys(RENDER_DIRS).join(", ")}`,
+  );
+  process.exit(1);
+}
+const RENDER_DIR = RENDER_DIRS[manifestArg];
+const GENERATED = resolve(import.meta.dirname, "..", "IMAGES-REVIEW", RENDER_DIR);
 const MEDIA = resolve(process.cwd(), "public", "media");
 
 /*
@@ -135,7 +152,7 @@ console.log(`\ntotal ${Math.round(total / 1024 / 1024 * 10) / 10}MB across ${MAN
  * generate-media.mjs, so the Midjourney path above stays self-sufficient.
  */
 if (!(await exists(GENERATED))) {
-  console.log("\nno IMAGES-REVIEW/0-raw-renders/ — skipping generated assets");
+  console.log(`\nno IMAGES-REVIEW/${RENDER_DIR}/ — skipping generated assets`);
   process.exit(0);
 }
 

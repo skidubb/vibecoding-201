@@ -2,7 +2,7 @@
 
 import { Glow } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, Footnote, Kicker, SectionHeader, Strip, type LayoutProps } from "./shared";
+import { CONTAINER, Footnote, Kicker, SectionBackdrop, SectionHeader, Strip, type LayoutProps } from "./shared";
 import { ExerciseWidget } from "@/components/interactive/ExerciseWidget";
 
 /**
@@ -19,6 +19,7 @@ export function ExerciseLayout({ section }: LayoutProps) {
 
   return (
     <>
+      <SectionBackdrop section={section} />
       <Glow className="right-[-16vw] top-[-8vh]" tone="magenta" size={48} />
 
       <div className={CONTAINER}>
