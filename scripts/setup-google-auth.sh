@@ -19,10 +19,29 @@ PROJECT_REF="nijlajnppqhqyskhodss"
 GCP_PROJECT="ai-gtm-pavilion"
 CALLBACK="https://${PROJECT_REF}.supabase.co/auth/v1/callback"
 
-if [ $# -ne 2 ]; then
+# Credentials come from a gitignored file if it exists, so the secret never has
+# to be typed into a shared terminal or pasted into a transcript.
+CRED_FILE=".google-oauth"
+if [ $# -eq 0 ] && [ -f "$CRED_FILE" ]; then
+  # shellcheck disable=SC1090
+  . "$CRED_FILE"
+  set -- "${GOOGLE_CLIENT_ID:-}" "${GOOGLE_CLIENT_SECRET:-}"
+fi
+
+if [ $# -ne 2 ] || [ -z "${1:-}" ] || [ -z "${2:-}" ]; then
   cat <<EOF
 
 Usage: $0 <client-id> <client-secret>
+
+Or, to keep the secret out of your shell history and out of any transcript,
+put it in a gitignored file and run this with no arguments:
+
+  cat > .google-oauth <<'CREDS'
+  GOOGLE_CLIENT_ID=…apps.googleusercontent.com
+  GOOGLE_CLIENT_SECRET=…
+  CREDS
+
+  npm run setup:google
 
 Before running this, create the OAuth client at:
 
@@ -78,3 +97,10 @@ echo "  open https://crossing-the-gap-site.vercel.app/signin"
 echo
 echo "Signing in with scott.e.ewalt@gmail.com also grants the presenter role —"
 echo "admin_emails carries that address, and the new-user trigger reads it."
+
+if [ -f "$CRED_FILE" ]; then
+  dd if=/dev/urandom of="$CRED_FILE" bs=1024 count=1 conv=notrunc 2>/dev/null || true
+  rm -f "$CRED_FILE"
+  echo
+  echo "Removed $CRED_FILE — the credentials live in Supabase now."
+fi

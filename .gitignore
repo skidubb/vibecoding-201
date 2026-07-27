@@ -59,3 +59,6 @@ scripts/.probe-brand.mjs
 
 # Local only. Move to 1Password and delete.
 .supabase-db-password
+
+# Google OAuth credentials, deleted by setup:google once pushed.
+.google-oauth
