@@ -3,7 +3,7 @@
 import { CONTAINER, Footnote, Kicker, SectionHeader, type LayoutProps } from "./shared";
 import { LinkChips } from "./LinkChips";
 import { PromptBlock } from "@/components/interactive/PromptBlock";
-import { RevealStable } from "@/components/neu/Neu";
+import { Reveal } from "@/components/neu/Neu";
 
 /**
  * A section whose payload is text the reader is meant to take with them.
@@ -21,13 +21,13 @@ export function PromptLayout({ section }: LayoutProps) {
 
       <div className="mt-12 grid gap-8 lg:grid-cols-2">
         {prompts.map((prompt, i) => (
-          <RevealStable key={prompt.id} delay={0.1 + i * 0.08}>
+          <Reveal key={prompt.id} delay={0.1 + i * 0.08}>
             <PromptBlock
               label={prompt.label}
               text={prompt.text}
               caption={prompt.caption}
             />
-          </RevealStable>
+          </Reveal>
         ))}
       </div>
 

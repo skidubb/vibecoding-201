@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 /** Soft-extruded panel. Shadows come from the section's [data-theme] vars. */
 export function NeuPanel({
@@ -91,70 +91,6 @@ export function Reveal({
     >
       {children}
     </motion.div>
-  );
-}
-
-/**
- * The same entrance as `Reveal`, for subtrees that hold their own state.
- *
- * `Reveal` drives the animation through Motion, which re-renders its subtree as
- * it runs. A control inside it that updates state during that window loses the
- * update: the handler fires, `setState` is called once, and the committed DOM
- * still shows the old value. Reproduced against a production build by clicking
- * a copy button while the page was still smooth-scrolling — the text was copied
- * and the confirmation never appeared, which is exactly the silent failure the
- * deck spends a section arguing against.
- *
- * This version animates in CSS off a one-shot IntersectionObserver, so children
- * render once and are never re-rendered by the entrance. Use it for anything
- * interactive — prompts, polls, forms. `Reveal` remains correct for static copy.
- */
-export function RevealStable({
-  children,
-  delay = 0,
-  y = 26,
-  className = "",
-}: {
-  children: ReactNode;
-  delay?: number;
-  y?: number;
-  className?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [shown, setShown] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setShown(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        setShown(true);
-        observer.disconnect();
-      },
-      { rootMargin: "-12% 0px -12% 0px" },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: shown ? 1 : 0,
-        transform: shown ? "none" : `translateY(${y}px)`,
-        transition: `opacity 850ms cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 850ms cubic-bezier(0.16,1,0.3,1) ${delay}s`,
-        willChange: shown ? undefined : "opacity, transform",
-      }}
-    >
-      {children}
-    </div>
   );
 }
 

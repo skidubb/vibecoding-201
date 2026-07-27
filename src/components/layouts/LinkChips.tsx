@@ -1,7 +1,7 @@
 "use client";
 
 import type { LinkRef } from "@/content/sections";
-import { RevealStable } from "@/components/neu/Neu";
+import { Reveal } from "@/components/neu/Neu";
 
 /**
  * Outbound references, rendered under any layout that carries `links`.
@@ -14,7 +14,7 @@ export function LinkChips({ links }: { links: LinkRef[] }) {
   if (!links.length) return null;
 
   return (
-    <RevealStable delay={0.3}>
+    <Reveal delay={0.3}>
       <ul className="mt-9 flex flex-wrap gap-3" data-deck-keys="off">
         {links.map((link) => (
           <li key={link.href}>
@@ -58,6 +58,6 @@ export function LinkChips({ links }: { links: LinkRef[] }) {
           </li>
         ))}
       </ul>
-    </RevealStable>
+    </Reveal>
   );
 }

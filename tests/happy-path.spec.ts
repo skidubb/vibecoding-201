@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { RAIL, promptCard, pressReliably, scrollY, scrollsPast } from "./helpers";
+import { RAIL, promptCard, copyButton, press, scrollY, scrollsPast } from "./helpers";
 
 /**
  * Happy path — the workflow a presenter and a reader actually run.
@@ -29,39 +29,11 @@ test("the rail has one tick per section and scrolls to the one clicked", async (
   await expect(page.locator("div.fixed.bottom-6")).toContainText("04");
 });
 
-/**
- * UNRESOLVED — these two are skipped, not passing.
- *
- * What is verified: in a real browser against `next start`, clicking Copy sets
- * the label to "Copied", and with the clipboard rejected it sets "Press ⌘C" and
- * selects the prompt text. Checked by hand; the feature works.
- *
- * What fails only under Playwright: the React handler runs (traced: copy()
- * entered, writeText resolved, setState called exactly once with "copied") and
- * the committed DOM still reads "Copy". A render with the new state appears in
- * a render trace and is then followed by one with the old state, on the same
- * component instance, with no unmount and no second setState.
- *
- * Ruled out: clipboard permissions (rejects in 13ms without, resolves in 6ms
- * with), hit-testing (elementFromPoint at the button centre is the button),
- * event delivery (all five mouse events arrive un-prevented), stale builds,
- * parallel workers, and elapsed time (three clicks over six seconds all fail,
- * while a single click after a three-second idle in an isolated run passes).
- *
- * Wrapping the block in Motion's `Reveal` reproduces it and a plain div does
- * not, which is why `RevealStable` exists — but switching to it did not fix the
- * test, so `Reveal` is at most part of the story.
- *
- * Left skipped deliberately. A green suite that does not exercise the feature
- * is worse than an honest skip, and the same interaction pattern is about to
- * carry the polls, so this needs a real answer before Phase 3.
- */
-test.fixme("a prompt copies to the clipboard, verbatim", async ({ page, context }) => {
+test("a prompt copies to the clipboard, verbatim", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 
   const card = await promptCard(page, "The plan prompt");
-  const button = card.getByRole("button", { name: "Copy" });
-  await pressReliably(button, "Copied");
+  await press(copyButton(card), "Copied");
 
   // Verbatim matters: an attendee pasting a paraphrase into their agent gets
   // different behaviour from the one the slide promises.

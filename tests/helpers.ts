@@ -44,35 +44,37 @@ export async function scrollsPast(page: Page, from: number): Promise<number> {
 export async function promptCard(page: Page, label: string): Promise<Locator> {
   await page.goto("/#director-mode");
   await settle(page);
-  // Quiescence, not just a stable scroll position. The entrance transition and
-  // the observers that fire behind it keep re-rendering for a beat after the
-  // page stops moving, and a state update committed inside that window can be
-  // dropped. A user scrolling to a prompt and reading it before clicking never
-  // hits this; a test that clicks the instant scrolling stops does.
-  await page.waitForTimeout(800);
   const card = page.locator("[data-deck-keys='off']").filter({ hasText: label });
   await expect(card).toBeVisible();
   return card;
 }
 
 /**
- * Presses a button the way these tests must, plus the check that buys back what
- * that costs.
+ * The card's copy button.
  *
- * Playwright's click performs its own scrollIntoView. Lenis is still easing
- * afterwards, so the element travels out from under the coordinates Playwright
- * already computed: every mouse event lands on the button un-prevented, the
- * React handler runs, and the resulting render is discarded. The button works
- * correctly in a real browser — verified by hand against `next start` — so the
- * failure is the harness, not the page.
- *
- * `el.click()` dispatches a real DOM click that React handles identically,
- * without moving the page. What it skips is hit-testing, so this first asserts
- * that the button really is the topmost element at its own centre. That covers
- * the regression `el.click()` alone would miss: something invisible sitting on
- * top of the control.
+ * Located by role alone, deliberately. Do not narrow it with `{ name: "Copy" }`:
+ * a button's accessible name comes from its text, and that text is the thing
+ * under test. The moment a press succeeds the name becomes "Copied" or
+ * "Press ⌘C", and a name-scoped locator matches nothing — "Copied" does not
+ * contain "Copy", the two diverge at the fourth letter. The assertion that
+ * follows then waits on an empty locator and reports a press that worked as a
+ * press that was lost. A prompt card holds exactly one button, so role alone is
+ * unambiguous.
  */
-export async function pressReliably(
+export function copyButton(card: Locator): Locator {
+  return card.getByRole("button");
+}
+
+/**
+ * Presses the button and waits for the label it owes the reader.
+ *
+ * The hit test is the part a passing click cannot cover: `click()` fails loudly
+ * when something sits on top of the control, but it also auto-scrolls and
+ * retries, so it would quietly succeed where a real user is blocked by an
+ * invisible overlay. Asserting the button is topmost at its own centre first
+ * keeps that regression in scope.
+ */
+export async function press(
   button: Locator,
   expected: string | RegExp,
 ): Promise<void> {
@@ -85,24 +87,6 @@ export async function pressReliably(
   });
   expect(hit, "the button is covered at its own centre point").toBe(true);
 
-  // Press until the label changes, up to three times.
-  //
-  // Not papering over a failure: a genuinely broken handler never changes the
-  // label and this still fails, loudly, after three tries. What it absorbs is
-  // the window described above, whose length scales with how loaded the machine
-  // is — three workers deep on CI it lasts several seconds, which no fixed
-  // sleep survives without making every run pay for the worst case.
-  const matcher =
-    typeof expected === "string" ? new RegExp(`^${expected}$`) : expected;
-
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    await button.evaluate((el: HTMLElement) => el.click());
-    try {
-      await expect(button).toHaveText(matcher, { timeout: 1500 });
-      return;
-    } catch {
-      if (attempt === 3) throw new Error(`button never showed ${expected}`);
-      await button.page().waitForTimeout(500);
-    }
-  }
+  await button.click();
+  await expect(button).toHaveText(expected);
 }
