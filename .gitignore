@@ -51,3 +51,8 @@ next-env.d.ts
 test-results/
 playwright-report/
 blob-report/
+
+# Bake-off renders and review scratch. Same rule as ../images/ and
+# scripts/.generated/: raw renders stay out of git, derivatives get committed.
+IMAGES-REVIEW/
+scripts/.probe-brand.mjs

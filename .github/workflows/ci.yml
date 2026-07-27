@@ -1,0 +1,52 @@
+name: CI
+
+# Runs both gates on every pull request. Slide 29 teaches a minimum test pack
+# and slide 39 puts "a tested critical workflow" on the production standard, so
+# this file is part of the argument, not just the plumbing: a green check on an
+# open PR is the evidence those two slides claim.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A new push supersedes the run it interrupted. Nothing downstream depends on a
+# stale run finishing.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          # @supabase/supabase-js declares engines.node >= 22, and the local
+          # toolchain is on 24. Pinning avoids a runner default drifting under us.
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Chromium only — the deck is presented from one browser over a
+      # screenshare, and a three-browser matrix would triple CI time to test
+      # something nobody does.
+      - run: npx playwright install --with-deps chromium
+
+      # `npm test` builds the app itself and starts it, so there is no separate
+      # build step: a compile error fails here, before any spec runs.
+      - run: npm test
+        env:
+          CI: "true"
+
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

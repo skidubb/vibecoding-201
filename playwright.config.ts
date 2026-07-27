@@ -15,7 +15,11 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? "github" : "list",
+  // In CI, annotate the diff *and* leave an HTML report behind — the workflow
+  // uploads it on failure, and "github" alone writes nothing to disk.
+  reporter: process.env.CI
+    ? [["github"], ["html", { open: "never" }]]
+    : [["list"]],
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
     trace: "on-first-retry",
