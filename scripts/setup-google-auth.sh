@@ -19,27 +19,46 @@ PROJECT_REF="nijlajnppqhqyskhodss"
 GCP_PROJECT="ai-gtm-pavilion"
 CALLBACK="https://${PROJECT_REF}.supabase.co/auth/v1/callback"
 
-# Credentials come from a gitignored file if it exists, so the secret never has
-# to be typed into a shared terminal or pasted into a transcript.
+# Credentials come from 1Password by default, which is this repo's existing
+# convention for anything secret — see .env.op. Nothing is typed into a shell,
+# written to disk, or pasted into a transcript.
+# Reference-safe title. An op:// reference rejects characters like "·",
+# so the item is named for the reference, not for the eye.
+OP_ITEM="op://Dev/google-oauth-vibecoding-201"
 CRED_FILE=".google-oauth"
-if [ $# -eq 0 ] && [ -f "$CRED_FILE" ]; then
-  # shellcheck disable=SC1090
-  . "$CRED_FILE"
-  set -- "${GOOGLE_CLIENT_ID:-}" "${GOOGLE_CLIENT_SECRET:-}"
+
+if [ $# -eq 0 ]; then
+  # username / credential are the fields 1Password's API Credential category
+  # actually shows in its editor, which is where the values end up in practice.
+  if op read "$OP_ITEM/credential" >/dev/null 2>&1; then
+    set -- "$(op read "$OP_ITEM/username")" "$(op read "$OP_ITEM/credential")"
+  elif [ -f "$CRED_FILE" ]; then
+    # shellcheck disable=SC1090
+    . "$CRED_FILE"
+    set -- "${GOOGLE_CLIENT_ID:-}" "${GOOGLE_CLIENT_SECRET:-}"
+  fi
 fi
+
+# Treat the placeholders 1Password was seeded with as "not filled in yet",
+# so the script prints instructions rather than a validation error about a
+# value the user never typed.
+case "${1:-}" in *"paste the"*) set -- "" "";; esac
 
 if [ $# -ne 2 ] || [ -z "${1:-}" ] || [ -z "${2:-}" ]; then
   cat <<EOF
 
-Usage: $0 <client-id> <client-secret>
+No credentials yet.
 
-Or, to keep the secret out of your shell history and out of any transcript,
-put it in a gitignored file and run this with no arguments:
+The 1Password item exists and is waiting for them:
 
-  cat > .google-oauth <<'CREDS'
-  GOOGLE_CLIENT_ID=…apps.googleusercontent.com
-  GOOGLE_CLIENT_SECRET=…
-  CREDS
+  Dev  ->  google-oauth-vibecoding-201
+
+     username    the OAuth client ID (…apps.googleusercontent.com)
+     credential  the client secret
+
+Fill those two fields in, then run this again with no arguments. It reads them
+straight from 1Password, so the secret never reaches a shell, a file, or a
+transcript.
 
   npm run setup:google
 

@@ -17,12 +17,18 @@ set -euo pipefail
 
 FILE=".supabase-db-password"
 VAULT="${OP_VAULT:-Dev}"
-TITLE="Supabase · vibecoding-201 · database password"
+# Named for the op:// reference rather than for reading: a title containing
+# "·" stores fine and then cannot be read back by reference at all, which is a
+# discovery best not made after the plaintext copy has been deleted.
+TITLE="supabase-vibecoding-201-db-password"
 PROJECT_REF="nijlajnppqhqyskhodss"
 
 [ -f "$FILE" ] || { echo "No $FILE — already moved, or never created."; exit 0; }
 
-if ! op whoami >/dev/null 2>&1; then
+# Probed with a real command rather than `op whoami`. With the desktop app
+# integration, whoami reports "account is not signed in" while every actual
+# operation works — guarding on it refuses to run for no reason.
+if ! op vault list >/dev/null 2>&1; then
   cat <<'EOF'
 1Password is not signed in.
 
@@ -60,4 +66,4 @@ echo "Removed $FILE from disk."
 
 echo
 echo "Verify it round-trips:"
-echo "  op read \"op://$VAULT/$TITLE/password\" | head -c 4"
+echo "  op read \"op://$VAULT/$TITLE/password\""
