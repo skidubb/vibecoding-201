@@ -16,6 +16,11 @@ operational rules that don't belong in it.
 - **A regression test is not accepted until it has been seen failing** against the code it
   guards. Two in `tests/` were, and one earlier version passed against a deliberately
   broken guard because a stale `next start` was still serving the previous build.
+- **Never scope a locator by the text under test.** `getByRole("button", { name: "Copy" })`
+  stops matching the instant the label becomes "Copied", and the assertion then waits on an
+  empty locator and reports working behaviour as broken. This cost hours and produced a
+  whole component built on the wrong diagnosis. Poll options change their label on click
+  too — locate by role, or by a `data-` attribute that does not change.
 - **Secrets resolve through 1Password, never inline.** `.env.op` holds `op://` pointers only
   and is intentionally committed. Anything needing a real key goes through
   `op run --env-file=.env.op -- …` (see `npm run gen:media`), which requires `op signin`.
