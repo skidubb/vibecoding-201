@@ -25,7 +25,20 @@ type DeckState = {
   next: () => void;
   prev: () => void;
   total: number;
+  /**
+   * Re-measure the stop grid. Interactive sections change height after mount —
+   * a poll's result bars appear, a sign-in card expands — and the stop *count*
+   * is not otherwise recomputed, only each stop's scroll position.
+   */
+  recompute: () => void;
 };
+
+/** Surfaces that own every keystroke while focused. */
+const TYPING_SELECTOR =
+  "input, textarea, select, [contenteditable='true'], [data-deck-keys='off']";
+
+/** Controls the browser activates with Space. */
+const ACTIVATABLE_SELECTOR = "button, a, [role='button']";
 
 const DeckContext = createContext<DeckState | null>(null);
 
@@ -48,21 +61,39 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
   const stopRef = useRef(0);
   const stopsRef = useRef<Stop[]>([]);
 
+  const rebuildRef = useRef<() => void>(() => {});
+
   // Stops depend on measured heights, so they are built after mount and
   // rebuilt on resize (a presenter switching to a projector changes both).
   useEffect(() => {
     const rebuild = () => {
       stopsRef.current = computeStops();
     };
+    rebuildRef.current = rebuild;
     rebuild();
     // Fonts and images settle after first paint and change section heights.
     const t = window.setTimeout(rebuild, 1200);
     window.addEventListener("resize", rebuild);
+
+    // Interactive sections grow and shrink long after load. Debounced, because
+    // a spring animating a panel's height would otherwise re-measure every
+    // section on every frame.
+    let debounce = 0;
+    const observer = new ResizeObserver(() => {
+      window.clearTimeout(debounce);
+      debounce = window.setTimeout(rebuild, 150);
+    });
+    observer.observe(document.body);
+
     return () => {
       window.clearTimeout(t);
+      window.clearTimeout(debounce);
+      observer.disconnect();
       window.removeEventListener("resize", rebuild);
     };
   }, []);
+
+  const recompute = useCallback(() => rebuildRef.current(), []);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -96,6 +127,9 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     stopRef.current = clamped;
     const target = stopScrollTop(list[clamped]);
     setActiveIndex(list[clamped].sectionIndex);
+    // Release focus from whatever was clicked, so the next Space press advances
+    // the deck instead of re-activating a rail tick.
+    (document.activeElement as HTMLElement | null)?.blur?.();
     if (lenisRef.current) {
       lenisRef.current.scrollTo(target, { duration: 1.1, lock: true });
     } else {
@@ -136,7 +170,16 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      if (target && /input|textarea|select/i.test(target.tagName)) return;
+
+      // Typing surfaces own every key. Interactive islands (a poll widget, a
+      // prompt block) opt out with data-deck-keys="off".
+      if (target?.closest(TYPING_SELECTOR)) return;
+
+      // Space is the only key the browser natively binds to a control, so it is
+      // the only one a focused button gets to keep. Arrows must keep working —
+      // the rail's ticks are buttons, and stealing arrows after a tick click
+      // would strand the presenter until they clicked empty page.
+      if (e.key === " " && target?.closest(ACTIVATABLE_SELECTOR)) return;
 
       switch (e.key) {
         case "ArrowRight":
@@ -174,8 +217,9 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
       next,
       prev,
       total: sections.length,
+      recompute,
     }),
-    [activeIndex, goToIndex, next, prev]
+    [activeIndex, goToIndex, next, prev, recompute]
   );
 
   return <DeckContext.Provider value={value}>{children}</DeckContext.Provider>;

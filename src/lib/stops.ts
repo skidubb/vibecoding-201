@@ -20,9 +20,14 @@ export function computeStops(): Stop[] {
   return sections.flatMap((section, sectionIndex) => {
     const el = document.getElementById(section.id);
     const height = el?.offsetHeight ?? vh;
-    // 0.8 so a section only slightly taller than the viewport still gets a
-    // second stop rather than leaving its last rows permanently below the fold.
-    const count = Math.min(4, Math.max(1, Math.ceil(height / (vh * 0.8))));
+    // Stops are derived from the *overshoot* — how far a section can actually
+    // scroll — not its raw height. Deriving them from height gave any section
+    // one viewport tall two stops that both resolved to the same scrollTop,
+    // because there was nothing to travel between them: the presenter pressed
+    // right, nothing moved, and they pressed again. One dead press per
+    // full-height section, live, all the way down the deck.
+    const overshoot = Math.max(0, height - vh);
+    const count = 1 + Math.min(3, Math.floor(overshoot / (vh * 0.5)));
     return Array.from({ length: count }, (_, i) => ({
       sectionIndex,
       sectionId: section.id,

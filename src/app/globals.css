@@ -130,6 +130,17 @@ body {
   pointer-events: none;
 }
 
+/* --- Focus --------------------------------------------------------------- */
+
+/* Neumorphism has no borders for a default outline to sit against, and this
+   deck is driven from the keyboard, so the ring is drawn explicitly. Offset
+   keeps it clear of the soft shadow that would otherwise swallow it. */
+:focus-visible {
+  outline: 2px solid var(--accent, #df285b);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 /* --- Atmosphere ---------------------------------------------------------- */
 
 .grain::after {

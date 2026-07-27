@@ -29,7 +29,8 @@ export function ProgressRail() {
         className="fixed inset-x-0 top-0 z-50 h-[3px] origin-left"
         style={{
           scaleX: progress,
-          background: "linear-gradient(90deg, #aba4dc 0%, #df285b 100%)",
+          background:
+            "linear-gradient(90deg, var(--chart-line) 0%, var(--accent) 100%)",
         }}
       />
 
@@ -55,22 +56,21 @@ export function ProgressRail() {
                 style={{
                   opacity: isHovered || isActive ? 1 : 0,
                   transform: `translateX(${isHovered || isActive ? 0 : 8}px)`,
-                  color: isActive ? "#df285b" : "rgba(206,198,244,0.75)",
+                  color: isActive ? "var(--accent)" : "var(--text-dim)",
                 }}
               >
                 {s.eyebrow ?? s.title}
               </span>
+              {/* Width springs; colour crossfades in CSS, because Motion
+                  cannot interpolate between two var() values. */}
               <motion.span
-                animate={{
-                  width: isActive ? 30 : 14,
-                  backgroundColor: isActive
-                    ? "#df285b"
-                    : isHovered
-                      ? "rgba(206,198,244,0.85)"
-                      : "rgba(206,198,244,0.3)",
-                }}
+                animate={{ width: isActive ? 30 : 14 }}
                 transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                className="block h-[3px] rounded-full"
+                className="block h-[3px] rounded-full transition-colors duration-300"
+                style={{
+                  backgroundColor: isActive ? "var(--accent)" : "var(--text-dim)",
+                  opacity: isActive ? 1 : isHovered ? 0.85 : 0.35,
+                }}
               />
             </button>
           );
@@ -81,19 +81,19 @@ export function ProgressRail() {
       <div className="pointer-events-none fixed bottom-6 left-6 z-50 flex items-baseline gap-2 font-sans">
         <span
           className="text-[13px] font-medium tabular-nums"
-          style={{ color: "#df285b" }}
+          style={{ color: "var(--accent)" }}
         >
           {String(activeIndex + 1).padStart(2, "0")}
         </span>
         <span
           className="text-[11px] tabular-nums"
-          style={{ color: "rgba(206,198,244,0.45)" }}
+          style={{ color: "var(--text-faint)" }}
         >
           / {String(total).padStart(2, "0")}
         </span>
         <span
           className="ml-3 text-[10px] uppercase tracking-[0.2em]"
-          style={{ color: "rgba(206,198,244,0.35)" }}
+          style={{ color: "var(--text-faint)", opacity: 0.75 }}
         >
           slide {active.slide}
         </span>

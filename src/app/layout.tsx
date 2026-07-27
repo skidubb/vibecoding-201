@@ -17,9 +17,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Vibecoding 201 · Crossing the Gap",
+  title: "Vibecoding 201 · Building Production GTM Tools",
   description:
-    "Taking one GTM prototype from a chat window to a tool 40 people depend on. Pavilion AI in GTM School — Scott Ewalt, Cardinal Element.",
+    "Taking one GTM prototype from a chat window to a tool your team depends on. Pavilion AI in GTM School — Scott Ewalt, Cardinal Element.",
 };
 
 export default function RootLayout({

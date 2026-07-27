@@ -4,6 +4,7 @@ import { sections, type LayoutKind, type Section } from "@/content/sections";
 import { DeckProvider } from "@/lib/deck-context";
 import { SectionShell } from "@/components/core/SectionShell";
 import { ProgressRail } from "@/components/core/ProgressRail";
+import { DeckChrome } from "@/components/core/DeckChrome";
 import { HeroLayout } from "@/components/layouts/HeroLayout";
 import { SplitLayout } from "@/components/layouts/SplitLayout";
 import { ClaimLayout } from "@/components/layouts/ClaimLayout";
@@ -27,15 +28,26 @@ const LAYOUTS: Record<LayoutKind, LayoutComponent> = {
   cta: CtaLayout,
 };
 
+/**
+ * Layouts that manage their own tall/sticky geometry.
+ *
+ * `tall` strips min-h-screen, vertical centering, padding and overflow-hidden
+ * from the shell, so a layout only belongs here if it supplies all four itself.
+ * Interactive layouts never do — they render in normal flow and reserve fixed
+ * height for their output so the stop grid stays stable.
+ */
+const TALL_LAYOUTS: ReadonlySet<LayoutKind> = new Set<LayoutKind>(["chart"]);
+
 export function Deck() {
   return (
     <DeckProvider>
-      <ProgressRail />
+      <DeckChrome>
+        <ProgressRail />
+      </DeckChrome>
       <main>
         {sections.map((section, index) => {
           const Layout = LAYOUTS[section.layout];
-          // Chart sections manage their own tall/sticky geometry.
-          const tall = section.layout === "chart";
+          const tall = TALL_LAYOUTS.has(section.layout);
           return (
             <SectionShell
               key={section.id}

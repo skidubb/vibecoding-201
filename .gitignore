@@ -34,9 +34,12 @@ yarn-error.log*
 .env*
 # ...except the 1Password reference file, which holds pointers, not secrets.
 !.env.op
+# Names only, no values. Slide 18 lists this as one of the six harness files,
+# so it has to actually be in the repo.
+!.env.example
 
-# generated media staging (raw renders from scripts/generate-media.mjs)
-scripts/.generated/
+# raw renders now live in ../IMAGES-REVIEW/ (visible, outside this repo)
+
 
 # vercel
 .vercel
@@ -44,3 +47,7 @@ scripts/.generated/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.playwright/
+test-results/
+playwright-report/
+blob-report/
