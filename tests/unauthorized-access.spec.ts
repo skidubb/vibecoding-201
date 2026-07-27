@@ -73,3 +73,16 @@ test("the deck points at the kit from the last slide", async ({ page }) => {
     page.locator("#close").getByRole("link", { name: /kit/i }),
   ).toHaveAttribute("href", "/kit");
 });
+
+test("the report does not spoil a poll that has not been revealed", async ({ page }) => {
+  // Anyone can open this URL during class. The tallies it reads are public by
+  // design — a count is not a vote — but the *answers* are not, and a results
+  // page that rendered mid-session would hand the room every debrief early.
+  await page.goto("/report");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+  const body = (await page.locator("body").innerText()).toLowerCase();
+  for (const spoiler of ["correct", "the answer is", "debrief"]) {
+    expect(body, `report leaked "${spoiler}"`).not.toContain(spoiler);
+  }
+});
