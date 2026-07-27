@@ -9,7 +9,9 @@
     "gen:media": "op run --env-file=.env.op -- node scripts/generate-media.mjs",
     "assets": "node scripts/optimize-assets.mjs",
     "test": "playwright test",
-    "smoke": "node --env-file=.env.local scripts/smoke.mjs"
+    "smoke": "node --env-file=.env.local scripts/smoke.mjs",
+    "setup:google": "./scripts/setup-google-auth.sh",
+    "stash:password": "./scripts/stash-db-password.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

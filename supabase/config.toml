@@ -151,11 +151,18 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3000"
+site_url = "https://crossing-the-gap-site.vercel.app"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = [
+  "http://localhost:3000/auth/callback",
+  "http://127.0.0.1:3100/auth/callback",
+  "https://crossing-the-gap-site.vercel.app/auth/callback",
+  # Vercel gives every preview deployment its own hostname, so the wildcard
+  # is what keeps sign-in working on a preview rather than only in production.
+  "https://crossing-the-gap-site-*-scottes-projects.vercel.app/auth/callback",
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -406,3 +413,22 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# Google sign-in.
+#
+# The client id and secret come from a Google Cloud OAuth client, which can
+# only be created in the console — there is no gcloud or API path for it, so
+# this block stays inert until those two values exist in the environment.
+#
+# `secret` is read from an environment variable rather than written here,
+# because config.toml is committed. Set them, then `supabase config push`.
+[auth.external.google]
+# Flipped to true by `npm run setup:google`, which refuses to run without both
+# credentials. Left false here on purpose: pushing `enabled = true` with an
+# unset env var publishes the literal string "env(...)" as the client id, and
+# Google then fails at the consent screen instead of the button simply not
+# appearing. A provider that is on and broken is worse than one that is off.
+enabled = false
+client_id = "env(SUPABASE_AUTH_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_GOOGLE_SECRET)"
+skip_nonce_check = false
