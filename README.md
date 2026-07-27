@@ -100,8 +100,17 @@ Two stages. Generation is optional — stage 2 alone still processes the origina
 Midjourney renders in `../images/`.
 
 ```bash
-npm run gen:media   # prompts -> raw renders in scripts/.generated/
+npm run gen:media   # prompts -> raw renders in IMAGES-REVIEW/<folder>/
 npm run assets      # raw renders -> src/assets/*.webp and public/media/*.mp4
+```
+
+Both take the same `--manifest` flag, and both default to `site`. They are two
+halves of one pipeline, so a flag passed to one and not the other means stage 2
+reads an empty directory and reports nothing to do:
+
+```bash
+npm run gen:media -- --manifest deck-v6   # -> IMAGES-REVIEW/deck-v6/
+npm run assets   -- --manifest deck-v6    # -> src/assets/generated/
 ```
 
 **Stage 1 — generate.** `scripts/generate-media.mjs` calls Vercel AI Gateway,
