@@ -1,0 +1,125 @@
+import { test, expect } from "@playwright/test";
+import { ready, scrollY, settle } from "./helpers";
+
+/**
+ * The third item in the deck's own minimum test pack (slide 29).
+ *
+ * The spec exercise is the one place on the site where an attendee types free
+ * text that a presenter may read aloud to a hundred people, so what it refuses
+ * matters as much as what it stores. These run backend-off, which is the state
+ * the whole suite runs in: every refusal here happens before a network call,
+ * and that is deliberate — validation that only exists in Postgres cannot tell
+ * the writer what is wrong while they still have 90 seconds to fix it.
+ */
+
+const EXERCISE = "#spec-exercise";
+
+test.beforeEach(async ({ page }) => {
+  await page.goto("/#spec-exercise");
+  await ready(page);
+  await settle(page);
+});
+
+test("an empty spec is refused, in words, before anything is sent", async ({ page }) => {
+  const section = page.locator(EXERCISE);
+  await section.locator("[data-submit]").click();
+
+  await expect(section.getByText("Write at least the three lines")).toBeVisible();
+});
+
+test("whitespace is not a spec", async ({ page }) => {
+  const section = page.locator(EXERCISE);
+  await section.locator("textarea").fill("        \n\n   \n");
+  await section.locator("[data-submit]").click();
+
+  await expect(section.getByText("Write at least the three lines")).toBeVisible();
+});
+
+test("a real spec gets past validation and meets the offline state in words", async ({
+  page,
+}) => {
+  // The backend is switched off for this run, so the honest answer is that
+  // nothing was sent — not a spinner, and not a button that appears to have
+  // worked. This is the kill-switch rehearsal for the exercise.
+  const section = page.locator(EXERCISE);
+  await section
+    .locator("textarea")
+    .fill("Job — route inbound demo requests\nUser — SDR, may reassign\nDone — every request has an owner within 15 minutes");
+  await section.locator("[data-submit]").click();
+
+  await expect(section.getByText(/Nothing was sent/)).toBeVisible();
+});
+
+test("the timer counts down, and resets", async ({ page }) => {
+  const section = page.locator(EXERCISE);
+  const timer = section.locator("[data-timer]");
+
+  await expect(timer).toHaveText("2:00");
+
+  await section.locator("[data-timer-toggle]").click();
+  await expect(timer).not.toHaveText("2:00", { timeout: 4000 });
+
+  await section.getByRole("button", { name: "Reset" }).click();
+  await expect(timer).toHaveText("2:00");
+});
+
+test("typing a spec does not drive the deck", async ({ page }) => {
+  // The presenter's arrow keys are global, and this is the one section where a
+  // hundred people are typing prose into a box on their own devices. An arrow
+  // press that jumps the deck instead of moving the caret would throw every
+  // one of them out of the exercise, mid-sentence, with no way back to it.
+  const section = page.locator(EXERCISE);
+  const box = section.locator("textarea");
+
+  await box.fill("Job — reconcile paid invoices");
+  await box.click();
+  const before = await scrollY(page);
+
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowUp");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowRight");
+  await page.waitForTimeout(600);
+
+  expect(await scrollY(page)).toBe(before);
+});
+
+test("the cold open shows two screens that are identical", async ({ page }) => {
+  // The slide's entire argument is that nothing visible tells the two apart —
+  // "two identical screens, radically different value". If the previews ever
+  // diverge, the room can pick the better-looking one and the trap is gone
+  // before anyone has thought about what sits underneath.
+  await page.goto("/#cold-open");
+  await ready(page);
+  await settle(page);
+
+  const screens = page.locator("#cold-open [role='img']");
+  await expect(screens).toHaveCount(2);
+
+  // Geometry measured relative to each screen's own top-left, plus the fill of
+  // every part. Comparing the two as images does not work and should not be
+  // attempted: the panels are translucent, so the section's glow renders
+  // through them differently at each x and the bytes differ while the drawing
+  // is the same. What has to match is the drawing.
+  const shape = await screens.evaluateAll((els) =>
+    els.map((el) => {
+      const root = el.getBoundingClientRect();
+      return JSON.stringify({
+        text: el.textContent,
+        size: [root.width, root.height],
+        parts: [...el.querySelectorAll("span")].map((s) => {
+          const r = s.getBoundingClientRect();
+          return [
+            +(r.x - root.x).toFixed(2),
+            +(r.y - root.y).toFixed(2),
+            +r.width.toFixed(2),
+            +r.height.toFixed(2),
+            getComputedStyle(s).backgroundColor,
+          ];
+        }),
+      });
+    }),
+  );
+
+  expect(shape[0]).toBe(shape[1]);
+});

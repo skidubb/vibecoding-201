@@ -94,3 +94,19 @@ update public.submissions set surfaced_at = now() where exercise_id='spec';
 select case when count(*)=1 then 'PASS' else 'FAIL' end || '  presenter surfaced the shared one'
   from public.submissions where surfaced_at is not null;
 reset role;
+
+\echo '10 an author cannot put their own submission on the room screen'
+-- Test 8 asked whether an admin could publish something private. It could not,
+-- and that answer was mistaken for the whole question. Nobody had asked whether
+-- an *author* could publish their own — and until the policy below was
+-- narrowed, they could: `surfaced_at` is what the deck renders to everyone, and
+-- the author's update policy named no columns. Any attendee could push their
+-- own text onto the projected screen. Found in production by `npm run smoke`.
+set role authenticated; set test.uid = :ALICE;
+update public.submissions set surfaced_at = null where exercise_id='spec';
+select case when count(*)=0 then 'PASS' else 'FAIL' end || '  the author can take their own work down'
+  from public.submissions where exercise_id='spec' and surfaced_at is not null;
+update public.submissions set surfaced_at = now() where exercise_id='spec';
+select case when count(*)=0 then 'PASS' else 'FAIL' end || '  but cannot put it back up themselves'
+  from public.submissions where exercise_id='spec' and surfaced_at is not null;
+reset role;

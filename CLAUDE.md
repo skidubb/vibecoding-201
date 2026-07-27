@@ -26,6 +26,12 @@ operational rules that don't belong in it.
   empty locator and reports working behaviour as broken. This cost hours and produced a
   whole component built on the wrong diagnosis. Poll options change their label on click
   too — locate by role, or by a `data-` attribute that does not change.
+- **A policy that permits an UPDATE permits every column of it.** RLS gates rows,
+  not fields, so "the author may edit their own submission" also meant "the author
+  may set `surfaced_at`" — the column the deck reads to decide what to render to
+  the whole room. Whenever an attendee can write a row, ask the second question
+  as well: not just who can read it, but who can put it on a screen. The check
+  constraint that looked like it covered this only enforced ordering.
 - **Secrets resolve through 1Password, never inline.** `.env.op` holds `op://` pointers only
   and is intentionally committed. Anything needing a real key goes through
   `op run --env-file=.env.op -- …` (see `npm run gen:media`), which requires `op signin`.

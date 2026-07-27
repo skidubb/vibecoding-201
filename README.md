@@ -45,6 +45,18 @@ The two asset scripts (`gen:media`, `assets`) are documented under
   this deck (`07 / 40`) and nothing else — the source deck's numbering is
   deliberately not mirrored
 
+The presenter bar appears bottom-right on the two kinds of section that have
+live state, and only for an account the database answers `is_admin()` for. Its
+keys are all Shift-modified, because bare letters would collide with the deck's
+own navigation:
+
+- On a poll — **Shift-O** open, **Shift-C** close, **Shift-R** reveal. The
+  readout carries the tally and the number of distinct accounts behind it
+- On the spec exercise — **Shift-S** opens the panel of submissions the room
+  has shared. Nothing an author kept private is readable from that account, so
+  the panel cannot show it even by mistake. "Put it on screen" sets
+  `surfaced_at`, which is what the section renders to everyone
+
 ## Adding a section
 
 Everything is driven by one registry: `src/content/sections.ts`. A new section is a
@@ -55,7 +67,7 @@ the deck, verbatim; if you find yourself writing one, stop.
 {
   id: "the-bar",
   theme: "dark",          // flips every neumorphic surface beneath it
-  layout: "cards",        // hero | split | claim | cards | timeline | chart | loop | cta | prompt | poll
+  layout: "cards",        // hero | split | claim | cards | timeline | chart | loop | cta | prompt | poll | exercise
   eyebrow: "The bar",
   title: "A production standard.",
   accent: "production standard.",   // rendered in magenta

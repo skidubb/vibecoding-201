@@ -19,7 +19,8 @@ export type LayoutKind =
   | "loop"
   | "cta"
   | "prompt"
-  | "poll";
+  | "poll"
+  | "exercise";
 
 export type Media = {
   image?: StaticImageData;
@@ -56,7 +57,19 @@ export type TimelineStop = {
 };
 
 /** One answer in a poll. `id` matches poll_options.id in Postgres. */
-export type PollOption = { id: string; label: string; body: string };
+export type PollOption = {
+  id: string;
+  label: string;
+  body: string;
+  /** The option's own name on the slide, above its description. */
+  name?: string;
+  /**
+   * A screenshot, for the two-up variant. Absent means the built-in mock —
+   * which is the honest rendering for the cold open, where the argument is
+   * that the two screens are pixel-for-pixel the same.
+   */
+  image?: StaticImageData;
+};
 
 /**
  * A live poll. The registry carries the question and the options and nothing
@@ -64,7 +77,25 @@ export type PollOption = { id: string; label: string; body: string };
  * a column grant, because this file is imported by client code and everything
  * in it ships to the browser.
  */
-export type Poll = { slug: string; options: PollOption[] };
+export type Poll = {
+  slug: string;
+  options: PollOption[];
+  /** `two-up` shows each option as a screen. Default is a stacked list. */
+  variant?: "list" | "two-up";
+};
+
+/**
+ * A hands-on exercise: a timer, somewhere to write, and a route to the room.
+ *
+ * `id` matches submissions.exercise_id in Postgres. Nothing about sharing lives
+ * here — the author sets `shared_at` on their own row, an admin sets
+ * `surfaced_at`, and a check constraint refuses the second without the first.
+ */
+export type Exercise = {
+  id: string;
+  seconds: number;
+  placeholder: string;
+};
 
 /** A prompt the reader copies into their own agent. Quoted from the deck verbatim. */
 export type Prompt = {
@@ -120,6 +151,7 @@ export type Section = {
   prompts?: Prompt[];
   links?: LinkRef[];
   poll?: Poll;
+  exercise?: Exercise;
 };
 
 export const sections: Section[] = [
@@ -145,16 +177,19 @@ export const sections: Section[] = [
     lede: "Which one would you trust to run Monday's retention meeting? Vote in the chat.",
     poll: {
       slug: "cold-open",
+      variant: "two-up",
       options: [
         {
           id: "cold-open:a",
           label: "A",
-          body: "Screen A — built in 12 minutes. Sample data. Open link.",
+          name: "Screen A",
+          body: "Built in 12 minutes. Sample data. Open link.",
         },
         {
           id: "cold-open:b",
           label: "B",
-          body: "Screen B — stores real records, controls access, refreshes itself, logs failures.",
+          name: "Screen B",
+          body: "Stores real records, controls access, refreshes itself, logs failures.",
         },
       ],
     },
@@ -343,7 +378,13 @@ export const sections: Section[] = [
   {
     id: "spec-exercise",
     theme: "dark",
-    layout: "cards",
+    layout: "exercise",
+    exercise: {
+      id: "spec",
+      seconds: 120,
+      placeholder:
+        "Job — …\nUser — …\nDone — …\n\nAccess rule · failure state · non-goal",
+    },
     eyebrow: "Hands on · timer on screen",
     title: "Write your three-line spec. 120 seconds.",
     accent: "120 seconds.",

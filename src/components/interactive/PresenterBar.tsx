@@ -13,12 +13,18 @@ type Integrity = {
   new_accounts_60s: number;
 };
 
+type Shared = { id: number; body: string; surfaced_at: string | null };
+
+/** How often the bar re-reads what the room has shared. */
+const REFRESH_MS = 4000;
+
 /**
  * The presenter's controls, visible only to an admin.
  *
  * Admin is asked of the database, never inferred in the browser: `is_admin()`
  * is a definer function over a table with row-level security on and no
- * policies, so a client that lies about it still cannot update a poll.
+ * policies, so a client that lies about it still cannot update a poll — or read
+ * a submission whose author has not shared it.
  *
  * Keys are all Shift-modified. Bare letters would collide with the deck's own
  * navigation, and the guard that lets a focused control keep Space would make
@@ -31,7 +37,12 @@ export function PresenterBar() {
   const [counts, setCounts] = useState<Integrity | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const slug = sections[activeIndex]?.poll?.slug ?? null;
+  const [shared, setShared] = useState<Shared[]>([]);
+  const [open, setOpen] = useState(false);
+
+  const section = sections[activeIndex];
+  const slug = section?.poll?.slug ?? null;
+  const exerciseId = section?.exercise?.id ?? null;
 
   useEffect(() => {
     const client = supabase();
@@ -45,6 +56,7 @@ export function PresenterBar() {
     };
   }, []);
 
+  // ------------------------------------------------------------------ polls
   const read = useCallback(async () => {
     const client = supabase();
     if (!client || !slug) return;
@@ -96,22 +108,67 @@ export function PresenterBar() {
     [slug, read],
   );
 
+  // ------------------------------------------------------------ submissions
+  //
+  // Only what the room offered. The filter is a courtesy, not the control:
+  // `admins read what authors shared` means an unshared submission does not
+  // exist as far as this query is concerned, and removing the filter would
+  // change nothing about what comes back.
+  const readShared = useCallback(async () => {
+    const client = supabase();
+    if (!client || !exerciseId) return;
+    const { data } = await client
+      .from("submissions")
+      .select("id, body, surfaced_at")
+      .eq("exercise_id", exerciseId)
+      .not("shared_at", "is", null)
+      .order("id", { ascending: true });
+    setShared((data as Shared[] | null) ?? []);
+  }, [exerciseId]);
+
   useEffect(() => {
-    if (!isAdmin || !slug) return;
+    if (!isAdmin || !exerciseId) {
+      setOpen(false);
+      return;
+    }
+    void readShared();
+    const timer = window.setInterval(() => void readShared(), REFRESH_MS);
+    return () => window.clearInterval(timer);
+  }, [isAdmin, exerciseId, readShared]);
+
+  const surface = useCallback(
+    async (row: Shared) => {
+      const client = supabase();
+      if (!client) return;
+      setBusy(true);
+      await client
+        .from("submissions")
+        .update({ surfaced_at: row.surfaced_at ? null : new Date().toISOString() })
+        .eq("id", row.id);
+      await readShared();
+      setBusy(false);
+    },
+    [readShared],
+  );
+
+  // ------------------------------------------------------------------- keys
+  useEffect(() => {
+    if (!isAdmin) return;
     const onKey = (e: KeyboardEvent) => {
       if (!e.shiftKey) return;
       const key = e.key.toLowerCase();
-      if (key === "o") void set("open");
-      else if (key === "c") void set("closed");
-      else if (key === "r") void set("revealed");
+      if (slug && key === "o") void set("open");
+      else if (slug && key === "c") void set("closed");
+      else if (slug && key === "r") void set("revealed");
+      else if (exerciseId && key === "s") setOpen((o) => !o);
       else return;
       e.preventDefault();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [isAdmin, slug, set]);
+  }, [isAdmin, slug, exerciseId, set]);
 
-  if (!isAdmin || !slug) return null;
+  if (!isAdmin || (!slug && !exerciseId)) return null;
 
   const Btn = ({ label, to }: { label: string; to: PollState }) => (
     <button
@@ -126,27 +183,87 @@ export function PresenterBar() {
   );
 
   return (
-    <div
-      data-deck-keys="off"
-      className="neu-raised neu-edge fixed bottom-6 right-6 z-50 flex items-center gap-1 rounded-full px-3 py-2"
-    >
-      <span
-        className="px-2 font-sans text-[11px] uppercase tracking-[0.16em]"
-        style={{ color: "var(--text-faint)" }}
-      >
-        {slug} · {state ?? "…"}
-        {counts
-          ? ` · ${counts.total_votes} from ${counts.distinct_accounts}${
-              counts.new_accounts_60s > counts.distinct_accounts / 2 &&
-              counts.distinct_accounts > 4
-                ? " ⚠"
-                : ""
-            }`
-          : ""}
-      </span>
-      <Btn label="Open" to="open" />
-      <Btn label="Close" to="closed" />
-      <Btn label="Reveal" to="revealed" />
+    <div data-deck-keys="off" className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+      {/* The panel sits above the bar so opening it never moves the controls
+          out from under the cursor mid-class. */}
+      {open && exerciseId && (
+        <div className="neu-raised neu-edge max-h-[60vh] w-[min(30rem,calc(100vw-3rem))] overflow-y-auto rounded-3xl p-5">
+          <p
+            className="font-sans text-[11px] font-medium uppercase tracking-[0.18em]"
+            style={{ color: "var(--text-faint)" }}
+          >
+            Shared with you · {shared.length}
+          </p>
+
+          {shared.length === 0 ? (
+            <p className="mt-3 text-[0.9rem]" style={{ color: "var(--text-dim)" }}>
+              Nothing yet. Submissions appear here only once their author shares
+              them — what the room has written but kept private is not readable
+              from this account.
+            </p>
+          ) : (
+            <ul className="mt-3 space-y-3">
+              {shared.map((row) => (
+                <li key={row.id} className="neu-inset neu-edge rounded-2xl px-4 py-3">
+                  <p
+                    className="whitespace-pre-wrap text-[0.9rem] leading-relaxed"
+                    style={{ color: "var(--text)" }}
+                  >
+                    {row.body}
+                  </p>
+                  <button
+                    type="button"
+                    data-surface={row.id}
+                    disabled={busy}
+                    onClick={() => void surface(row)}
+                    className="mt-3 rounded-full text-[11px] font-medium uppercase tracking-[0.14em] disabled:opacity-40"
+                    style={{ color: row.surfaced_at ? "var(--accent)" : "var(--text-dim)" }}
+                  >
+                    {row.surfaced_at ? "Take it down" : "Put it on screen"}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <div className="neu-raised neu-edge flex items-center gap-1 rounded-full px-3 py-2">
+        <span
+          className="px-2 font-sans text-[11px] uppercase tracking-[0.16em]"
+          style={{ color: "var(--text-faint)" }}
+        >
+          {slug ?? exerciseId} · {slug ? (state ?? "…") : "exercise"}
+          {slug && counts
+            ? ` · ${counts.total_votes} from ${counts.distinct_accounts}${
+                counts.new_accounts_60s > counts.distinct_accounts / 2 &&
+                counts.distinct_accounts > 4
+                  ? " ⚠"
+                  : ""
+              }`
+            : ""}
+        </span>
+
+        {slug && (
+          <>
+            <Btn label="Open" to="open" />
+            <Btn label="Close" to="closed" />
+            <Btn label="Reveal" to="revealed" />
+          </>
+        )}
+
+        {exerciseId && (
+          <button
+            type="button"
+            data-submissions
+            onClick={() => setOpen((o) => !o)}
+            className="rounded-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em]"
+            style={{ color: open ? "var(--accent)" : "var(--text-dim)" }}
+          >
+            Shared {shared.length}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

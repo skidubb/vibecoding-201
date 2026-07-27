@@ -30,7 +30,12 @@ export function PollLayout({ section }: LayoutProps) {
         </Reveal>
       )}
 
-      <PollWidget slug={poll.slug} options={poll.options} sectionId={section.id} />
+      <PollWidget
+        slug={poll.slug}
+        options={poll.options}
+        sectionId={section.id}
+        variant={poll.variant}
+      />
 
       {section.kicker && <Kicker>{section.kicker}</Kicker>}
     </div>

@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { PollOption } from "@/content/sections";
+import type { Poll, PollOption } from "@/content/sections";
 import { backendConfigured, supabase } from "@/lib/supabase/client";
 import { logEvent } from "@/lib/events";
 import { NeuPanel } from "@/components/neu/Neu";
+import { ScreenMock } from "@/components/interactive/ScreenMock";
 
 type Tally = Record<string, number>;
 type Status = "loading" | "ready" | "voting" | "voted" | "offline" | "error";
@@ -29,10 +31,12 @@ export function PollWidget({
   slug,
   options,
   sectionId,
+  variant = "list",
 }: {
   slug: string;
   options: PollOption[];
   sectionId: string;
+  variant?: NonNullable<Poll["variant"]>;
 }) {
   const [status, setStatus] = useState<Status>(
     backendConfigured ? "loading" : "offline",
@@ -179,9 +183,11 @@ export function PollWidget({
   const showResults = chosen !== null || pollState === "revealed";
   const locked = status === "voting" || chosen !== null || pollState !== "open";
 
+  const twoUp = variant === "two-up";
+
   return (
     <div data-deck-keys="off" className="mt-10">
-      <ul className="grid gap-3">
+      <ul className={twoUp ? "grid gap-5 md:grid-cols-2" : "grid gap-3"}>
         {options.map((option) => {
           const count = tally[option.id] ?? 0;
           const share = total > 0 ? Math.round((count / total) * 100) : 0;
@@ -196,12 +202,14 @@ export function PollWidget({
                 onClick={() => vote(option.id)}
                 data-option={option.id}
                 aria-pressed={isChosen}
-                className="w-full text-left disabled:cursor-default"
+                className="h-full w-full text-left disabled:cursor-default"
               >
                 <NeuPanel
                   variant={isChosen ? "inset" : "flat"}
                   radius="rounded-2xl"
-                  className="relative overflow-hidden px-5 py-4"
+                  className={`relative h-full overflow-hidden ${
+                    twoUp ? "p-4 md:p-5" : "px-5 py-4"
+                  }`}
                 >
                   {/* The result bar sits behind the text so the option stays
                       readable at every share, including 100%. */}
@@ -219,7 +227,26 @@ export function PollWidget({
                     />
                   )}
 
-                  <span className="relative flex items-baseline gap-3">
+                  {twoUp && (
+                    <span className="relative mb-4 block">
+                      {option.image ? (
+                        <Image
+                          src={option.image}
+                          alt=""
+                          sizes="(max-width: 768px) 100vw, 45vw"
+                          className="w-full rounded-2xl object-cover"
+                        />
+                      ) : (
+                        <ScreenMock />
+                      )}
+                    </span>
+                  )}
+
+                  <span
+                    className={`relative flex gap-3 ${
+                      twoUp ? "items-start" : "items-baseline"
+                    }`}
+                  >
                     <span
                       className="font-display text-[0.8rem] font-semibold"
                       style={{ color: isCorrect ? "var(--accent)" : "var(--text-dim)" }}
@@ -227,7 +254,14 @@ export function PollWidget({
                       {option.label}
                     </span>
                     <span className="flex-1" style={{ color: "var(--text)" }}>
-                      {option.body}
+                      {option.name && (
+                        <span className="block font-display font-semibold">
+                          {option.name}
+                        </span>
+                      )}
+                      <span className={option.name ? "mt-1 block text-[0.94rem]" : ""}>
+                        {option.body}
+                      </span>
                     </span>
                     {showResults && (
                       <span

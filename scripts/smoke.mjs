@@ -94,5 +94,67 @@ check(((await anon.from("polls").select("state").eq("slug", "debugging").single(
 await a.from("votes").delete().eq("poll_slug", "rehearsal");
 await b.removeChannel(channel);
 
+// ------------------------------------------------------------- submissions
+//
+// The spec exercise stores free text that a presenter may read to a hundred
+// people, so the questions worth asking are all about who can see it and who
+// can put it on screen. Written under `smoke`, never `spec`: the deck reads
+// only `spec`, and `delete` is revoked from every client role, so these rows
+// cannot be cleaned up afterwards and must not land where the class looks.
+console.log("\nthe submission path");
+const EX = "smoke";
+const aId = (await a.auth.getSession()).data.session.user.id;
+
+const { error: wrote } = await a
+  .from("submissions")
+  .upsert({ exercise_id: EX, user_id: aId, body: "Job / User / Done" }, { onConflict: "exercise_id,user_id" });
+check(!wrote, `a submission is accepted (${wrote?.message ?? "ok"})`);
+
+const { error: again } = await a
+  .from("submissions")
+  .upsert({ exercise_id: EX, user_id: aId, body: "Job / User / Done, tightened" }, { onConflict: "exercise_id,user_id" });
+const mine = (await a.from("submissions").select("id,body").eq("exercise_id", EX)).data ?? [];
+check(!again && mine.length === 1, `a second submission edits the first rather than duplicating it (${mine.length} row)`);
+
+check(
+  Boolean((await b.from("submissions").select("*").eq("exercise_id", EX)).data?.length === 0),
+  "another attendee cannot read it",
+);
+
+const { error: forged } = await a
+  .from("submissions")
+  .update({ user_id: (await b.auth.getSession()).data.session.user.id })
+  .eq("exercise_id", EX);
+check(Boolean(forged), "and cannot be reassigned to somebody else");
+
+// The author-consent constraint, asked of production rather than of a local
+// rebuild. `surfaced_at` is what puts a submission on the projected screen;
+// setting it without `shared_at` has to fail in the database, because the
+// presenter's UI is not the thing standing between private work and a room.
+const { error: jumped } = await a
+  .from("submissions")
+  .update({ surfaced_at: new Date().toISOString() })
+  .eq("exercise_id", EX);
+check(Boolean(jumped), "nothing reaches the screen without its author sharing it first");
+
+await a.from("submissions").update({ shared_at: new Date().toISOString() }).eq("exercise_id", EX);
+check(
+  ((await b.from("submissions").select("*").eq("exercise_id", EX)).data ?? []).length === 0,
+  "sharing offers it to the presenter, and still not to the room",
+);
+
+// Whether an attendee can put their own text on the projected screen.
+const { error: selfSurfaced } = await a
+  .from("submissions")
+  .update({ surfaced_at: new Date().toISOString() })
+  .eq("exercise_id", EX);
+const roomSees = ((await b.from("submissions").select("*").eq("exercise_id", EX)).data ?? []).length;
+check(
+  Boolean(selfSurfaced) && roomSees === 0,
+  `only the presenter decides what the room sees (self-surfaced: ${selfSurfaced ? "refused" : "ALLOWED"}, room sees ${roomSees})`,
+);
+
+await a.from("submissions").update({ shared_at: null, surfaced_at: null }).eq("exercise_id", EX);
+
 console.log(failures === 0 ? "\nall good\n" : `\n${failures} failed\n`);
 process.exit(failures === 0 ? 0 : 1);
