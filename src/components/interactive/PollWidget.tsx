@@ -41,6 +41,7 @@ export function PollWidget({
   const [tally, setTally] = useState<Tally>({});
   const [chosen, setChosen] = useState<string | null>(null);
   const [correct, setCorrect] = useState<string | null>(null);
+  const [debrief, setDebrief] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const mounted = useRef(true);
 
@@ -66,7 +67,10 @@ export function PollWidget({
 
     if (state === "revealed") {
       const { data } = await client.rpc("poll_reveal", { p_poll_slug: slug });
-      if (mounted.current) setCorrect(data?.[0]?.correct_option_id ?? null);
+      if (mounted.current) {
+        setCorrect(data?.[0]?.correct_option_id ?? null);
+        setDebrief(data?.[0]?.debrief ?? null);
+      }
     }
   }, [slug]);
 
@@ -240,6 +244,15 @@ export function PollWidget({
           );
         })}
       </ul>
+
+      {debrief && (
+        <p
+          className="mt-6 max-w-3xl border-l-2 pl-6 font-display text-[clamp(1rem,1.4vw,1.2rem)] leading-snug text-balance"
+          style={{ borderColor: "var(--accent)", color: "var(--text)" }}
+        >
+          {debrief}
+        </p>
+      )}
 
       <p
         aria-live="polite"

@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ImageBackdrop, Glow } from "@/components/core/ParallaxLayer";
-import { NeuBadge } from "@/components/neu/Neu";
+import { NeuBadge, AccentTitle } from "@/components/neu/Neu";
 import { CONTAINER, type LayoutProps } from "./shared";
 
 export function HeroLayout({ section }: LayoutProps) {
@@ -49,11 +49,9 @@ export function HeroLayout({ section }: LayoutProps) {
           className="mt-8 font-display text-[clamp(3.2rem,9vw,8.5rem)] font-semibold leading-[0.94] tracking-[-0.04em]"
           style={{ color: "var(--text)" }}
         >
-          Crossing
-          <br />
-          <span className="inline-flex items-baseline gap-[0.22em]">
-            <span style={{ color: "var(--accent)" }}>the Gap</span>
-          </span>
+          {/* Reads the registry. It used to hardcode the title of a deck this
+              class no longer gives, which the entry above could not override. */}
+          <AccentTitle title={section.title} accent={section.accent} />
         </motion.h1>
 
         <motion.p

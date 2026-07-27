@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { RAIL, promptCard, copyButton, press, scrollY, scrollsPast } from "./helpers";
+import { RAIL, promptCard, copyButton, press, scrollY, scrollsPast, settle } from "./helpers";
 
 /**
  * Happy path — the workflow a presenter and a reader actually run.
@@ -103,6 +103,10 @@ test("the chrome layer mirrors the active section's theme", async ({ page }) => 
   for (let i = 0; i < count; i++) {
     const expected = await sections.nth(i).getAttribute("data-theme");
     await page.locator(RAIL).nth(i).click();
+    // Let the jump finish before asking where we are. Lenis holds a scroll
+    // lock through its ease and drops a scrollTo issued inside it, so clicking
+    // the next tick immediately leaves the deck on a section it passed.
+    await settle(page);
     await expect(page.locator("div.fixed.bottom-6")).toContainText(
       String(i + 1).padStart(2, "0"),
     );
