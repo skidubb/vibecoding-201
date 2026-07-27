@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Glow, ImageBackdrop } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
 import { CONTAINER, Footnote, Kicker, SectionHeader, type LayoutProps } from "./shared";
+import { EventFeed } from "@/components/interactive/EventFeed";
 
 /**
  * Numbered card grid — the workhorse for the deck's many enumerated lists
@@ -78,11 +79,32 @@ export function CardsLayout({ section }: LayoutProps) {
                       {card.body}
                     </p>
                   )}
+
+                  {/* Evidence, where a card makes a claim about this repository.
+                      Pushed to the bottom so cards in a row line up whether or
+                      not they carry one. */}
+                  {card.href && (
+                    <a
+                      href={card.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      data-deck-keys="off"
+                      className="mt-auto inline-flex items-baseline gap-2 pt-5 font-sans text-[11px] uppercase tracking-[0.14em] underline-offset-4 hover:underline"
+                      style={{ color: card.met === false ? "var(--text-faint)" : "var(--accent)" }}
+                    >
+                      {card.met === false ? "Not yet — see why" : "Evidence"}
+                      <span aria-hidden>↗</span>
+                    </a>
+                  )}
                 </NeuPanel>
               </motion.div>
             </Reveal>
           ))}
         </div>
+
+        {/* The Run section argues that a tool needs a log. Rather than say so
+            and move on, it shows this page's own. */}
+        {section.id === "run" && <EventFeed />}
 
         {section.kicker && section.theme === "dark" && <Kicker>{section.kicker}</Kicker>}
         {section.footnote && <Footnote>{section.footnote}</Footnote>}

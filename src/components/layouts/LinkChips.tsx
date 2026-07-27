@@ -2,6 +2,7 @@
 
 import type { LinkRef } from "@/content/sections";
 import { Reveal } from "@/components/neu/Neu";
+import { logEvent } from "@/lib/events";
 
 /**
  * Outbound references, rendered under any layout that carries `links`.
@@ -22,6 +23,7 @@ export function LinkChips({ links }: { links: LinkRef[] }) {
               href={link.href}
               target="_blank"
               rel="noreferrer noopener"
+              onClick={() => logEvent("link_clicked", undefined, { label: link.label })}
               className="neu-flat neu-edge group flex flex-col gap-1 rounded-2xl px-5 py-3 transition-transform duration-200 hover:-translate-y-0.5"
             >
               <span className="flex items-baseline gap-2">

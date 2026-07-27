@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { NeuPanel } from "@/components/neu/Neu";
+import { logEvent } from "@/lib/events";
 
 type CopyState = "idle" | "copied" | "failed";
 
@@ -55,6 +56,7 @@ export function PromptBlock({
     try {
       await navigator.clipboard.writeText(text);
       announce("copied");
+      logEvent("prompt_copied", undefined, { prompt: label });
       onCopy?.(label);
     } catch {
       selectBody();

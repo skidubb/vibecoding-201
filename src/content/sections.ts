@@ -37,6 +37,16 @@ export type Card = {
   title: string;
   body?: string;
   meta?: string;
+  /**
+   * Evidence for a claim the card makes, in this repository.
+   *
+   * Used by The Bar, where every item has to be checkable by an attendee who
+   * goes looking. A claim with no link is a claim, and the section says which
+   * of the two it is rather than letting the reader assume.
+   */
+  href?: string;
+  /** false renders the item as honestly unmet rather than quietly omitted. */
+  met?: boolean;
 };
 
 export type TimelineStop = {
@@ -537,20 +547,66 @@ export const sections: Section[] = [
     eyebrow: "The bar",
     title: "A production standard.",
     accent: "production standard.",
-    lede: "If a tool misses one of these, it is not ready for people to depend on it.",
+    lede: "If a tool misses one of these, it is not ready for people to depend on it. This site is scored against all nine, and every link goes to the thing itself in a public repository — including the one it does not meet.",
     cards: [
-      { label: "01", title: "Persistent data" },
-      { label: "02", title: "Sign-in" },
-      { label: "03", title: "Enforced authorization" },
-      { label: "04", title: "Server-side secrets" },
-      { label: "05", title: "A tested critical workflow" },
-      { label: "06", title: "Visible error states" },
-      { label: "07", title: "Logs and analytics" },
-      { label: "08", title: "Preview before production" },
-      { label: "09", title: "A named owner" },
+      {
+        label: "01",
+        title: "Persistent data",
+        body: "Postgres, with the schema in version control rather than clicked into a dashboard.",
+        href: "https://github.com/skidubb/vibecoding-201/tree/main/supabase/migrations",
+      },
+      {
+        label: "02",
+        title: "Sign-in",
+        body: "Google, plus anonymous sessions so a vote never waits on an inbox.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/src/app/signin/page.tsx",
+      },
+      {
+        label: "03",
+        title: "Enforced authorization",
+        body: "Fifteen row-level policies, and the deck's own cross-tenant test run against them.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
+      },
+      {
+        label: "04",
+        title: "Server-side secrets",
+        body: "Names committed, values never. No service-role key exists anywhere in this app.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/.env.example",
+      },
+      {
+        label: "05",
+        title: "A tested critical workflow",
+        body: "Sixteen browser specs and seventeen live assertions against the real database.",
+        href: "https://github.com/skidubb/vibecoding-201/tree/main/tests",
+      },
+      {
+        label: "06",
+        title: "Visible error states",
+        body: "Every failure path is a test: no backend, no clipboard, a refused vote.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/tests/upstream-failure.spec.ts",
+      },
+      {
+        label: "07",
+        title: "Logs and analytics",
+        body: "An events table the site writes to, readable without exposing who did what.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/src/lib/events.ts",
+      },
+      {
+        label: "08",
+        title: "Preview before production",
+        body: "Both gates run on every pull request, and every branch gets its own URL.",
+        href: "https://github.com/skidubb/vibecoding-201/actions",
+      },
+      {
+        label: "09",
+        title: "A named owner",
+        body: "Named, with a rollback path. Backup owner, review date and shutdown path are still undecided — and say so in public rather than sitting blank.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/OWNERSHIP.md",
+        met: false,
+      },
     ],
     kicker:
-      "This site is scored against all nine, honestly, including the one it does not yet meet.",
+      "Eight and a half. The half is deliberate: a standard you always score full marks against is a standard you are not really applying.",
   },
   {
     id: "homework",

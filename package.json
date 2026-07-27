@@ -11,7 +11,8 @@
     "test": "playwright test",
     "smoke": "node --env-file=.env.local scripts/smoke.mjs",
     "setup:google": "./scripts/setup-google-auth.sh",
-    "stash:password": "./scripts/stash-db-password.sh"
+    "stash:password": "./scripts/stash-db-password.sh",
+    "links": "node scripts/check-links.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
