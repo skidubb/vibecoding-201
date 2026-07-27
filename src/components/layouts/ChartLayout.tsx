@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { useScroll } from "motion/react";
+import { useEffect, useRef } from "react";
+import { useScroll, useTransform } from "motion/react";
 import { Glow, VideoBackdrop } from "@/components/core/ParallaxLayer";
 import { AccentTitle, NeuBadge, Reveal } from "@/components/neu/Neu";
 import { SCurveChart } from "@/components/charts/SCurveChart";
@@ -19,9 +19,49 @@ import { CONTAINER, type LayoutProps } from "./shared";
  */
 export function ChartLayout({ section }: LayoutProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
+
+  /**
+   * Progress through this section, measured here rather than by `useScroll`'s
+   * own target tracking.
+   *
+   * Target tracking cached offsets from before the fonts and the video
+   * backdrop settled and never recovered: at this section's final stop, where
+   * the geometry says progress is exactly 1.000, it reported roughly 0. The
+   * rungs lit halfway down and were dark again on the beat the presenter
+   * actually talks over — and the reveal ran backwards in between.
+   *
+   * Page-level `useScroll` is reliable (the rail runs on it), so the only
+   * thing needed is this section's own start and travel, re-measured on the
+   * same signals the stop grid uses.
+   */
+  const range = useRef({ start: 0, travel: 1 });
+
+  useEffect(() => {
+    const measure = () => {
+      const el = ref.current;
+      if (!el) return;
+      range.current = {
+        start: el.getBoundingClientRect().top + window.scrollY,
+        travel: Math.max(1, el.offsetHeight - window.innerHeight),
+      };
+    };
+    measure();
+    // Fonts and media settle after first paint and move everything below them.
+    const settle = window.setTimeout(measure, 1200);
+    window.addEventListener("resize", measure);
+    const observer = new ResizeObserver(measure);
+    observer.observe(document.body);
+    return () => {
+      window.clearTimeout(settle);
+      window.removeEventListener("resize", measure);
+      observer.disconnect();
+    };
+  }, []);
+
+  const { scrollY } = useScroll();
+  const scrollYProgress = useTransform(scrollY, (y) => {
+    const { start, travel } = range.current;
+    return Math.min(1, Math.max(0, (y - start) / travel));
   });
   const wide = section.chart === "ladder";
 

@@ -3,22 +3,28 @@
 import { motion } from "motion/react";
 import { Glow, ImageBackdrop } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, Footnote, Kicker, SectionHeader, type LayoutProps } from "./shared";
+import { CONTAINER, Footnote, Kicker, SectionHeader, Strip, type LayoutProps } from "./shared";
 import { EventFeed } from "@/components/interactive/EventFeed";
+import { PromptBlock } from "@/components/interactive/PromptBlock";
 
 /**
  * Numbered card grid — the workhorse for the deck's many enumerated lists
- * (outcomes, archetypes, killers). Column count follows card count so five
- * archetypes read as one row on desktop rather than a ragged 3+2.
+ * (defects, doors, questions). Column count follows card count so five doors
+ * read as one row on desktop rather than a ragged 3+2, and four questions sit
+ * two-by-two rather than 3+1.
  */
 export function CardsLayout({ section }: LayoutProps) {
   const count = section.cards?.length ?? 0;
   const cols =
-    count === 3
-      ? "md:grid-cols-3"
-      : count === 5
-        ? "md:grid-cols-3 lg:grid-cols-5"
-        : "md:grid-cols-2 lg:grid-cols-3";
+    count === 2
+      ? "md:grid-cols-2"
+      : count === 3
+        ? "md:grid-cols-3"
+        : count === 4
+          ? "md:grid-cols-2"
+          : count === 5
+            ? "md:grid-cols-3 lg:grid-cols-5"
+            : "md:grid-cols-2 lg:grid-cols-3";
 
   return (
     <>
@@ -35,17 +41,6 @@ export function CardsLayout({ section }: LayoutProps) {
 
       <div className={CONTAINER}>
         <SectionHeader section={section} />
-
-        {section.kicker && count > 0 && section.theme === "light" && (
-          <Reveal delay={0.2}>
-            <p
-              className="mt-9 font-sans text-[11px] font-medium uppercase tracking-[0.22em]"
-              style={{ color: "var(--accent)" }}
-            >
-              {section.kicker}
-            </p>
-          </Reveal>
-        )}
 
         <div className={`mt-8 grid gap-5 ${cols}`}>
           {section.cards?.map((card, i) => (
@@ -79,6 +74,17 @@ export function CardsLayout({ section }: LayoutProps) {
                       {card.body}
                     </p>
                   )}
+                  {/* 12px, not 10px: this line is the step that repairs each
+                      defect and the vocabulary of each layer — the answer to
+                      several of these slides' headlines, not a caption. */}
+                  {card.meta && (
+                    <p
+                      className="mt-3 font-sans text-[12px] uppercase tracking-[0.16em]"
+                      style={{ color: "var(--text-faint)" }}
+                    >
+                      {card.meta}
+                    </p>
+                  )}
 
                   {/* Evidence, where a card makes a claim about this repository.
                       Pushed to the bottom so cards in a row line up whether or
@@ -102,11 +108,28 @@ export function CardsLayout({ section }: LayoutProps) {
           ))}
         </div>
 
+        {/* A prompt quoted on a card slide — the delegation prompt under the
+            three layers. Same copyable block the prompt layout uses. */}
+        {section.prompts && section.prompts.length > 0 && (
+          <div className="mt-10 grid gap-8 lg:grid-cols-2">
+            {section.prompts.map((prompt, i) => (
+              <Reveal key={prompt.id} delay={0.1 + i * 0.08}>
+                <PromptBlock
+                  label={prompt.label}
+                  text={prompt.text}
+                  caption={prompt.caption}
+                />
+              </Reveal>
+            ))}
+          </div>
+        )}
+
         {/* The Run section argues that a tool needs a log. Rather than say so
             and move on, it shows this page's own. */}
         {section.id === "run" && <EventFeed />}
 
-        {section.kicker && section.theme === "dark" && <Kicker>{section.kicker}</Kicker>}
+        {section.strip && <Strip {...section.strip} />}
+        {section.kicker && <Kicker>{section.kicker}</Kicker>}
         {section.footnote && <Footnote>{section.footnote}</Footnote>}
       </div>
     </>

@@ -85,7 +85,13 @@ export function Reveal({
     <motion.div
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-12% 0px -12% 0px" }}
+      // No inset margin. Shrinking the trigger area by 12% top and bottom
+      // delayed reveals prettily while free-scrolling and stranded content at
+      // rest: this deck moves in discrete stops, so a kicker that comes to
+      // rest inside the bottom band has no further scrolling to trigger it and
+      // stays at opacity 0 — on screen, in the DOM, invisible to the room. The
+      // stagger still reads, because it comes from each element's own delay.
+      viewport={{ once: true }}
       transition={{ duration: 0.85, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >

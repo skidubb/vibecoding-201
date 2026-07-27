@@ -1,15 +1,11 @@
 # Vibecoding 201 — companion site
 
-A neumorphic, parallax-scrolling companion to *Vibecoding 201: Building Production
-GTM Tools* (Pavilion AI in GTM School). The class is presented from the PowerPoint;
-this is the thing the room opens in a second tab — the polls, the copyable prompts,
-and the tool the class is about, deployed for real.
-
-Content currently covers 12 sections of the superseded *Crossing the Gap* deck and
-establishes the design system. The rebuild against
-`Vibecoding-201-Production-GTM-Tools-v6.pptx` (40 slides) is in progress; see
-`SPEC.md` for what this is meant to do and `ARCHITECTURE.md` for why it is built
-this way.
+A neumorphic, parallax-scrolling presentation of *Vibecoding 201: Building Production
+GTM Tools* (Pavilion AI in GTM School) — the polls, the copyable prompts, and the tool
+the class is about, deployed for real. The site is the presentation surface, not a
+companion: all 40 sections of `Vibecoding-201-Production-GTM-Tools-v6.pptx` are on the
+page, with every title quoted from the deck verbatim. See `SPEC.md` for what this is
+meant to do and `ARCHITECTURE.md` for why it is built this way.
 
 **Live:** https://crossing-the-gap-site.vercel.app
 
@@ -45,24 +41,25 @@ The two asset scripts (`gen:media`, `assets`) are documented under
   the wheel mid-sentence. Stops come from a section's scrollable overshoot, not
   its height: every stop is somewhere the deck can actually travel to, so no
   key press is ever a no-op
-- The right-hand rail is clickable; the bottom-left readout shows position and
-  the source deck's slide number
+- The right-hand rail is clickable; the bottom-left readout shows position in
+  this deck (`07 / 40`) and nothing else — the source deck's numbering is
+  deliberately not mirrored
 
-## Adding the remaining slides
+## Adding a section
 
-Everything is driven by one registry: `src/content/sections.ts`. A new slide is a
-new entry — code is only needed for a genuinely new layout shape.
+Everything is driven by one registry: `src/content/sections.ts`. A new section is a
+new entry — code is only needed for a genuinely new layout shape. Titles come from
+the deck, verbatim; if you find yourself writing one, stop.
 
 ```ts
 {
   id: "the-bar",
-  slide: "37",
   theme: "dark",          // flips every neumorphic surface beneath it
-  layout: "cards",        // hero | split | claim | cards | timeline | chart | loop | cta
+  layout: "cards",        // hero | split | claim | cards | timeline | chart | loop | cta | prompt | poll
   eyebrow: "The bar",
-  title: "The minimum production standard.",
+  title: "A production standard.",
   accent: "production standard.",   // rendered in magenta
-  cards: [{ label: "01", title: "An explicit job and user" }],
+  cards: [{ label: "01", title: "Persistent data" }],
 }
 ```
 

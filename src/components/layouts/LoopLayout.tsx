@@ -77,11 +77,15 @@ export function LoopLayout({ section }: LayoutProps) {
               background: "linear-gradient(90deg, transparent, var(--accent))",
             }}
           />
+          {/* No ↻ glyph. Neither display face carries it, so it fell back to
+              a font that drew it at half cap height and below the baseline —
+              a stray mark, on the one slide about the loop coming back
+              around. The rules either side already say "return". */}
           <span
-            className="font-sans text-[10px] uppercase tracking-[0.24em]"
+            className="font-sans text-[11px] uppercase tracking-[0.24em]"
             style={{ color: "var(--accent)" }}
           >
-            ↻ and back to spec
+            and back to spec
           </span>
           <span
             className="h-[1px] w-16 md:w-40"

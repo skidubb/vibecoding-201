@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { RAIL, promptCard, copyButton, press } from "./helpers";
+import { RAIL, promptCard, copyButton, press, ready } from "./helpers";
 
 /**
  * Upstream failure — item five of slide 29's minimum test pack.
@@ -44,6 +44,7 @@ test("the deck still presents when the clipboard is unavailable", async ({ page 
 
   await page.goto("/");
   await expect(page.locator(RAIL).first()).toBeVisible();
+  await ready(page);
 
   // A broken upstream must not take navigation with it. This is the property
   // that keeps a bad browser from ending a live class.

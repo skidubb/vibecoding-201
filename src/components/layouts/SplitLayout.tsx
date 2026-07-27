@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { Glow } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, SectionHeader, type LayoutProps } from "./shared";
+import { CONTAINER, Footnote, Kicker, SectionHeader, Strip, type LayoutProps } from "./shared";
 
 /**
  * The cold open: two screens that look alike and are worth wildly different
@@ -18,16 +18,20 @@ export function SplitLayout({ section }: LayoutProps) {
       <div className={CONTAINER}>
         <SectionHeader section={section} align="center" />
 
-      <div className="mt-10 grid gap-6 md:grid-cols-2 md:gap-8">
+      <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2 md:gap-8">
         {section.split?.map((pane, i) => {
           const isTool = i === 1;
           return (
-            <Reveal key={pane.label} delay={0.1 + i * 0.12}>
+            // h-full down the whole chain: the two panes are a comparison, and
+            // one body wrapping to a second line bottomed the cards out 26px
+            // apart, which reads as a mistake rather than a pair.
+            <Reveal key={pane.label} delay={0.1 + i * 0.12} className="h-full">
               <motion.div
                 whileHover={{ y: -6 }}
                 transition={{ type: "spring", stiffness: 300, damping: 26 }}
+                className="h-full"
               >
-                <NeuPanel className="overflow-hidden">
+                <NeuPanel className="flex h-full flex-col overflow-hidden">
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <Image
                       src={pane.image}
@@ -53,7 +57,7 @@ export function SplitLayout({ section }: LayoutProps) {
                     )}
                   </div>
 
-                  <div className="p-6 md:p-7">
+                  <div className="flex flex-1 flex-col p-6 md:p-7">
                     <span
                       className="font-sans text-[11px] font-medium uppercase tracking-[0.2em]"
                       style={{
@@ -81,6 +85,10 @@ export function SplitLayout({ section }: LayoutProps) {
           );
           })}
         </div>
+
+        {section.strip && <Strip {...section.strip} />}
+        {section.kicker && <Kicker>{section.kicker}</Kicker>}
+        {section.footnote && <Footnote>{section.footnote}</Footnote>}
       </div>
     </>
   );

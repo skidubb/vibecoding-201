@@ -42,7 +42,10 @@ export function TimelineLayout({ section }: LayoutProps) {
             <Reveal key={stop.day} delay={0.05 + i * 0.06}>
               <div className="relative flex flex-col gap-5 md:flex-row md:items-start md:gap-10">
                 {/* Day label sits left of the spine on desktop. */}
-                <div className="md:w-36 md:shrink-0 md:pt-1 md:text-right">
+                {/* pr-5 keeps the day off the node: the column is 9rem wide
+                    and the node sits at 9rem, so SUNDAY and WEDNESDAY ran
+                    their last letter into the ring. */}
+                <div className="md:w-36 md:shrink-0 md:pr-5 md:pt-1 md:text-right">
                   <span
                     className="font-sans text-[11px] font-medium uppercase tracking-[0.2em]"
                     style={{
@@ -77,12 +80,14 @@ export function TimelineLayout({ section }: LayoutProps) {
                       >
                         {stop.title}
                       </h3>
-                      <p
-                        className="mt-2 leading-relaxed"
-                        style={{ color: "var(--text-dim)" }}
-                      >
-                        {stop.body}
-                      </p>
+                      {stop.body && (
+                        <p
+                          className="mt-2 leading-relaxed"
+                          style={{ color: "var(--text-dim)" }}
+                        >
+                          {stop.body}
+                        </p>
+                      )}
                     </div>
                     {stop.image && (
                       <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-[14px] md:h-20 md:w-40">

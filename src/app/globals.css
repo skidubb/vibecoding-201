@@ -34,7 +34,11 @@
   --edge: rgba(206, 198, 244, 0.09);
   --text: #f3f1fb;
   --text-dim: #9a9db4;
-  --text-faint: #6b7090;
+  /* 4.54:1 on --surface-raised. Was #6b7090 (3.15:1), which read as disabled
+     text on a projector and took the deck's meta lines — the loop step that
+     repairs each defect, the vocabulary of each layer — down with it. Faint is
+     still a step below dim (5.69:1); it is no longer below legible. */
+  --text-faint: #868ba8;
   --accent: #df285b;
   --accent-soft: #cec6f4;
   --glow-a: rgba(206, 198, 244, 0.16);
@@ -57,7 +61,10 @@
   --edge: rgba(26, 31, 54, 0.06);
   --text: #1a1f36;
   --text-dim: #5a5a7e;
-  --text-faint: #8a8fa3;
+  /* 4.84:1 on --surface-raised, against #8a8fa3's 2.66:1 — the worst ratio in
+     the deck, and the one carrying Jordan's authorization rules and the nine
+     items of the minimum standard. */
+  --text-faint: #5f6480;
   --accent: #df285b;
   --accent-soft: #6e6a9e;
   --glow-a: rgba(171, 164, 220, 0.4);

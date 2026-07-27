@@ -66,3 +66,56 @@ test("every section has a unique id, since ids are anchors", () => {
     ids.length,
   );
 });
+
+test("no layout silently drops content it was handed", async ({ page }) => {
+  // The registry is a bag of optional fields and each layout renders the
+  // subset it knows about, so giving a section a field its layout ignores
+  // deletes that content from the deck with nothing failing anywhere.
+  //
+  // That is not hypothetical. `strip` was added to the cards and claim
+  // layouts, and Jordan's three authorization rules — which live on a split
+  // layout — stopped appearing at all. The build passed, every test passed,
+  // and the rules were simply gone from the slide.
+  await page.goto("/");
+
+  const missing: string[] = [];
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    if (!id) continue;
+
+    // Lowercased: several of these tiers render through `text-transform:
+    // uppercase`, and innerText returns the transformed text, so a
+    // case-sensitive compare would flag every footnote in the deck.
+    const rendered = (await page.locator(`#${id}`).innerText())
+      .replace(/\s+/g, " ")
+      .toLowerCase();
+
+    // Quoted strings from the fields a layout can forget. Long enough to be
+    // distinctive, short enough not to trip on a wrap or an injected
+    // separator.
+    const expected: string[] = [];
+    const push = (raw?: string) => {
+      if (!raw) return;
+      const text = raw.replace(/\\"/g, '"').replace(/\s+/g, " ").trim().toLowerCase();
+      if (text.length > 8) expected.push(text.slice(0, 40));
+    };
+
+    push(block.match(/\n {4}kicker:\s*\n?\s*"((?:[^"\\]|\\.)*)"/)?.[1]);
+    push(block.match(/\n {4}footnote:\s*\n?\s*"((?:[^"\\]|\\.)*)"/)?.[1]);
+
+    const strip = block.match(/strip: \{([\s\S]*?)\n {4}\}/)?.[1];
+    if (strip) {
+      push(strip.match(/label: "((?:[^"\\]|\\.)*)"/)?.[1]);
+      for (const item of strip.matchAll(/^\s*"((?:[^"\\]|\\.)*)",?$/gm)) push(item[1]);
+    }
+
+    for (const text of expected) {
+      if (!rendered.includes(text)) missing.push(`${id}: "${text}"`);
+    }
+  }
+
+  expect(missing, `registry copy that never reaches the page:\n${missing.join("\n")}`).toEqual(
+    [],
+  );
+});

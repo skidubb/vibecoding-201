@@ -17,7 +17,10 @@ export function SectionHeader({
 }) {
   const centered = align === "center";
   return (
-    <div className={`max-w-4xl ${centered ? "mx-auto text-center" : ""}`}>
+    // max-w-5xl: at 4xl the exercise headline broke inside its own hyphenated
+    // compound — "Write your three-" / "line spec." — while the card grid
+    // beneath it ran 600px wider. The measure was the constraint, not the copy.
+    <div className={`max-w-5xl ${centered ? "mx-auto text-center" : ""}`}>
       {section.eyebrow && (
         <Reveal>
           <NeuBadge>{section.eyebrow}</NeuBadge>
@@ -55,11 +58,53 @@ export function SectionHeader({
 export function Footnote({ children }: { children: React.ReactNode }) {
   return (
     <p
-      className="mt-10 font-sans text-[11px] uppercase tracking-[0.16em]"
+      className="mt-10 max-w-4xl font-sans text-[13px] uppercase tracking-[0.14em]"
       style={{ color: "var(--text-faint)" }}
     >
       {children}
     </p>
+  );
+}
+
+/**
+ * A labelled strip: the minimum standard, Jordan's rules, the minimum test
+ * pack, what the tool must show on screen.
+ *
+ * These are content — on the slide they are a band under the cards, carrying
+ * items that appear nowhere else. Routing them through `footnote` set nine
+ * production criteria in the same 11px letterspaced grey used for a citation,
+ * which made the least legible thing on the slide the thing the headline had
+ * just promised. They get their own surface and body-sized type instead.
+ */
+export function Strip({ label, items }: { label?: string; items: string[] }) {
+  return (
+    <Reveal delay={0.26}>
+      <div className="neu-inset neu-edge mt-10 rounded-2xl px-6 py-5 md:px-8 md:py-6">
+        {label && (
+          <p
+            className="font-sans text-[11px] font-medium uppercase tracking-[0.2em]"
+            style={{ color: "var(--accent)" }}
+          >
+            {label}
+          </p>
+        )}
+        <p
+          className={`${label ? "mt-3" : ""} text-[clamp(0.95rem,1.15vw,1.05rem)] leading-relaxed`}
+          style={{ color: "var(--text)" }}
+        >
+          {items.map((item, i) => (
+            <span key={item}>
+              {i > 0 && (
+                <span aria-hidden style={{ color: "var(--text-faint)" }}>
+                  {"  ·  "}
+                </span>
+              )}
+              {item}
+            </span>
+          ))}
+        </p>
+      </div>
+    </Reveal>
   );
 }
 

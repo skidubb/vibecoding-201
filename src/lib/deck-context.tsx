@@ -131,7 +131,12 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     // the deck instead of re-activating a rail tick.
     (document.activeElement as HTMLElement | null)?.blur?.();
     if (lenisRef.current) {
-      lenisRef.current.scrollTo(target, { duration: 1.1, lock: true });
+      // `force` so a jump issued while the previous one is still easing is
+      // honoured rather than swallowed by its own lock. Without it a presenter
+      // pressing twice in quick succession loses the first move but keeps the
+      // stop it consumed, which skips a beat — the deck arrives a slide ahead
+      // of where they are in the talk.
+      lenisRef.current.scrollTo(target, { duration: 1.1, lock: true, force: true });
     } else {
       window.scrollTo({ top: target });
     }
@@ -162,8 +167,51 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     return drifted ? nearestStopIndex(list) : stopRef.current;
   }, []);
 
-  const next = useCallback(() => goToStop(baseStop() + 1), [goToStop, baseStop]);
-  const prev = useCallback(() => goToStop(baseStop() - 1), [goToStop, baseStop]);
+  /**
+   * Advance, against a grid measured now rather than whenever it was last
+   * rebuilt.
+   *
+   * Stop *positions* were always read live, but the stop *count* came from the
+   * cached grid, so a section that grew after the last rebuild kept the number
+   * of stops it had when it was shorter. The result on stage is two different
+   * faults from the same cause: a press that moves nothing, and a section
+   * whose tail is skipped entirely because the stop that would have shown it
+   * was never in the list. One measuring pass per key press costs nothing next
+   * to a 1.1s scroll animation.
+   */
+  const step = useCallback(
+    (delta: number) => {
+      const intent = stopsRef.current[stopRef.current];
+      rebuildRef.current();
+      const list = stopsRef.current;
+      if (!list.length) return;
+
+      // A rebuild can renumber the grid, so the intent is carried across by
+      // identity rather than by index — otherwise adding a stop mid-deck
+      // silently reassigns every index after it, and the queueing that makes
+      // two quick presses land two stops later would send the deck somewhere
+      // else entirely.
+      if (intent) {
+        let best = -1;
+        let bestDistance = Infinity;
+        list.forEach((stop, i) => {
+          if (stop.sectionId !== intent.sectionId) return;
+          const distance = Math.abs(stop.fraction - intent.fraction);
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            best = i;
+          }
+        });
+        if (best >= 0) stopRef.current = best;
+      }
+
+      goToStop(baseStop() + delta);
+    },
+    [goToStop, baseStop],
+  );
+
+  const next = useCallback(() => step(1), [step]);
+  const prev = useCallback(() => step(-1), [step]);
 
   // Presenter keys. Space/arrows jump section to section for live delivery;
   // the rest of the time the page scrolls freely.

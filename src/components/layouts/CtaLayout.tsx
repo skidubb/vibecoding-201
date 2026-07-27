@@ -23,14 +23,16 @@ export function CtaLayout({ section }: LayoutProps) {
       <Glow className="left-1/2 top-1/3 -translate-x-1/2" tone="magenta" size={64} />
 
       <div className={`${CONTAINER} mx-auto max-w-3xl text-center`}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-        >
-          <NeuBadge accent>{section.eyebrow}</NeuBadge>
-        </motion.div>
+        {section.eyebrow && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <NeuBadge accent>{section.eyebrow}</NeuBadge>
+          </motion.div>
+        )}
 
         <div className="mt-10 flex flex-col gap-1">
           {lines.map((line, i) => {
@@ -41,7 +43,7 @@ export function CtaLayout({ section }: LayoutProps) {
                 key={text}
                 initial={{ opacity: 0, y: 26 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-12%" }}
+                viewport={{ once: true }}
                 transition={{
                   duration: 0.8,
                   delay: 0.14 + i * 0.16,
@@ -75,9 +77,12 @@ export function CtaLayout({ section }: LayoutProps) {
           className="mt-12 flex flex-col items-center gap-8"
         >
           <NeuButton onClick={() => goToIndex(0)}>Back to the top</NeuButton>
+          {/* Body colour, not faint: this is the presenter's own name on the
+              last slide the room looks at, and it sits over a photograph
+              whose local luminance varies. */}
           <span
-            className="font-sans text-[11px] uppercase tracking-[0.2em]"
-            style={{ color: "var(--text-faint)" }}
+            className="font-sans text-[13px] uppercase tracking-[0.2em]"
+            style={{ color: "var(--text)" }}
           >
             {section.kicker}
           </span>

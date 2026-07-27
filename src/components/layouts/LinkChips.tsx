@@ -48,10 +48,13 @@ export function LinkChips({ links }: { links: LinkRef[] }) {
                 </span>
               )}
 
+              {/* Body colour, not faint: an install command set dimmer than
+                  the title beside it reads as a disabled control rather than
+                  a line to type. */}
               {link.install && (
                 <code
-                  className="mt-1 font-mono text-[0.78rem]"
-                  style={{ color: "var(--text-faint)" }}
+                  className="mt-1 font-mono text-[0.84rem]"
+                  style={{ color: "var(--text-dim)" }}
                 >
                   {link.install}
                 </code>

@@ -2,23 +2,23 @@
 
 import { motion, useTransform, type MotionValue } from "motion/react";
 
+// Quoted from Vibecoding-201-Production-GTM-Tools-v6.pptx, slide 7 — the room
+// reads the deck and this page at the same time, so a paraphrase here is a
+// distraction at exactly the wrong moment.
 const RUNGS = [
   {
     name: "Prototype",
-    who: "Prototyper",
     test: "Demonstrates the idea with sample or temporary inputs",
     value: "Creates belief",
   },
   {
     name: "Tool",
-    who: "Builder, Grower",
-    test: "A defined group reliably completes a real workflow",
+    test: "A defined group can reliably complete a real workflow",
     value: "Changes work",
   },
   {
     name: "System",
-    who: "Sweeper, Maintainer",
-    test: "The workflow operates across teams, data sources, permissions, and time",
+    test: "The workflow operates across teams, data sources, permissions, time, and failure conditions",
     value: "Changes the business",
   },
 ];
@@ -48,7 +48,11 @@ function Rung({
   progress: MotionValue<number>;
 }) {
   const start = 0.1 + index * 0.16;
-  const opacity = useTransform(progress, [start, start + 0.12], [0.28, 1]);
+  // Floor at 0.55, not 0.28. The rungs are the only substance on the slide and
+  // they sit over a video backdrop; at 0.28 the resting state measured 2.06:1
+  // and the room could not read the comparison the headline sets up. They
+  // still light in sequence — they are legible before they do.
+  const opacity = useTransform(progress, [start, start + 0.12], [0.55, 1]);
   const x = useTransform(progress, [start, start + 0.12], [-24, 0]);
   // Each rung is physically wider than the one below it.
   const width = 80 + index * 10;
@@ -70,17 +74,11 @@ function Rung({
           >
             {rung.name}
           </h3>
-          <p
-            className="mt-1 font-sans text-[11px] uppercase tracking-[0.16em]"
-            style={{ color: "var(--accent)" }}
-          >
-            {rung.who}
-          </p>
         </div>
 
         <div className="flex-1">
           <p
-            className="font-sans text-[10px] uppercase tracking-[0.2em]"
+            className="font-sans text-[11px] uppercase tracking-[0.18em]"
             style={{ color: "var(--text-faint)" }}
           >
             Observable test
@@ -92,7 +90,7 @@ function Rung({
 
         <div className="lg:w-44 lg:shrink-0 lg:text-right">
           <p
-            className="font-sans text-[10px] uppercase tracking-[0.2em]"
+            className="font-sans text-[11px] uppercase tracking-[0.18em]"
             style={{ color: "var(--text-faint)" }}
           >
             Business value

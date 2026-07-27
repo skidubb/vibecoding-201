@@ -27,12 +27,29 @@ export function computeStops(): Stop[] {
     // right, nothing moved, and they pressed again. One dead press per
     // full-height section, live, all the way down the deck.
     const overshoot = Math.max(0, height - vh);
-    const count = 1 + Math.min(3, Math.floor(overshoot / (vh * 0.5)));
+    // Anything past SLACK is content, and content gets a stop that reveals it.
+    //
+    // This used to divide by half a viewport and floor, which granted a second
+    // stop only after a section overran by 50% of the screen. Sections that
+    // overran by less got exactly one stop at their top and everything below
+    // the fold was unreachable by any key — on a 1280x720 laptop that was 22 of
+    // 40 sections, hiding as much as 324px of a section nobody could scroll to
+    // without abandoning the arrow keys mid-sentence. Ceiling, so one pixel of
+    // real overflow is still worth a press.
+    // One section's bottom padding (`md:py-24`). A section overrunning by less
+    // than this is spilling empty padding, not copy — the room has already seen
+    // everything it says, and spending a whole key press to travel 40px reads
+    // as a broken remote. Past it, real copy is below the fold.
+    const SLACK = 96;
+    const count =
+      overshoot <= SLACK ? 1 : 1 + Math.min(3, Math.ceil(overshoot / (vh * 0.75)));
     return Array.from({ length: count }, (_, i) => ({
       sectionIndex,
       sectionId: section.id,
-      // Nudge off the very top so a section's entrance animations have played.
-      fraction: count === 1 ? 0 : (i / (count - 1)) * 0.92 + 0.02,
+      // The first stop nudges off the very top so a section's entrance
+      // animations have played; the last lands flush with the bottom, because
+      // stopping 8% short of it is how the tail goes missing.
+      fraction: count === 1 ? 0 : 0.02 + (i / (count - 1)) * 0.98,
     }));
   });
 }

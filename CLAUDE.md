@@ -6,6 +6,11 @@
 The README above is the source of truth for architecture and commands. These are the
 operational rules that don't belong in it.
 
+- **Titles come from the deck, verbatim.** If you find yourself writing a title, stop —
+  you are decorating, and it reads as hiding the point. Every eyebrow, headline, body
+  line and kicker in `src/content/sections.ts` is quoted from
+  `../Vibecoding-201-Production-GTM-Tools-v6.pptx`; the deck's slide numbering and
+  speaker notes are noise and are deliberately not mirrored anywhere on the site.
 - **`AGENTS.md` is generated.** Never hand-edit between the `BEGIN/END:nextjs-agent-rules`
   markers — a tool regenerates that block and will clobber anything added there. Durable
   rules go in the README, or here.
