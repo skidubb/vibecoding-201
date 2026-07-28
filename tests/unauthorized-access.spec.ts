@@ -86,3 +86,16 @@ test("the report does not spoil a poll that has not been revealed", async ({ pag
     expect(body, `report leaked "${spoiler}"`).not.toContain(spoiler);
   }
 });
+
+test("no presenter chrome ships to the room", async ({ page }) => {
+  // The presenter chip, per-option counts and refresh control render only for
+  // an account the database answers is_admin() for. Backend-off there is no
+  // account at all, so the deck must carry none of it — a chip that rendered
+  // here would render for every attendee in class.
+  await page.goto("/#cold-open");
+  await ready(page);
+  await settle(page);
+
+  await expect(page.locator("[data-presenter-chip]")).toHaveCount(0);
+  await expect(page.locator("[data-refresh]")).toHaveCount(0);
+});

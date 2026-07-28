@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { sections } from "@/content/sections";
 import { backendConfigured, supabase } from "@/lib/supabase/client";
 import { NeuBadge, NeuPanel } from "@/components/neu/Neu";
@@ -27,26 +27,45 @@ export default function ReportPage() {
   const [revealed, setRevealed] = useState<string[]>([]);
   const [checked, setChecked] = useState(!backendConfigured);
 
+  const read = useCallback(async () => {
+    const client = supabase();
+    if (!client) return;
+    const [{ data: tallies }, { data: polls }] = await Promise.all([
+      client.from("poll_tallies").select("poll_slug, option_id, votes"),
+      client.from("polls").select("slug, state").eq("state", "revealed"),
+    ]);
+    setRows((tallies as Row[] | null) ?? []);
+    setRevealed(((polls ?? []) as { slug: string }[]).map((p) => p.slug));
+    setChecked(true);
+  }, []);
+
   useEffect(() => {
     const client = supabase();
     if (!client) return;
-    let cancelled = false;
 
-    void (async () => {
-      const [{ data: tallies }, { data: polls }] = await Promise.all([
-        client.from("poll_tallies").select("poll_slug, option_id, votes"),
-        client.from("polls").select("slug, state").eq("state", "revealed"),
-      ]);
-      if (cancelled) return;
-      setRows((tallies as Row[] | null) ?? []);
-      setRevealed(((polls ?? []) as { slug: string }[]).map((p) => p.slug));
-      setChecked(true);
-    })();
+    void read();
+
+    // A reveal that happens while this tab is open appears without a reload —
+    // the same subscription /vote uses — and the button below is the manual
+    // insurance for a websocket that quietly dropped.
+    const channel = client
+      .channel("report")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "polls" },
+        () => void read(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "poll_tallies" },
+        () => void read(),
+      )
+      .subscribe();
 
     return () => {
-      cancelled = true;
+      void client.removeChannel(channel);
     };
-  }, []);
+  }, [read]);
 
   const shown = POLLS.filter((p) => revealed.includes(p.poll.slug));
 
@@ -69,6 +88,18 @@ export default function ReportPage() {
           during the exercise are not on this page at all: those were shared
           with a room, which is not the same as published.
         </p>
+
+        {backendConfigured && (
+          <button
+            type="button"
+            data-refresh
+            onClick={() => void read()}
+            className="neu-raised neu-edge mt-6 rounded-full px-4 py-2 font-sans text-[11px] font-medium uppercase tracking-[0.14em]"
+            style={{ color: "var(--text)" }}
+          >
+            Refresh
+          </button>
+        )}
 
         {!checked ? (
           <p className="mt-10" style={{ color: "var(--text-dim)" }}>
@@ -158,6 +189,13 @@ export default function ReportPage() {
             style={{ color: "var(--accent)" }}
           >
             Take the kit
+          </a>
+          <a
+            href="/admin"
+            className="text-[0.9rem] underline underline-offset-4"
+            style={{ color: "var(--text-faint)" }}
+          >
+            Presenter
           </a>
         </div>
       </div>

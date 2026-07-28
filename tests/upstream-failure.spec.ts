@@ -114,3 +114,16 @@ test("a failed sign-in lands somewhere that explains itself", async ({ page }) =
   // And offers the route that does not depend on the thing that just broke.
   await expect(page.locator("main")).toContainText("do not need an account to vote");
 });
+
+test("the presenter console says it is offline instead of rendering dead controls", async ({
+  page,
+}) => {
+  // Backend-off, the server gate short-circuits before any sign-in redirect:
+  // the page stays at /admin and explains itself, with zero buttons — an
+  // Open control that could never write would be the quiet failure the whole
+  // deck argues against.
+  await page.goto("/admin");
+  await expect(page.locator("main")).toContainText("offline");
+  await expect(page.getByRole("button")).toHaveCount(0);
+  expect(page.url()).toContain("/admin");
+});

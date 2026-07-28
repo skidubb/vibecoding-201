@@ -123,10 +123,18 @@ names only. `.gitignore` ignores `.env*` and re-admits exactly those two files.
 Only the asset pipeline needs a credential today. `npm run dev` and
 `npm run build` need none.
 
-## What does not exist yet
+## The backend
 
-Stated plainly, because a document describing unbuilt things is worse than a
-missing one: there is no backend, no authentication, no database, no API route,
-and no persistence of any kind. `DATA_MODEL.md` and `SECURITY.md` — the two
-remaining files from the deck's six — are deliberately absent until there is a
-schema for them to describe truthfully.
+This document's earlier claim that no backend exists is no longer true. The
+site now has: a Supabase Postgres project (schema in `supabase/migrations/`,
+eight migrations) with Google OAuth and anonymous sign-ins; live polls and the
+spec exercise writing through RLS and definer RPCs; an `events` log; the
+`/admin` presenter console and `/admin/export` CSV route, both gated by
+`is_admin()` asked of the database; and Vercel Web Analytics for traffic. The
+deck itself is still a static document served from the CDN — the proxy matcher
+deliberately excludes `/` so two hundred simultaneous opens cost one cached
+page.
+
+`DATA_MODEL.md` and `SECURITY.md` — the two remaining files from the deck's
+six — are still absent. When they had no schema to describe that was
+deliberate; the schema now exists, so they are the known gap, not a choice.

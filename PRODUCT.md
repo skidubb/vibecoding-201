@@ -25,20 +25,25 @@ narrator.
 
 ## What it deliberately does not do
 
-- **No sign-in, no accounts, no stored state.** Nothing to log into, and nothing kept about
-  a visitor.
+- **No account required to read, or to vote.** The deck is public; polls sign a voter in
+  anonymously on their first tap. A real sign-in (`/signin`) exists for saving a spec
+  submission, requesting the kit, and presenting — auth cookies are set only for people who
+  do one of those.
 - **No content management.** Sections are entries in `src/content/sections.ts`. Editing
   means a commit, a review, and a deploy.
 - **No speaker notes.** They stay in the PPTX, where Scott reads them on a second screen.
 - **No presenting from a phone.** The rail is hidden below the `md` breakpoint. Reading on a
-  phone works.
-- **No analytics, no tracking, no cookies.** See below for what that costs.
+  phone works — and a signed-in presenter's phone on `/vote` doubles as a live results
+  monitor.
+- **No third-party trackers.** Instrumentation is first-party and minimal: a small `events`
+  table (votes, copied prompts, clicked links — never attributed to a person on any rendered
+  surface) and Vercel Web Analytics, which is cookieless.
 
 ## How to tell whether it is working
 
-There is no instrumentation in this app, so every signal below is observed rather than
-measured. That gap is deliberate for now: adding analytics means adding a consent story to a
-page that currently sets no cookies at all.
+The `/admin` console shows the live signals — per-option poll counts, shared submissions,
+event counts, the log — and Vercel Analytics shows traffic. The signals below are still
+observed rather than measured:
 
 **During a class.** Scott gets through the deck without a key press that goes nowhere and
 without narrating around a section that failed to render. Attendees ask about the argument

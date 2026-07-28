@@ -19,6 +19,16 @@ export async function GET(request: NextRequest) {
   const type = url.searchParams.get("type");
   const wantsKit = url.searchParams.get("kit") === "1";
 
+  // Where to land after sign-in. Same-origin relative paths only — this value
+  // round-trips through Google, so it is attacker-writable and must never
+  // become an open redirect. "//host" and backslash tricks both parse as
+  // absolute in some browsers.
+  const rawNext = url.searchParams.get("next") ?? "/";
+  const next =
+    rawNext.startsWith("/") && !rawNext.startsWith("//") && !rawNext.includes("\\")
+      ? rawNext
+      : "/";
+
   const supabase = await createClient();
 
   const { error } = code
@@ -34,16 +44,31 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/error", url.origin));
   }
 
-  // Consent, recorded against the account that just gave it. Only ever set to
-  // true here — clearing it is the owner's to do, via their own profile row.
-  if (wantsKit) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    // The two events the analytics panel counts. Written with the session
+    // client — the events INSERT policy admits any authenticated row — and
+    // errors swallowed, because telemetry must never fail a sign-in.
+    // "signup_completed" means "completed the sign-in flow": returning
+    // accounts land here too.
+    const rows = [
+      { name: "signup_completed", section_id: null, props: { provider: code ? "google" : "email" } },
+      ...(wantsKit ? [{ name: "kit_requested", section_id: null, props: {} }] : []),
+    ];
+    await supabase
+      .from("events")
+      .insert(rows)
+      .then(undefined, () => {});
+
+    // Consent, recorded against the account that just gave it. Only ever set
+    // to true here — clearing it is the owner's to do, via their own profile.
+    if (wantsKit) {
       await supabase.from("profiles").update({ wants_kit: true }).eq("id", user.id);
     }
   }
 
-  return NextResponse.redirect(new URL("/", url.origin));
+  return NextResponse.redirect(new URL(next, url.origin));
 }

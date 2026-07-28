@@ -16,6 +16,7 @@ import { PromptBlock } from "@/components/interactive/PromptBlock";
  */
 export function CardsLayout({ section }: LayoutProps) {
   const count = section.cards?.length ?? 0;
+  const hasBrands = section.cards?.some((card) => card.brand) ?? false;
   const cols =
     count === 2
       ? "md:grid-cols-2"
@@ -55,22 +56,19 @@ export function CardsLayout({ section }: LayoutProps) {
                   className="flex h-full flex-col p-6 md:p-7"
                   radius="rounded-[24px]"
                 >
-                  {/* The mark sits with the number, not above the title, so a
-                      row of cards where only some name a product still lines
-                      its headlines up. A layout that ignored `brand` would
-                      delete it from the deck with nothing failing anywhere —
-                      which is how Jordan's authorization rules once vanished. */}
-                  <span className="flex items-center justify-between gap-3">
-                    <span
-                      className="font-display text-2xl font-semibold tabular-nums"
-                      style={{ color: "var(--accent)", opacity: 0.85 }}
-                    >
-                      {card.label}
+                  {/* The mark row renders for every card in a section where
+                      any card names a product — min-height included — so a
+                      row where only some carry a brand still lines its
+                      headlines up. A layout that ignored `brand` would delete
+                      it from the deck with nothing failing anywhere — which
+                      is how Jordan's authorization rules once vanished. */}
+                  {hasBrands && (
+                    <span className="flex min-h-[22px] items-center justify-end">
+                      {card.brand && <Logo brand={card.brand} height={22} />}
                     </span>
-                    {card.brand && <Logo brand={card.brand} height={22} />}
-                  </span>
+                  )}
                   <h3
-                    className="mt-4 font-display text-[1.06rem] font-semibold leading-snug tracking-tight"
+                    className={`${hasBrands ? "mt-4 " : ""}font-display text-[1.06rem] font-semibold leading-snug tracking-tight`}
                     style={{ color: "var(--text)" }}
                   >
                     {card.title}

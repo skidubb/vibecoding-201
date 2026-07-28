@@ -47,4 +47,4 @@ Every URL, install command, and figure in this kit was checked on **27 July 2026
 Tooling in this category changes monthly. If a command fails, check the linked
 documentation before assuming you did something wrong.
 
-Questions after class: Scott Ewalt, scott.e.ewalt@gmail.com
+Questions after class: Scott Ewalt, scott@cardinalelement.com

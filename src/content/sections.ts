@@ -72,7 +72,6 @@ export type Media = {
 };
 
 export type Card = {
-  label?: string;
   title: string;
   body?: string;
   /** The card's second line from the deck — a cost, a role, a surface list. */
@@ -309,12 +308,12 @@ export const sections: Section[] = [
     title: "The six defects we will repair",
     accent: "six defects",
     cards: [
-      { label: "01", title: "Data disappears after refresh", meta: "Build · persistence" },
-      { label: "02", title: "No sign-in or access control", meta: "Build · identity" },
-      { label: "03", title: "The CRM connection is manual", meta: "Build · the data door" },
-      { label: "04", title: "Failed refreshes look successful", meta: "Build · the freshness surface" },
-      { label: "05", title: "Nobody can explain the risk score", meta: "Build · the AI insight rule" },
-      { label: "06", title: "Only Jordan knows how it works", meta: "Run · ownership" },
+      { title: "Data disappears after refresh", meta: "Build · persistence" },
+      { title: "No sign-in or access control", meta: "Build · identity" },
+      { title: "The CRM connection is manual", meta: "Build · the data door" },
+      { title: "Failed refreshes look successful", meta: "Build · the freshness surface" },
+      { title: "Nobody can explain the risk score", meta: "Build · the AI insight rule" },
+      { title: "Only Jordan knows how it works", meta: "Run · ownership" },
     ],
     kicker: "The last three fail silently. That is what makes them expensive.",
     media: { image: genS05SixNotes, speed: -0.12 },
@@ -342,10 +341,10 @@ export const sections: Section[] = [
     title: "Before you invest further, ask four questions.",
     accent: "four questions.",
     cards: [
-      { label: "01", title: "Is the workflow frequent or consequential enough to matter?" },
-      { label: "02", title: "Is the process stable enough to encode?" },
-      { label: "03", title: "Is there a named user, outcome, and owner?" },
-      { label: "04", title: "What new risk appears when others depend on it?" },
+      { title: "Is the workflow frequent or consequential enough to matter?" },
+      { title: "Is the process stable enough to encode?" },
+      { title: "Is there a named user, outcome, and owner?" },
+      { title: "What new risk appears when others depend on it?" },
     ],
     kicker:
       "Most prototypes should die here. That is the system working, not a waste.",
@@ -388,17 +387,14 @@ export const sections: Section[] = [
     lede: "Not just a better prompt. A prompt has no downstream. A spec feeds the next step. It is an artifact. A file the next step reads, not a message that scrolls away. It is versioned. It changes on purpose, and you can see what changed. It is testable. Done is a check another person can run.",
     cards: [
       {
-        label: "01",
         title: "Job",
         body: "Every Monday, identify the ten accounts most at risk of churn and show the evidence behind each flag.",
       },
       {
-        label: "02",
         title: "User",
         body: "The VP of RevOps and the assigned account owner.",
       },
       {
-        label: "03",
         title: "Done",
         body: "A user can sign in, load current records, understand every flag, update the next action, refresh, and confirm the change persists.",
       },
@@ -449,17 +445,14 @@ export const sections: Section[] = [
     accent: "120 seconds.",
     cards: [
       {
-        label: "01",
         title: "Job",
         body: "One narrow recurring GTM workflow. Start with a verb: identify, prepare, route, reconcile, summarize, approve.",
       },
       {
-        label: "02",
         title: "User",
         body: "Who performs it, and what are they allowed to change?",
       },
       {
-        label: "03",
         title: "Done",
         body: "A check another person could run. Not a feeling.",
       },
@@ -519,11 +512,11 @@ export const sections: Section[] = [
     title: "Five questions to ask of any plan.",
     accent: "Five questions",
     cards: [
-      { label: "01", title: "Does it solve the stated job?" },
-      { label: "02", title: "What assumptions did it invent?" },
-      { label: "03", title: "What data and permissions does it require?" },
-      { label: "04", title: "How will the core workflow be tested?" },
-      { label: "05", title: "What is deliberately excluded?" },
+      { title: "Does it solve the stated job?" },
+      { title: "What assumptions did it invent?" },
+      { title: "What data and permissions does it require?" },
+      { title: "How will the core workflow be tested?" },
+      { title: "What is deliberately excluded?" },
     ],
     kicker: "Approve or revise. Then let it implement one bounded capability.",
     media: { image: genS14TheQuestion, speed: -0.15 },
@@ -537,37 +530,31 @@ export const sections: Section[] = [
     accent: "minimum standard",
     cards: [
       {
-        label: "01",
         title: "Lovable or Artifact",
         brand: "lovable",
         receipt: "This site skipped it — create-next-app, then a written spec.",
       },
       {
-        label: "02",
         title: "GitHub",
         brand: "github",
         receipt: "skidubb/vibecoding-201, public, every commit readable.",
       },
       {
-        label: "03",
         title: "Claude Code or Codex",
         brand: "claude",
         receipt: "Claude Code, working from an approved plan.",
       },
       {
-        label: "04",
         title: "Supabase",
         brand: "supabase",
         receipt: "Six migrations. Row-level security on every table.",
       },
       {
-        label: "05",
         title: "Vercel preview",
         brand: "vercel",
         receipt: "Every push builds one before production sees it.",
       },
       {
-        label: "06",
         title: "Production",
         brand: "vercel",
         receipt: "The page you are reading.",
@@ -599,20 +586,17 @@ export const sections: Section[] = [
     accent: "each do",
     cards: [
       {
-        label: "01",
         title: "GitHub",
         brand: "github",
         body: "The system of record for the application and its changes.",
         meta: "repository · branch · pull request · merge",
       },
       {
-        label: "02",
         title: "Supabase",
         body: "Persistence and permission.",
         meta: "Postgres · auth · row-level security · server functions · scheduled work",
       },
       {
-        label: "03",
         title: "Vercel",
         body: "Where it becomes a URL.",
         meta: "local · preview · production · logs · environment configuration",
@@ -637,10 +621,10 @@ export const sections: Section[] = [
     title: "The demo, in four steps",
     accent: "four steps",
     cards: [
-      { label: "01", title: "The repository", body: "The Lovable project, already in GitHub." },
-      { label: "02", title: "The inspection", body: "The agent reads the project before acting." },
-      { label: "03", title: "The plan", body: "Proposed before any file changes. You approve it." },
-      { label: "04", title: "One persistent action", body: "Written to Supabase, survives a refresh." },
+      { title: "The repository", body: "The Lovable project, already in GitHub." },
+      { title: "The inspection", body: "The agent reads the project before acting." },
+      { title: "The plan", body: "Proposed before any file changes. You approve it." },
+      { title: "One persistent action", body: "Written to Supabase, survives a refresh." },
     ],
     kicker:
       "Narrate evidence, not keystrokes: what files changed, what it inferred, what I still have to inspect myself.",
@@ -654,12 +638,12 @@ export const sections: Section[] = [
     title: "Six files to keep in the repository",
     accent: "Six files",
     cards: [
-      { label: "01", title: "PRODUCT.md", body: "What this is, who it serves, and what it deliberately does not do." },
-      { label: "02", title: "ARCHITECTURE.md", body: "The decisions and why, so the next change does not quietly undo one." },
-      { label: "03", title: "DATA_MODEL.md", body: "What is stored, and what each rule protects." },
-      { label: "04", title: "SECURITY.md", body: "Who may read and change what, and how that is enforced." },
-      { label: "05", title: "CLAUDE.md / AGENTS.md", body: "How your agent should work in this repository." },
-      { label: "06", title: ".env.example", body: "The names of every credential. Never the values." },
+      { title: "PRODUCT.md", body: "What this is, who it serves, and what it deliberately does not do." },
+      { title: "ARCHITECTURE.md", body: "The decisions and why, so the next change does not quietly undo one." },
+      { title: "DATA_MODEL.md", body: "What is stored, and what each rule protects." },
+      { title: "SECURITY.md", body: "Who may read and change what, and how that is enforced." },
+      { title: "CLAUDE.md / AGENTS.md", body: "How your agent should work in this repository." },
+      { title: ".env.example", body: "The names of every credential. Never the values." },
     ],
     kicker:
       "The subscription rents intelligence. These files capture how your organization wants that intelligence to work. A billion people have the same assistant you do. The edge is what yours is grounded in.",
@@ -743,9 +727,9 @@ export const sections: Section[] = [
     title: "Credentials belong outside the code.",
     accent: "outside the code.",
     cards: [
-      { label: "01", title: ".env.local", body: "The real values. Never leaves your machine." },
-      { label: "02", title: ".env.example", body: "The names only. Safe to commit." },
-      { label: "03", title: ".gitignore", body: "The file that keeps the first one out of GitHub." },
+      { title: ".env.local", body: "The real values. Never leaves your machine." },
+      { title: ".env.example", body: "The names only. Safe to commit." },
+      { title: ".gitignore", body: "The file that keeps the first one out of GitHub." },
     ],
     kicker:
       "The two rules: secrets never belong in GitHub or in browser code. An exposed secret is not a mistake to hide. It must be revoked and rotated.",
@@ -760,32 +744,27 @@ export const sections: Section[] = [
     accent: "Five ways",
     cards: [
       {
-        label: "01",
         title: "Manual",
         body: "Rare, ambiguous, or judgment-heavy work.",
         meta: "Stale data and human effort",
       },
       {
-        label: "02",
         title: "Computer use",
         body: "A stable interface with no usable integration.",
         meta: "Fragility and terms-of-service limits",
       },
       {
-        label: "03",
         title: "API",
         body: "The preferred runtime connection for app-to-app work.",
         meta: "Auth, rate limits, engineering overhead",
       },
       {
-        label: "04",
         title: "MCP",
         brand: "mcp",
         body: "Governed agent access to tools and context.",
         meta: "Connector quality and permissions",
       },
       {
-        label: "05",
         title: "CLI",
         brand: "github",
         body: "The agent's operating surface for GitHub, Vercel, Supabase, tests, logs.",
@@ -804,13 +783,13 @@ export const sections: Section[] = [
     title: "What a live data connection requires",
     accent: "requires",
     cards: [
-      { label: "01", title: "Authenticate" },
-      { label: "02", title: "Fetch" },
-      { label: "03", title: "Store" },
-      { label: "04", title: "Normalize" },
-      { label: "05", title: "Record status" },
-      { label: "06", title: "Expose freshness" },
-      { label: "07", title: "Retry safely" },
+      { title: "Authenticate" },
+      { title: "Fetch" },
+      { title: "Store" },
+      { title: "Normalize" },
+      { title: "Record status" },
+      { title: "Expose freshness" },
+      { title: "Retry safely" },
     ],
     strip: {
       label: "What Jordan's tool must show on screen",
@@ -911,12 +890,12 @@ export const sections: Section[] = [
     title: "Who does what in the build loop",
     accent: "build loop",
     cards: [
-      { label: "01", title: "Define the behavior", meta: "You" },
-      { label: "02", title: "Write the test", meta: "Agent" },
-      { label: "03", title: "Confirm it fails", meta: "Agent" },
-      { label: "04", title: "Implement", meta: "Agent" },
-      { label: "05", title: "Run until green", meta: "Agent" },
-      { label: "06", title: "Verify as a user", meta: "You" },
+      { title: "Define the behavior", meta: "You" },
+      { title: "Write the test", meta: "Agent" },
+      { title: "Confirm it fails", meta: "Agent" },
+      { title: "Implement", meta: "Agent" },
+      { title: "Run until green", meta: "Agent" },
+      { title: "Verify as a user", meta: "You" },
     ],
     strip: {
       label: "Minimum test pack",
@@ -941,12 +920,10 @@ export const sections: Section[] = [
     accent: "fails",
     cards: [
       {
-        label: "05",
         title: "The authorization test",
         body: "Signed in as Org A, a request for an Org B record is denied.",
       },
       {
-        label: "06",
         title: "The forced failure",
         body: "The integration is broken on purpose; the error state is visible to the user and to the operator.",
       },
@@ -963,17 +940,14 @@ export const sections: Section[] = [
     accent: "Preview",
     cards: [
       {
-        label: "01",
         title: "Local",
         body: "Where you break things. Nobody sees it. Nothing is at stake.",
       },
       {
-        label: "02",
         title: "Preview",
         body: "Where you prove it. A real URL on real infrastructure, visible to nobody but you and your reviewer.",
       },
       {
-        label: "03",
         title: "Production",
         body: "Where people depend on it. Promoted deliberately, never by accident.",
       },
@@ -1003,17 +977,14 @@ export const sections: Section[] = [
     accent: "alerts",
     cards: [
       {
-        label: "01",
         title: "Analytics",
         body: "Is it creating value? What users do, how often, and whether the workflow actually completes.",
       },
       {
-        label: "02",
         title: "Logs",
         body: "What happened in this run? The record of a specific execution, including the ones that failed.",
       },
       {
-        label: "03",
         title: "Alerts",
         body: "Who needs to intervene? A named human. A log entry is not an alert.",
       },
@@ -1037,12 +1008,12 @@ export const sections: Section[] = [
     title: "Ownership means the tool survives the person who built it",
     accent: "survives the person who built it",
     cards: [
-      { label: "01", title: "A named owner" },
-      { label: "02", title: "A backup owner" },
-      { label: "03", title: "A rollback path" },
-      { label: "04", title: "Known limitations" },
-      { label: "05", title: "A review date" },
-      { label: "06", title: "A shutdown path" },
+      { title: "A named owner" },
+      { title: "A backup owner" },
+      { title: "A rollback path" },
+      { title: "Known limitations" },
+      { title: "A review date" },
+      { title: "A shutdown path" },
     ],
     kicker:
       "Planning how a tool ends costs an afternoon. Skipping it is how a working tool becomes somebody's unpaid second job.",
@@ -1058,10 +1029,10 @@ export const sections: Section[] = [
     accent: "the loop that follows",
     lede: "Worth building? → Spec → Plan → Build → Test → Ship → Run",
     cards: [
-      { label: "01", title: "Build", body: "A narrow internal tool." },
-      { label: "02", title: "Buy", body: "When something mature already solves 80%." },
-      { label: "03", title: "Delegate", body: "The build or the productionization." },
-      { label: "04", title: "Stop", body: "When the prototype proved it is not worth operating." },
+      { title: "Build", body: "A narrow internal tool." },
+      { title: "Buy", body: "When something mature already solves 80%." },
+      { title: "Delegate", body: "The build or the productionization." },
+      { title: "Stop", body: "When the prototype proved it is not worth operating." },
     ],
     kicker:
       "The agent generates the implementation. You own the architecture, the evidence, the release decision, and the consequences.",
@@ -1075,9 +1046,9 @@ export const sections: Section[] = [
     title: "Ship one narrow internal tool. Real user, real URL.",
     accent: "Real user, real URL.",
     cards: [
-      { label: "01", title: "Your three-line specification", body: "Job, User, and a Done someone else could check." },
-      { label: "02", title: "The live link", body: "Or a recorded walkthrough of the workflow." },
-      { label: "03", title: "One known limitation", body: "The item that proves you actually verified it." },
+      { title: "Your three-line specification", body: "Job, User, and a Done someone else could check." },
+      { title: "The live link", body: "Or a recorded walkthrough of the workflow." },
+      { title: "One known limitation", body: "The item that proves you actually verified it." },
     ],
     kicker:
       "You don't cross this by becoming an engineer. You cross it by knowing which work you are not doing, and directing it.",
@@ -1115,55 +1086,46 @@ export const sections: Section[] = [
     lede: "If a tool misses one of these, it is not ready for people to depend on it. This site is scored against all nine, and every link goes to the thing itself in a public repository — including the one it does not meet.",
     cards: [
       {
-        label: "01",
         title: "Persistent data",
         body: "Postgres, with the schema in version control rather than clicked into a dashboard.",
         href: "https://github.com/skidubb/vibecoding-201/tree/main/supabase/migrations",
       },
       {
-        label: "02",
         title: "Sign-in",
         body: "Google, plus anonymous sessions so a vote never waits on an inbox.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/src/app/signin/page.tsx",
       },
       {
-        label: "03",
         title: "Enforced authorization",
         body: "Fifteen row-level policies, and the deck's own cross-tenant test run against them.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
       },
       {
-        label: "04",
         title: "Server-side secrets",
         body: "Names committed, values never. No service-role key exists anywhere in this app.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/.env.example",
       },
       {
-        label: "05",
         title: "A tested critical workflow",
         body: "Sixteen browser specs and seventeen live assertions against the real database.",
         href: "https://github.com/skidubb/vibecoding-201/tree/main/tests",
       },
       {
-        label: "06",
         title: "Visible error states",
         body: "Every failure path is a test: no backend, no clipboard, a refused vote.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/tests/upstream-failure.spec.ts",
       },
       {
-        label: "07",
         title: "Logs and analytics",
         body: "An events table the site writes to, readable without exposing who did what.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/src/lib/events.ts",
       },
       {
-        label: "08",
         title: "Preview before production",
         body: "Both gates run on every pull request, and every branch gets its own URL.",
         href: "https://github.com/skidubb/vibecoding-201/actions",
       },
       {
-        label: "09",
         title: "A named owner",
         body: "Named, with a rollback path. Backup owner, review date and shutdown path are still undecided — and say so in public rather than sitting blank.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/OWNERSHIP.md",
@@ -1182,12 +1144,13 @@ export const sections: Section[] = [
     title: "Questions.",
     accent: "Questions.",
     cards: [
-      { label: "01", title: "Should this cross?", body: "Rung, frequency, consequence, owner." },
-      { label: "02", title: "How do I specify it?", body: "Job, user, checkable Done, non-goals." },
-      { label: "03", title: "How should it connect?", body: "The proportionate data door." },
-      { label: "04", title: "How is it verified?", body: "Workflow run, failure states, review gate." },
+      { title: "Should this cross?", body: "Rung, frequency, consequence, owner." },
+      { title: "How do I specify it?", body: "Job, user, checkable Done, non-goals." },
+      { title: "How should it connect?", body: "The proportionate data door." },
+      { title: "How is it verified?", body: "Workflow run, failure states, review gate." },
     ],
-    footnote: "Scott Ewalt · Cardinal Element · scott.e.ewalt@gmail.com",
+    footnote: "Scott Ewalt · Cardinal Element · scott@cardinalelement.com",
+    footnoteHref: "mailto:scott@cardinalelement.com",
     media: { image: genS40Council, speed: -0.18 },
   },
   {
@@ -1199,6 +1162,10 @@ export const sections: Section[] = [
     accent: "Make sure it gets used.",
     lede: "Pick one workflow. Give it a job, a memory, and a way in. Ship it before the next session.",
     kicker: "Scott Ewalt · Cardinal Element",
+    links: [
+      { label: "scott@cardinalelement.com", href: "mailto:scott@cardinalelement.com" },
+      { label: "linkedin.com/in/scottewalt", href: "https://www.linkedin.com/in/scottewalt" },
+    ],
     footnote: "Take the kit: /kit",
     footnoteHref: "/kit",
     media: { image: genS37OneObject, speed: -0.12 },

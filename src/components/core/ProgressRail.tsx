@@ -93,13 +93,13 @@ export function ProgressRail() {
           className="text-[13px] font-medium tabular-nums"
           style={{ color: "var(--accent)" }}
         >
-          {String(activeIndex + 1).padStart(2, "0")}
+          {activeIndex + 1}
         </span>
         <span
           className="text-[11px] tabular-nums"
           style={{ color: "var(--text-faint)" }}
         >
-          / {String(total).padStart(2, "0")}
+          / {total}
         </span>
       </div>
     </>

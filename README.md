@@ -42,20 +42,33 @@ The two asset scripts (`gen:media`, `assets`) are documented under
   its height: every stop is somewhere the deck can actually travel to, so no
   key press is ever a no-op
 - The right-hand rail is clickable; the bottom-left readout shows position in
-  this deck (`07 / 40`) and nothing else — the source deck's numbering is
+  this deck (`7 / 40`) and nothing else — the source deck's numbering is
   deliberately not mirrored
 
-The presenter bar appears bottom-right on the two kinds of section that have
-live state, and only for an account the database answers `is_admin()` for. Its
-keys are all Shift-modified, because bare letters would collide with the deck's
-own navigation:
+**`/admin` is the presenter console, and the one URL worth remembering.**
+Signed out it routes through `/signin` and comes back; signed in as anyone but
+an admin it is indistinguishable from a URL that does not exist. It shows every
+poll with per-option live counts and open/close/reveal controls that work from
+anywhere, the shared submissions with "put it on screen", the event analytics
+and log, and the CSV exports. `/kit` and `/report` both carry a small
+Presenter link for the day the URL is forgotten.
+
+The presenter bar appears bottom-right on **every** section for an account the
+database answers `is_admin()` for — the Presenter chip is the standing proof of
+being signed in, and links to the console. The controls join it on the two
+kinds of section that have live state. Keys are all Shift-modified, because
+bare letters would collide with the deck's own navigation:
 
 - On a poll — **Shift-O** open, **Shift-C** close, **Shift-R** reveal. The
-  readout carries the tally and the number of distinct accounts behind it
+  readout carries the tally, the number of distinct accounts behind it, and
+  the per-option counts; Refresh re-reads if a websocket quietly dropped
 - On the spec exercise — **Shift-S** opens the panel of submissions the room
   has shared. Nothing an author kept private is readable from that account, so
   the panel cannot show it even by mistake. "Put it on screen" sets
   `surfaced_at`, which is what the section renders to everyone
+- An admin also sees every poll's bars before the reveal, labelled "Presenter
+  preview" — decide whether the projector should be a signed-in browser, or
+  present signed out and drive from `/admin`
 
 ## Adding a section
 
@@ -71,7 +84,7 @@ the deck, verbatim; if you find yourself writing one, stop.
   eyebrow: "The bar",
   title: "A production standard.",
   accent: "production standard.",   // rendered in magenta
-  cards: [{ label: "01", title: "Persistent data" }],
+  cards: [{ title: "Persistent data" }],
 }
 ```
 

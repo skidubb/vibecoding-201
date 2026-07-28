@@ -11,17 +11,18 @@ import { logEvent } from "@/lib/events";
  * than a second copy button — one copy affordance per block is enough, and the
  * command is short enough to read and retype.
  */
-export function LinkChips({ links }: { links: LinkRef[] }) {
+export function LinkChips({ links, className = "mt-9" }: { links: LinkRef[]; className?: string }) {
   if (!links.length) return null;
 
   return (
     <Reveal delay={0.3}>
-      <ul className="mt-9 flex flex-wrap gap-3" data-deck-keys="off">
+      <ul className={`flex flex-wrap gap-3 ${className}`} data-deck-keys="off">
         {links.map((link) => (
           <li key={link.href}>
             <a
               href={link.href}
-              target="_blank"
+              // A mail link in a new tab is a blank tab next to the mail app.
+              target={link.href.startsWith("mailto:") ? undefined : "_blank"}
               rel="noreferrer noopener"
               onClick={() => logEvent("link_clicked", undefined, { label: link.label })}
               className="neu-flat neu-edge group flex flex-col gap-1 rounded-2xl px-5 py-3 transition-transform duration-200 hover:-translate-y-0.5"

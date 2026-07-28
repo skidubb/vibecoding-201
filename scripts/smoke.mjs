@@ -163,12 +163,30 @@ await a.from("submissions").update({ shared_at: null, surfaced_at: null }).eq("e
 // are the calls an attendee could make with the publishable key in their
 // browser console: each has to come back empty, not merely be hard to find.
 console.log("\nthe export, from an attendee's session");
-for (const fn of ["admin_poll_results", "admin_submissions", "admin_kit_requests"]) {
+for (const fn of ["admin_poll_results", "admin_submissions", "admin_kit_requests", "admin_event_counts"]) {
   const { data, error } = await a.rpc(fn);
   check(!error && (data ?? []).length === 0, `${fn}() returns nothing (${error?.message ?? `${(data ?? []).length} rows`})`);
 }
 const { data: anonExport } = await anon.rpc("admin_kit_requests");
 check((anonExport ?? []).length === 0, "and nothing to a reader with no account at all");
+const { data: anonCounts } = await anon.rpc("admin_event_counts");
+check((anonCounts ?? []).length === 0, "event counts refuse a reader with no account too");
+
+// ------------------------------------------------------------------ console
+//
+// The console's own gates live in the deployed app, not the database, so they
+// are checked from outside: a signed-out visit must be routed through sign-in
+// (with a way back), and the export route must still demand a session.
+console.log("\nthe console, from outside");
+const SITE = process.env.SMOKE_SITE_URL ?? "https://crossing-the-gap-site.vercel.app";
+const door = await fetch(`${SITE}/admin`, { redirect: "manual" });
+const doorLocation = door.headers.get("location") ?? "";
+check(
+  [303, 307, 308].includes(door.status) && doorLocation.includes("/signin") && doorLocation.includes("next="),
+  `a signed-out /admin routes through sign-in and back (${door.status} → ${doorLocation || "no location"})`,
+);
+const exportDoor = await fetch(`${SITE}/admin/export`);
+check(exportDoor.status === 401, `and the export still asks for a session first (${exportDoor.status})`);
 
 console.log(failures === 0 ? "\nall good\n" : `\n${failures} failed\n`);
 process.exit(failures === 0 ? 0 : 1);

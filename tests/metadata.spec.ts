@@ -147,3 +147,13 @@ async function pngSize(request: APIRequestContext, url: string) {
   expect(body.subarray(1, 4).toString("ascii"), "not a PNG").toBe("PNG");
   return { width: body.readUInt32BE(16), height: body.readUInt32BE(20) };
 }
+
+test("the presenter console is not indexable", async ({ page }) => {
+  // /admin is gated, but a gate is not an excuse to hand the URL to a search
+  // index. The offline shell renders backend-off, so the tag is assertable
+  // here without a session.
+  await page.goto("/admin");
+  const robots = page.locator('meta[name="robots"]');
+  await expect(robots).toHaveCount(1);
+  expect(await robots.getAttribute("content")).toContain("noindex");
+});

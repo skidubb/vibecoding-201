@@ -36,7 +36,7 @@ test("the rail has one tick per section and scrolls to the one clicked", async (
   await page.locator(RAIL).nth(3).click();
   await scrollsPast(page, 0);
 
-  await expect(page.locator("div.fixed.bottom-6")).toContainText("04");
+  await expect(page.locator("div.fixed.bottom-6 span").first()).toHaveText("4");
 });
 
 test("every rail tick is on screen, so every section can be reached", async ({
@@ -104,7 +104,7 @@ test("Space activates a focused rail tick rather than advancing a stop", async (
   // Space belongs to the button: the deck lands on section 7, which is far
   // beyond the one-stop nudge that advancing would have produced.
   await scrollsPast(page, 0);
-  await expect(page.locator("div.fixed.bottom-6")).toContainText("07");
+  await expect(page.locator("div.fixed.bottom-6 span").first()).toHaveText("7");
 });
 
 test("every presenter key press moves the deck", async ({ page }) => {
@@ -280,8 +280,8 @@ test("the chrome layer mirrors the active section's theme", async ({ page }) => 
     // lock through its ease and drops a scrollTo issued inside it, so clicking
     // the next tick immediately leaves the deck on a section it passed.
     await settle(page);
-    await expect(page.locator("div.fixed.bottom-6")).toContainText(
-      String(i + 1).padStart(2, "0"),
+    await expect(page.locator("div.fixed.bottom-6 span").first()).toHaveText(
+      String(i + 1),
     );
     await expect(chrome, `section ${i} is ${expected}`).toHaveAttribute(
       "data-theme",
@@ -293,4 +293,16 @@ test("the chrome layer mirrors the active section's theme", async ({ page }) => 
   // And the deck really does alternate, so the mirror is being exercised in
   // both directions rather than sitting on one value the whole way down.
   expect([...seen].sort()).toEqual(["dark", "light"]);
+});
+
+test("the kit and the report both point a presenter at the console", async ({ page }) => {
+  // /admin is the one URL worth remembering, and these two public pages are
+  // where a presenter who forgot it will be standing.
+  for (const path of ["/kit", "/report"]) {
+    await page.goto(path);
+    await expect(page.getByRole("link", { name: "Presenter" })).toHaveAttribute(
+      "href",
+      "/admin",
+    );
+  }
 });

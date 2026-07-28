@@ -35,13 +35,7 @@ export function PipelineLayout({ section }: LayoutProps) {
             <li key={`${node.title}-${i}`}>
               <Reveal delay={0.06 + i * 0.06}>
                 <NeuPanel radius="rounded-[22px]" className="flex h-full flex-col p-5">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="font-display text-[0.95rem] font-semibold tabular-nums"
-                      style={{ color: "var(--accent)", opacity: 0.85 }}
-                    >
-                      {node.label}
-                    </span>
+                  <div className="flex min-h-[22px] items-center gap-3">
                     {/* The connector. Drawn per node rather than between them,
                         because the row wraps at two breakpoints and a line
                         spanning the gaps would hang off the end of each row. */}

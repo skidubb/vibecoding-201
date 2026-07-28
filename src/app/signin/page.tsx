@@ -7,6 +7,17 @@ import { NeuPanel, NeuButton, NeuBadge } from "@/components/neu/Neu";
 type State = "idle" | "working" | "sent" | "error";
 
 /**
+ * Where to land after the callback, read from ?next=. Handler-only — not
+ * useSearchParams(), which would demand a Suspense boundary around the page —
+ * and validated to a same-origin relative path so the round trip through the
+ * OAuth provider cannot become an open redirect.
+ */
+function nextPath(): string {
+  const raw = new URLSearchParams(window.location.search).get("next") ?? "/";
+  return raw.startsWith("/") && !raw.startsWith("//") && !raw.includes("\\") ? raw : "/";
+}
+
+/**
  * Sign-in.
  *
  * Google first, because it is one tap and the room is on laptops they are
@@ -29,7 +40,7 @@ export default function SignInPage() {
     const { error } = await client.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?kit=${wantsKit ? 1 : 0}`,
+        redirectTo: `${window.location.origin}/auth/callback?kit=${wantsKit ? 1 : 0}&next=${encodeURIComponent(nextPath())}`,
       },
     });
     if (error) {
@@ -46,7 +57,7 @@ export default function SignInPage() {
     const { error } = await client.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?kit=${wantsKit ? 1 : 0}`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?kit=${wantsKit ? 1 : 0}&next=${encodeURIComponent(nextPath())}`,
       },
     });
     if (error) {

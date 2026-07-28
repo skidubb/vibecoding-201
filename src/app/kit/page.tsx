@@ -104,13 +104,22 @@ export default function KitPage() {
           ))}
         </ul>
 
-        <a
-          href="/"
-          className="mt-12 inline-block text-[0.9rem] underline underline-offset-4"
-          style={{ color: "var(--text-faint)" }}
-        >
-          Open the full deck
-        </a>
+        <div className="mt-12 flex gap-6">
+          <a
+            href="/"
+            className="text-[0.9rem] underline underline-offset-4"
+            style={{ color: "var(--text-faint)" }}
+          >
+            Open the full deck
+          </a>
+          <a
+            href="/admin"
+            className="text-[0.9rem] underline underline-offset-4"
+            style={{ color: "var(--text-faint)" }}
+          >
+            Presenter
+          </a>
+        </div>
       </div>
     </main>
   );

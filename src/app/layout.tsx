@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Poppins, Inter } from "next/font/google";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -62,6 +63,9 @@ export default function RootLayout({
         <div id="main-content" tabIndex={-1}>
           {children}
         </div>
+        {/* Page views and visitors, in the Vercel dashboard. The beacon 404s
+            harmlessly in local production builds; the component tolerates it. */}
+        <Analytics />
       </body>
     </html>
   );

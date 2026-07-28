@@ -30,14 +30,8 @@ export function ExerciseLayout({ section }: LayoutProps) {
             {section.cards.map((card, i) => (
               <Reveal key={card.title} delay={0.08 + i * 0.07}>
                 <NeuPanel radius="rounded-[24px]" className="flex h-full flex-col p-5 md:p-6">
-                  <span
-                    className="font-display text-xl font-semibold tabular-nums"
-                    style={{ color: "var(--accent)", opacity: 0.85 }}
-                  >
-                    {card.label}
-                  </span>
                   <h3
-                    className="mt-3 font-display text-[1.02rem] font-semibold leading-snug tracking-tight"
+                    className="font-display text-[1.02rem] font-semibold leading-snug tracking-tight"
                     style={{ color: "var(--text)" }}
                   >
                     {card.title}

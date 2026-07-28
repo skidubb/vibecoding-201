@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Poll, PollOption } from "@/content/sections";
 import { backendConfigured, supabase } from "@/lib/supabase/client";
 import { logEvent } from "@/lib/events";
+import { useIsAdmin } from "@/lib/use-is-admin";
 import { NeuPanel } from "@/components/neu/Neu";
 import { ScreenMock } from "@/components/interactive/ScreenMock";
 
@@ -38,6 +39,7 @@ export function PollWidget({
   sectionId: string;
   variant?: NonNullable<Poll["variant"]>;
 }) {
+  const isAdmin = useIsAdmin();
   const [status, setStatus] = useState<Status>(
     backendConfigured ? "loading" : "offline",
   );
@@ -180,8 +182,12 @@ export function PollWidget({
   }
 
   const total = Object.values(tally).reduce((a, b) => a + b, 0);
-  const showResults = chosen !== null || pollState === "revealed";
+  // The bars stay hidden until you have voted, so early numbers cannot herd
+  // the room — except for the presenter, whose job is to watch them move.
+  // poll_tallies is already public; this only changes what gets drawn.
+  const showResults = chosen !== null || pollState === "revealed" || isAdmin;
   const locked = status === "voting" || chosen !== null || pollState !== "open";
+  const presenterPreview = isAdmin && chosen === null && pollState !== "revealed";
 
   const twoUp = variant === "two-up";
 
@@ -298,11 +304,13 @@ export function PollWidget({
           : (message ??
             (pollState === "revealed"
               ? "Revealed."
-              : showResults
-                ? `${total} ${total === 1 ? "vote" : "votes"} so far. One vote per signed-in account, enforced by a primary key in Postgres.`
-                : pollState === "open"
-                  ? "Pick one."
-                  : "This poll opens during the session."))}
+              : presenterPreview
+                ? `Presenter preview — ${total} ${total === 1 ? "vote" : "votes"} so far. The room sees these bars only after the reveal.`
+                : showResults
+                  ? `${total} ${total === 1 ? "vote" : "votes"} so far. One vote per signed-in account, enforced by a primary key in Postgres.`
+                  : pollState === "open"
+                    ? "Pick one."
+                    : "This poll opens during the session."))}
       </p>
     </div>
   );

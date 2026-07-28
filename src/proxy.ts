@@ -16,6 +16,11 @@ import { NextResponse, type NextRequest } from "next/server";
  * cached. Two hundred people opening the link at once should cost one cached
  * document. The browser client refreshes its own session on the deck, which is
  * all a single-page document needs.
+ *
+ * `/admin` is here because the console's server component reads the session
+ * but cannot write refreshed cookies — a server component renders after
+ * headers are gone. This pass is what keeps an expired-but-refreshable
+ * presenter session signed in at the console door.
  */
 export async function proxy(request: NextRequest) {
   if (
@@ -59,5 +64,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/signin", "/vote", "/presenter/:path*", "/auth/:path*"],
+  matcher: ["/signin", "/vote", "/admin/:path*", "/auth/:path*"],
 };

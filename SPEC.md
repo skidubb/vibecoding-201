@@ -35,16 +35,23 @@ same checklist in executable form.
 
 ## Source data
 
-None. Every word, number, and image on the page is a literal in `src/content/sections.ts`
-or a file in `src/assets/` and `public/media/`. The page makes no network request at run
-time and reads no database. Content changes ship as a commit and a deploy.
+Deck copy is literal: every word and image on the page is a literal in
+`src/content/sections.ts` or a file in `src/assets/` and `public/media/`, and content
+changes ship as a commit and a deploy. Live state is not: polls, tallies, spec submissions
+and the event log read and write a Supabase Postgres project at run time
+(`supabase/migrations/` is the schema), degrading to explicit offline messages when the
+backend is absent.
 
 ## Access rules
 
-Public and unauthenticated. Anyone with the URL sees all of it, there is nothing to sign
-into, and the server keeps no per-viewer state. Production sets no cookies. Nothing on the
-page is confidential, so this is the intended setting rather than a control that has not
-been built yet. Speaker notes are deliberately absent; they live in the PPTX.
+The deck, `/vote`, `/report` and `/kit` are public. Voting signs a participant in
+anonymously on first tap; `/signin` (Google or emailed link) exists for saving a spec,
+requesting the kit, and presenting — auth cookies are set only for those who use it. What a
+viewer can read is decided in Postgres: row-level security and column grants keep another
+person's vote, an unshared spec, and an unrevealed answer unreadable regardless of what a
+client asks for. `/admin` (the presenter console) and `/admin/export` answer only to an
+account `is_admin()` recognises, and 404 for everyone else. Speaker notes are deliberately
+absent; they live in the PPTX.
 
 ## Failure behavior
 

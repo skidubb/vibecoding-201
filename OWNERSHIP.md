@@ -6,7 +6,7 @@ ones still undecided say so instead of sitting blank.
 
 ## Named owner
 
-**Scott Ewalt, Cardinal Element. scott.e.ewalt@gmail.com**
+**Scott Ewalt, Cardinal Element. scott@cardinalelement.com**
 
 Owns the content, the deploy, and the decision to keep or retire the site.
 
@@ -73,21 +73,17 @@ deployment. -->
 
 Verified against the repository as it stands, not inferred from the plan.
 
-- **The content is the superseded deck.** All twelve sections come from *Crossing the Gap*,
-  which `Vibecoding-201-Production-GTM-Tools-v6.pptx` has replaced. The rail's slide numbers
-  point at a 44-slide deck that no longer exists, and terms on the page (the Gap, the three
-  killers, the five archetypes) appear nowhere in v6.
-- **Production is behind `main`.** The deployed page still titles itself "Vibecoding 201 ·
-  Crossing the Gap" while `src/app/layout.tsx` at HEAD says "Building Production GTM Tools".
-  The rename was committed and never deployed.
-- **Twelve sections out of forty-odd.** Built as a representative sample that establishes the
-  design system, and it has not grown since.
-- **No backend of any kind.** No database, no auth, no API routes, no server state. `src/app`
-  holds one page.
+- **The backend is real and load-bearing.** Supabase Postgres (eight migrations), Google +
+  anonymous auth, live polls, the spec exercise, an events log, the `/admin` presenter
+  console, and the `/admin/export` CSV route. All forty sections of
+  `Vibecoding-201-Production-GTM-Tools-v6.pptx` are on the page, titles verbatim, and
+  production deploys from `main` via Git. Shutting the site down now also means deciding
+  what happens to the Supabase project and the data in it — see the shutdown DECIDE block.
 - **The progress rail disappears below the `md` breakpoint** (`ProgressRail.tsx:39`). On a
   phone there is no position readout and no chapter navigation.
 - **Two of slide 18's six harness files are absent:** `DATA_MODEL.md` and `SECURITY.md`.
-  Both are deliberately deferred until there is a schema for them to describe truthfully;
+  The schema they would describe now exists in `supabase/migrations/`, so this is a real
+  gap rather than a deferral;
   see the closing section of `ARCHITECTURE.md`. An attendee counting files will still come
   up two short, so the reason is written down rather than left to inference.
 - **`CLAUDE.md` still says "There is no test or lint script."** There is a test script,

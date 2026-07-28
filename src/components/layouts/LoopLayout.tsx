@@ -36,15 +36,9 @@ export function LoopLayout({ section }: LayoutProps) {
                 transition={{ type: "spring", stiffness: 320, damping: 24 }}
               >
                 <NeuPanel
-                  className="flex min-w-[130px] flex-col items-center gap-1.5 px-7 py-6"
+                  className="flex min-w-[130px] flex-col items-center px-7 py-6"
                   radius="rounded-[20px]"
                 >
-                  <span
-                    className="font-sans text-[10px] font-medium tabular-nums tracking-[0.2em]"
-                    style={{ color: "var(--accent)" }}
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
                   <span
                     className="font-display text-lg font-semibold tracking-tight"
                     style={{ color: "var(--text)" }}

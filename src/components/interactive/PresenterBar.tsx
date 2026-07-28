@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { sections } from "@/content/sections";
 import { useDeck } from "@/lib/deck-context";
 import { supabase } from "@/lib/supabase/client";
+import { useIsAdmin } from "@/lib/use-is-admin";
 
 type PollState = "closed" | "open" | "revealed";
 
@@ -32,9 +33,10 @@ const REFRESH_MS = 4000;
  */
 export function PresenterBar() {
   const { activeIndex } = useDeck();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const isAdmin = useIsAdmin();
   const [state, setState] = useState<PollState | null>(null);
   const [counts, setCounts] = useState<Integrity | null>(null);
+  const [tally, setTally] = useState<Record<string, number>>({});
   const [busy, setBusy] = useState(false);
 
   const [shared, setShared] = useState<Shared[]>([]);
@@ -43,18 +45,6 @@ export function PresenterBar() {
   const section = sections[activeIndex];
   const slug = section?.poll?.slug ?? null;
   const exerciseId = section?.exercise?.id ?? null;
-
-  useEffect(() => {
-    const client = supabase();
-    if (!client) return;
-    let cancelled = false;
-    void client.rpc("is_admin").then((result: { data: unknown }) => {
-      if (!cancelled) setIsAdmin(result.data === true);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   // ------------------------------------------------------------------ polls
   const read = useCallback(async () => {
@@ -76,6 +66,21 @@ export function PresenterBar() {
       p_poll_slug: slug,
     });
     setCounts((integrity as Integrity[] | null)?.[0] ?? null);
+
+    // Per-option counts. poll_tallies is the same public aggregate every
+    // voter's bars are drawn from — the presenter just gets it as numbers.
+    const { data: tallies } = await client
+      .from("poll_tallies")
+      .select("option_id, votes")
+      .eq("poll_slug", slug);
+    setTally(
+      Object.fromEntries(
+        ((tallies as { option_id: string; votes: number }[] | null) ?? []).map((t) => [
+          t.option_id,
+          t.votes,
+        ]),
+      ),
+    );
   }, [slug]);
 
   useEffect(() => {
@@ -168,7 +173,10 @@ export function PresenterBar() {
     return () => window.removeEventListener("keydown", onKey);
   }, [isAdmin, slug, exerciseId, set]);
 
-  if (!isAdmin || (!slug && !exerciseId)) return null;
+  // The bar renders for an admin on every section — the chip is the standing
+  // proof of being signed in, and the door to the console. Controls still
+  // appear only where there is live state to control.
+  if (!isAdmin) return null;
 
   const Btn = ({ label, to }: { label: string; to: PollState }) => (
     <button
@@ -229,20 +237,37 @@ export function PresenterBar() {
       )}
 
       <div className="neu-raised neu-edge flex items-center gap-1 rounded-full px-3 py-2">
-        <span
-          className="px-2 font-sans text-[11px] uppercase tracking-[0.16em]"
-          style={{ color: "var(--text-faint)" }}
+        <a
+          href="/admin"
+          data-presenter-chip
+          data-deck-keys="off"
+          className="rounded-full px-2 font-sans text-[11px] font-medium uppercase tracking-[0.16em]"
+          style={{ color: "var(--accent)" }}
         >
-          {slug ?? exerciseId} · {slug ? (state ?? "…") : "exercise"}
-          {slug && counts
-            ? ` · ${counts.total_votes} from ${counts.distinct_accounts}${
-                counts.new_accounts_60s > counts.distinct_accounts / 2 &&
-                counts.distinct_accounts > 4
-                  ? " ⚠"
-                  : ""
-              }`
-            : ""}
-        </span>
+          Presenter
+        </a>
+
+        {(slug || exerciseId) && (
+          <span
+            className="px-2 font-sans text-[11px] uppercase tracking-[0.16em]"
+            style={{ color: "var(--text-faint)" }}
+          >
+            {slug ?? exerciseId} · {slug ? (state ?? "…") : "exercise"}
+            {slug && counts
+              ? ` · ${counts.total_votes} from ${counts.distinct_accounts}${
+                  counts.new_accounts_60s > counts.distinct_accounts / 2 &&
+                  counts.distinct_accounts > 4
+                    ? " ⚠"
+                    : ""
+                }`
+              : ""}
+            {slug && section?.poll
+              ? ` · ${section.poll.options
+                  .map((o) => `${o.label} ${tally[o.id] ?? 0}`)
+                  .join(" · ")}`
+              : ""}
+          </span>
+        )}
 
         {slug && (
           <>
@@ -250,6 +275,22 @@ export function PresenterBar() {
             <Btn label="Close" to="closed" />
             <Btn label="Reveal" to="revealed" />
           </>
+        )}
+
+        {(slug || exerciseId) && (
+          <button
+            type="button"
+            data-refresh
+            disabled={busy}
+            onClick={() => {
+              void read();
+              void readShared();
+            }}
+            className="rounded-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] disabled:opacity-40"
+            style={{ color: "var(--text-dim)" }}
+          >
+            Refresh
+          </button>
         )}
 
         {exerciseId && (

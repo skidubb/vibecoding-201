@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Glow, ImageBackdrop } from "@/components/core/ParallaxLayer";
 import { NeuBadge, NeuButton } from "@/components/neu/Neu";
 import { useDeck } from "@/lib/deck-context";
+import { LinkChips } from "./LinkChips";
 import { CONTAINER, type LayoutProps } from "./shared";
 
 /** The three-line close, delivered one line at a time. */
@@ -86,6 +87,10 @@ export function CtaLayout({ section }: LayoutProps) {
           >
             {section.kicker}
           </span>
+
+          {/* Contact, under the name it belongs to. Centred like the rest of
+              the slide, and mt-0 because the parent column already spaces. */}
+          {section.links && <LinkChips links={section.links} className="mt-0 justify-center" />}
 
           {/* The last slide is where the room is told where to take the kit
               from, so this layout can no longer be the one that ignores a

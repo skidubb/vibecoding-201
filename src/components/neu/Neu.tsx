@@ -22,7 +22,11 @@ export function NeuPanel({
   );
 }
 
-/** Small carved chip used for section numbers, eyebrows and step labels. */
+/**
+ * Uppercase micro-label for eyebrows and step labels. Plain text on the
+ * surface — the carved chip it used to be read as interface chrome on lines
+ * that are just copy.
+ */
 export function NeuBadge({
   children,
   className = "",
@@ -34,7 +38,7 @@ export function NeuBadge({
 }) {
   return (
     <span
-      className={`neu-inset neu-edge inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-sans text-[11px] font-medium uppercase tracking-[0.18em] ${className}`}
+      className={`inline-flex items-center gap-2 font-sans text-[11px] font-medium uppercase tracking-[0.18em] ${className}`}
       style={{ color: accent ? "var(--accent)" : "var(--text-dim)" }}
     >
       {children}
