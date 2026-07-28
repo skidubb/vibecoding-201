@@ -358,7 +358,7 @@ export const sections: Section[] = [
     title: "Most prototypes should die at the gate.",
     accent: "die at the gate.",
     kicker:
-      "A prototype that proves an idea is not worth operating saves you every hour you would have spent maintaining it. I have never seen anyone celebrate that.",
+      "Prototypes have clear value, keep building them. But, not every prototype needs to be a hardened system. Pressure test ideas to ensure they have value at scale.",
     media: { image: genS08LightsOut, speed: -0.18 },
   },
   {
