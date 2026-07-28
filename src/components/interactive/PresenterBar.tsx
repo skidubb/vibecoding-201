@@ -3,8 +3,21 @@
 import { useCallback, useEffect, useState } from "react";
 import { sections } from "@/content/sections";
 import { useDeck } from "@/lib/deck-context";
-import { supabase } from "@/lib/supabase/client";
+import { backendConfigured, supabase } from "@/lib/supabase/client";
 import { useIsAdmin } from "@/lib/use-is-admin";
+
+/**
+ * The chrome floats over full-bleed photography on both themes, so it cannot
+ * borrow the section's neumorphic palette: dark-on-dark made the first version
+ * of this bar literally invisible in a 1080p screenshot. Fixed brand colors,
+ * not theme vars — a control the presenter has to find mid-class does not get
+ * to be subtle.
+ */
+const CHROME_BG = "rgba(10, 12, 24, 0.92)";
+const CHROME_EDGE = "1px solid rgba(223, 40, 91, 0.7)";
+const CHROME_TEXT = "rgba(234, 236, 248, 0.92)";
+const CHROME_TEXT_DIM = "rgba(234, 236, 248, 0.58)";
+const CHROME_ACCENT = "#FF5C8A";
 
 type PollState = "closed" | "open" | "revealed";
 
@@ -173,18 +186,36 @@ export function PresenterBar() {
     return () => window.removeEventListener("keydown", onKey);
   }, [isAdmin, slug, exerciseId, set]);
 
-  // The bar renders for an admin on every section — the chip is the standing
+  // Signed out (or signed in without the role), the same corner carries the
+  // way in. A deck whose only login is a URL you have to know is a deck whose
+  // owner cannot find the login — this link is the answer to "where is the
+  // sign-in", permanently. It goes to /signin, not /admin, so a curious
+  // attendee lands on the page that already explains they do not need it.
+  if (!isAdmin) {
+    if (!backendConfigured) return null; // kill-switch deck carries no doors
+    return (
+      <a
+        href="/signin"
+        data-signin-door
+        data-deck-keys="off"
+        className="fixed bottom-6 right-6 z-50 rounded-full px-5 py-2.5 font-sans text-[12px] font-semibold uppercase tracking-[0.16em]"
+        style={{ background: CHROME_BG, border: CHROME_EDGE, color: CHROME_ACCENT }}
+      >
+        Sign in
+      </a>
+    );
+  }
+  // For an admin the bar renders on every section — the chip is the standing
   // proof of being signed in, and the door to the console. Controls still
   // appear only where there is live state to control.
-  if (!isAdmin) return null;
 
   const Btn = ({ label, to }: { label: string; to: PollState }) => (
     <button
       type="button"
       disabled={busy || state === to}
       onClick={() => void set(to)}
-      className="rounded-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] disabled:opacity-40"
-      style={{ color: state === to ? "var(--accent)" : "var(--text-dim)" }}
+      className="rounded-full px-3 py-1.5 text-[12px] font-medium uppercase tracking-[0.14em] disabled:opacity-40"
+      style={{ color: state === to ? CHROME_ACCENT : CHROME_TEXT_DIM }}
     >
       {label}
     </button>
@@ -236,21 +267,24 @@ export function PresenterBar() {
         </div>
       )}
 
-      <div className="neu-raised neu-edge flex items-center gap-1 rounded-full px-3 py-2">
+      <div
+        className="flex items-center gap-1 rounded-full px-3 py-2"
+        style={{ background: CHROME_BG, border: CHROME_EDGE }}
+      >
         <a
           href="/admin"
           data-presenter-chip
           data-deck-keys="off"
-          className="rounded-full px-2 font-sans text-[11px] font-medium uppercase tracking-[0.16em]"
-          style={{ color: "var(--accent)" }}
+          className="rounded-full px-2 font-sans text-[12px] font-semibold uppercase tracking-[0.16em]"
+          style={{ color: CHROME_ACCENT }}
         >
           Presenter
         </a>
 
         {(slug || exerciseId) && (
           <span
-            className="px-2 font-sans text-[11px] uppercase tracking-[0.16em]"
-            style={{ color: "var(--text-faint)" }}
+            className="px-2 font-sans text-[12px] uppercase tracking-[0.16em]"
+            style={{ color: CHROME_TEXT }}
           >
             {slug ?? exerciseId} · {slug ? (state ?? "…") : "exercise"}
             {slug && counts
@@ -286,8 +320,8 @@ export function PresenterBar() {
               void read();
               void readShared();
             }}
-            className="rounded-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] disabled:opacity-40"
-            style={{ color: "var(--text-dim)" }}
+            className="rounded-full px-3 py-1.5 text-[12px] font-medium uppercase tracking-[0.14em] disabled:opacity-40"
+            style={{ color: CHROME_TEXT_DIM }}
           >
             Refresh
           </button>
@@ -298,8 +332,8 @@ export function PresenterBar() {
             type="button"
             data-submissions
             onClick={() => setOpen((o) => !o)}
-            className="rounded-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em]"
-            style={{ color: open ? "var(--accent)" : "var(--text-dim)" }}
+            className="rounded-full px-3 py-1.5 text-[12px] font-medium uppercase tracking-[0.14em]"
+            style={{ color: open ? CHROME_ACCENT : CHROME_TEXT_DIM }}
           >
             Shared {shared.length}
           </button>

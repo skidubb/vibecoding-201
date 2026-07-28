@@ -121,13 +121,22 @@ export default function VotePage() {
           </>
         )}
 
-        <a
-          href="/"
-          className="mt-10 inline-block text-[0.9rem] underline underline-offset-4"
-          style={{ color: "var(--text-faint)" }}
-        >
-          Open the full deck
-        </a>
+        <div className="mt-10 flex gap-6">
+          <a
+            href="/"
+            className="text-[0.9rem] underline underline-offset-4"
+            style={{ color: "var(--text-faint)" }}
+          >
+            Open the full deck
+          </a>
+          <a
+            href="/signin"
+            className="text-[0.9rem] underline underline-offset-4"
+            style={{ color: "var(--text-faint)" }}
+          >
+            Sign in
+          </a>
+        </div>
       </div>
     </main>
   );

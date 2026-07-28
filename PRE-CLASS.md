@@ -36,8 +36,8 @@ to `exercise_id = 'smoke'`, neither of which the deck renders.
 - [ ] **Every class poll is `closed` and its tally is zero.** `npm run smoke`
       asserts the first half. For the second:
       `select poll_slug, sum(votes) from poll_tallies group by 1;`
-- [ ] **Presenter role confirmed.** Open **`/admin`** — it routes through
-      sign-in and back. The console rendering at all *is* the admin check: for
+- [ ] **Presenter role confirmed.** Click the **Sign in** pill bottom-right on
+      the deck (or open **`/admin`**, which routes through sign-in and back). The console rendering at all *is* the admin check: for
       anyone else the URL 404s. Either Google account works
       (scott.e.ewalt@gmail.com and scott@cardinalelement.com are both in
       `admin_emails`); any other account gets nothing. Then open the deck and

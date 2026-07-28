@@ -45,7 +45,12 @@ The two asset scripts (`gen:media`, `assets`) are documented under
   this deck (`7 / 40`) and nothing else — the source deck's numbering is
   deliberately not mirrored
 
-**`/admin` is the presenter console, and the one URL worth remembering.**
+**The login is on the deck itself**: signed out, a **Sign in** pill sits fixed
+bottom-right on every section (backend on) and leads through `/signin` — no
+URL to remember. Signed in as an admin, that same corner becomes the presenter
+bar.
+
+**`/admin` is the presenter console.**
 Signed out it routes through `/signin` and comes back; signed in as anyone but
 an admin it is indistinguishable from a URL that does not exist. It shows every
 poll with per-option live counts and open/close/reveal controls that work from

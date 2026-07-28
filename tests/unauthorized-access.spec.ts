@@ -98,4 +98,7 @@ test("no presenter chrome ships to the room", async ({ page }) => {
 
   await expect(page.locator("[data-presenter-chip]")).toHaveCount(0);
   await expect(page.locator("[data-refresh]")).toHaveCount(0);
+  // Backend off there is no account system, so even the sign-in door stays
+  // off the page rather than leading to a form that cannot work.
+  await expect(page.locator("[data-signin-door]")).toHaveCount(0);
 });
