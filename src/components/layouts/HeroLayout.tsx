@@ -24,7 +24,12 @@ export function HeroLayout({ section }: LayoutProps) {
         <ImageBackdrop
           src={section.media.image}
           speed={section.media.speed}
-          opacity={0.5}
+          // 0.34, not 0.5. The tuning here was set for `threshold`, whose
+          // subject sat clear of the type; the doorway render puts a frame and
+          // a hand directly behind the headline and at half opacity the two
+          // compete. The scrim protects the left column, the opacity settles
+          // what the scrim does not reach.
+          opacity={0.34}
           focal="72% 35%"
           sideScrim="left"
           preload

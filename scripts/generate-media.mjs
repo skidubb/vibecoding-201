@@ -180,6 +180,36 @@ const only = (() => {
   const i = args.indexOf("--only");
   return i === -1 ? null : new Set((args[i + 1] ?? "").split(",").filter(Boolean));
 })();
+/**
+ * How many stills to have in flight at once.
+ *
+ * The loop was strictly sequential, which at ~3 minutes a render made a
+ * 49-scene manifest a two-hour wait for work the gateway is happy to do
+ * concurrently. Stills only: video is minutes per clip and metered against a
+ * balance, so clips stay one at a time where a rate-limit rejection costs one
+ * retry rather than six.
+ *
+ * Failures are already per-asset and non-fatal, so a pool changes throughput
+ * and nothing about error handling.
+ */
+const concurrency = (() => {
+  const i = args.indexOf("--concurrency");
+  const n = i === -1 ? 5 : Number(args[i + 1]);
+  return Number.isFinite(n) && n >= 1 ? Math.min(Math.floor(n), 12) : 5;
+})();
+
+/** Runs `task` over `items`, `limit` at a time, preserving nothing but order of start. */
+async function pool(items, limit, task) {
+  let next = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) {
+      const i = next++;
+      await task(items[i]);
+    }
+  });
+  await Promise.all(workers);
+}
+
 // Neither --images nor --videos means both.
 const wantImages = has("--images") || !has("--videos");
 const wantVideos = has("--videos") || !has("--images");
@@ -257,8 +287,10 @@ async function emit(name, kind, produce) {
 
 if (wantImages) {
   const batch = IMAGES.filter(selected);
-  if (batch.length) console.log(`\nimages · ${IMAGE_MODEL}`);
-  for (const entry of batch) {
+  if (batch.length) {
+    console.log(`\nimages · ${IMAGE_MODEL} · ${concurrency} at a time`);
+  }
+  await pool(batch, concurrency, async (entry) => {
     await emit(entry.name, "image", async () => {
       const model = entry.model ?? IMAGE_MODEL;
       let bytes, mediaType;
@@ -303,7 +335,7 @@ if (wantImages) {
       }
       return { bytes, ext: mediaType?.split("/")[1] ?? "png", note };
     });
-  }
+  });
 }
 
 if (wantVideos) {

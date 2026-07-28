@@ -10,6 +10,45 @@ import agentA from "@/assets/agent-a.webp";
 import agentB from "@/assets/agent-b.webp";
 import failureB from "@/assets/failure-b.webp";
 
+import genS01Doorway from "@/assets/generated/s01-doorway.webp";
+import genS02bTwoDoors from "@/assets/generated/s02b-two-doors.webp";
+import genS03UnderTheDesk from "@/assets/generated/s03-under-the-desk.webp";
+import genS04Monday from "@/assets/generated/s04-monday.webp";
+import genS05SixNotes from "@/assets/generated/s05-six-notes.webp";
+import genS07Turnstile from "@/assets/generated/s07-turnstile.webp";
+import genS08LightsOut from "@/assets/generated/s08-lights-out.webp";
+import genS10PagePassed from "@/assets/generated/s10-page-passed.webp";
+import genS11TwoSheets from "@/assets/generated/s11-two-sheets.webp";
+import genS12Timer from "@/assets/generated/s12-timer.webp";
+import genS13HoveringPen from "@/assets/generated/s13-hovering-pen.webp";
+import genS14TheQuestion from "@/assets/generated/s14-the-question.webp";
+import genS15Relay from "@/assets/generated/s15-relay.webp";
+import genS16ThreeDrawers from "@/assets/generated/s16-three-drawers.webp";
+import genS17OverShoulder from "@/assets/generated/s17-over-shoulder.webp";
+import genS18SixBinders from "@/assets/generated/s18-six-binders.webp";
+import genS19HandsUp from "@/assets/generated/s19-hands-up.webp";
+import genS20Badge from "@/assets/generated/s20-badge.webp";
+import genS21WrongSide from "@/assets/generated/s21-wrong-side.webp";
+import genS22SealedEnvelope from "@/assets/generated/s22-sealed-envelope.webp";
+import genS23FiveEntrances from "@/assets/generated/s23-five-entrances.webp";
+import genS24StatusBoard from "@/assets/generated/s24-status-board.webp";
+import genS25TwoParcels from "@/assets/generated/s25-two-parcels.webp";
+import genS26LedgerAndNote from "@/assets/generated/s26-ledger-and-note.webp";
+import genS27HandsUp2 from "@/assets/generated/s27-hands-up-2.webp";
+import genS28GreenLights from "@/assets/generated/s28-green-lights.webp";
+import genS29RelayHands from "@/assets/generated/s29-relay-hands.webp";
+import genS30Unplugging from "@/assets/generated/s30-unplugging.webp";
+import genS31ThreeDoors from "@/assets/generated/s31-three-doors.webp";
+import genS32ManyPhones from "@/assets/generated/s32-many-phones.webp";
+import genS33WallDisplay from "@/assets/generated/s33-wall-display.webp";
+import genS34Nameplate from "@/assets/generated/s34-nameplate.webp";
+import genS35RingWithGate from "@/assets/generated/s35-ring-with-gate.webp";
+import genS36ThreeLines from "@/assets/generated/s36-three-lines.webp";
+import genS37OneObject from "@/assets/generated/s37-one-object.webp";
+import genS38AboutToSend from "@/assets/generated/s38-about-to-send.webp";
+import genS39NineItems from "@/assets/generated/s39-nine-items.webp";
+import genS40Council from "@/assets/generated/s40-council.webp";
+
 export type LayoutKind =
   | "hero"
   | "split"
@@ -178,7 +217,7 @@ export const sections: Section[] = [
     lede: "Taking one GTM prototype from a chat window to a tool your team depends on.",
     kicker: "Scott Ewalt · Founder, Cardinal Element",
     footnote: "Pavilion AI in GTM School · 90 minutes: 60 content, 30 Q&A",
-    media: { image: threshold, speed: -0.18 },
+    media: { image: genS01Doorway, speed: -0.18 },
   },
   {
     id: "cold-open",
@@ -206,6 +245,7 @@ export const sections: Section[] = [
         },
       ],
     },
+    media: { image: genS02bTwoDoors, speed: -0.12 },
   },
   {
     id: "governing-claim",
@@ -216,6 +256,7 @@ export const sections: Section[] = [
       "AI made the visible part of software cheap. The remaining value and risk sit in the invisible system underneath it.",
     accent: "invisible system underneath it.",
     kicker: "Code is no longer the primary bottleneck. Judgment is.",
+    media: { image: genS03UnderTheDesk, speed: -0.15 },
   },
   {
     id: "jordan",
@@ -258,6 +299,7 @@ export const sections: Section[] = [
         tone: "bad",
       },
     ],
+    media: { image: genS04Monday, speed: -0.18 },
   },
   {
     id: "six-defects",
@@ -275,6 +317,7 @@ export const sections: Section[] = [
       { label: "06", title: "Only Jordan knows how it works", meta: "Run · ownership" },
     ],
     kicker: "The last three fail silently. That is what makes them expensive.",
+    media: { image: genS05SixNotes, speed: -0.12 },
   },
   {
     id: "ladder",
@@ -306,7 +349,7 @@ export const sections: Section[] = [
     ],
     kicker:
       "Most prototypes should die here. That is the system working, not a waste.",
-    media: { image: opsRoomB, speed: -0.1 },
+    media: { image: genS07Turnstile, speed: -0.15 },
   },
   {
     id: "should-die",
@@ -317,6 +360,7 @@ export const sections: Section[] = [
     accent: "die at the gate.",
     kicker:
       "A prototype that proves an idea is not worth operating saves you every hour you would have spent maintaining it. I have never seen anyone celebrate that.",
+    media: { image: genS08LightsOut, speed: -0.18 },
   },
   {
     id: "the-loop",
@@ -363,6 +407,7 @@ export const sections: Section[] = [
       "Four constraints go underneath, not in the mnemonic: source data, access rules, failure behavior, non-goals.",
     footnote:
       "This is the premise of GitHub Spec Kit (106K+ stars, 200+ contributors): each phase produces an artifact that feeds the next, instead of ad-hoc prompts.",
+    media: { image: genS10PagePassed, speed: -0.12 },
   },
   {
     id: "spec-testable",
@@ -387,6 +432,7 @@ export const sections: Section[] = [
     ],
     kicker:
       "If you cannot write the steps, you do not yet know what you are asking for.",
+    media: { image: genS11TwoSheets, speed: -0.15 },
   },
   {
     id: "spec-exercise",
@@ -420,6 +466,7 @@ export const sections: Section[] = [
     ],
     kicker:
       "Then add one access rule, one failure state, one non-goal. Put it in the chat. I will read two aloud and tighten them live.",
+    media: { image: genS12Timer, speed: -0.18 },
   },
   {
     id: "director-mode",
@@ -462,6 +509,7 @@ export const sections: Section[] = [
     ],
     kicker:
       "Director Mode moves expertise from typing syntax to defining, testing, and judging the work.",
+    media: { image: genS13HoveringPen, speed: -0.12 },
   },
   {
     id: "plan-questions",
@@ -478,6 +526,7 @@ export const sections: Section[] = [
       { label: "05", title: "What is deliberately excluded?" },
     ],
     kicker: "Approve or revise. Then let it implement one bounded capability.",
+    media: { image: genS14TheQuestion, speed: -0.15 },
   },
   {
     id: "build-stack",
@@ -539,6 +588,7 @@ export const sections: Section[] = [
       ],
     },
     kicker: "You direct. The agent handles the syntax.",
+    media: { image: genS15Relay, speed: -0.18 },
   },
   {
     id: "layer-jobs",
@@ -577,6 +627,7 @@ export const sections: Section[] = [
           "GitHub is the layer most GTM leaders have never touched. This prompt means you never have to — the agent drives it, and you review the diff.",
       },
     ],
+    media: { image: genS16ThreeDrawers, speed: -0.12 },
   },
   {
     id: "demo-inspect",
@@ -593,6 +644,7 @@ export const sections: Section[] = [
     ],
     kicker:
       "Narrate evidence, not keystrokes: what files changed, what it inferred, what I still have to inspect myself.",
+    media: { image: genS17OverShoulder, speed: -0.15 },
   },
   {
     id: "harness",
@@ -612,6 +664,7 @@ export const sections: Section[] = [
     kicker:
       "The subscription rents intelligence. These files capture how your organization wants that intelligence to work. A billion people have the same assistant you do. The edge is what yours is grounded in.",
     footnote: "This repository carries all six. Open it and count.",
+    media: { image: genS18SixBinders, speed: -0.18 },
   },
   {
     id: "poll-debugging",
@@ -634,6 +687,7 @@ export const sections: Section[] = [
         { id: "debugging:d", label: "D", body: "Read every line of code" },
       ],
     },
+    media: { image: genS19HandsUp, speed: -0.12 },
   },
   {
     id: "authorization",
@@ -665,6 +719,7 @@ export const sections: Section[] = [
       ],
     },
     kicker: "Hiding records in the interface is not security.",
+    media: { image: genS20Badge, speed: -0.15 },
   },
   {
     id: "breach-test",
@@ -678,6 +733,7 @@ export const sections: Section[] = [
     footnote: "This site runs that exact test against its own database — authorization.sql, in public",
     footnoteHref:
       "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
+    media: { image: genS21WrongSide, speed: -0.18 },
   },
   {
     id: "secrets",
@@ -693,6 +749,7 @@ export const sections: Section[] = [
     ],
     kicker:
       "The two rules: secrets never belong in GitHub or in browser code. An exposed secret is not a mistake to hide. It must be revoked and rotated.",
+    media: { image: genS22SealedEnvelope, speed: -0.12 },
   },
   {
     id: "data-doors",
@@ -737,6 +794,7 @@ export const sections: Section[] = [
     ],
     kicker:
       "Choose on frequency · consequence · volume · expected lifetime · stability · retry safety",
+    media: { image: genS23FiveEntrances, speed: -0.15 },
   },
   {
     id: "live-data",
@@ -767,6 +825,7 @@ export const sections: Section[] = [
       ],
     },
     kicker: "This is what makes “failed refreshes look successful” impossible.",
+    media: { image: genS24StatusBoard, speed: -0.18 },
   },
   {
     id: "idempotency",
@@ -777,6 +836,7 @@ export const sections: Section[] = [
     accent: "anything automated.",
     kicker: "What happens if this runs twice?",
     lede: "Imports, webhooks, CRM writes, and scheduled jobs repeat. The system should update an existing record, never create a duplicate. The duplicate stays invisible until a customer finds it.",
+    media: { image: genS25TwoParcels, speed: -0.12 },
   },
   {
     id: "insight-rule",
@@ -801,6 +861,7 @@ export const sections: Section[] = [
     ],
     kicker: "The model does not invent the churn score from raw CRM data.",
     footnote: "This is Thursday, repaired.",
+    media: { image: genS26LedgerAndNote, speed: -0.15 },
   },
   {
     id: "poll-door",
@@ -819,6 +880,7 @@ export const sections: Section[] = [
         { id: "proportionate-door:d", label: "D", body: "Assume an MCP connector exists" },
       ],
     },
+    media: { image: genS27HandsUp2, speed: -0.18 },
   },
   {
     id: "verification",
@@ -839,6 +901,7 @@ export const sections: Section[] = [
         "confirm stale-data disclosure",
       ],
     },
+    media: { image: genS28GreenLights, speed: -0.12 },
   },
   {
     id: "build-loop",
@@ -867,6 +930,7 @@ export const sections: Section[] = [
       ],
     },
     kicker: "Six tests, no engineering vocabulary required.",
+    media: { image: genS29RelayHands, speed: -0.15 },
   },
   {
     id: "demo-fail",
@@ -888,6 +952,7 @@ export const sections: Section[] = [
       },
     ],
     kicker: "A tool that fails loudly is safer than a tool that fails quietly.",
+    media: { image: genS30Unplugging, speed: -0.18 },
   },
   {
     id: "ship",
@@ -914,6 +979,7 @@ export const sections: Section[] = [
       },
     ],
     kicker: "Promotion is a decision someone makes, not a side effect of saving a file.",
+    media: { image: genS31ThreeDoors, speed: -0.12 },
   },
   {
     id: "open-the-link",
@@ -926,6 +992,7 @@ export const sections: Section[] = [
       "Real deployment. Real storage. Fictional accounts. Anyone with the link can use it right now.",
     footnote: "The link is this site — cast a vote at /vote",
     footnoteHref: "/vote",
+    media: { image: genS32ManyPhones, speed: -0.15 },
   },
   {
     id: "run",
@@ -960,6 +1027,7 @@ export const sections: Section[] = [
       ],
     },
     kicker: "Usage feeds the next spec. Run is where value compounds.",
+    media: { image: genS33WallDisplay, speed: -0.18 },
   },
   {
     id: "ownership",
@@ -979,6 +1047,7 @@ export const sections: Section[] = [
     kicker:
       "Planning how a tool ends costs an afternoon. Skipping it is how a working tool becomes somebody's unpaid second job.",
     footnote: "This repository has an OWNERSHIP.md. Two of its six items are still marked undecided, in public.",
+    media: { image: genS34Nameplate, speed: -0.12 },
   },
   {
     id: "decision-rule",
@@ -996,6 +1065,7 @@ export const sections: Section[] = [
     ],
     kicker:
       "The agent generates the implementation. You own the architecture, the evidence, the release decision, and the consequences.",
+    media: { image: genS35RingWithGate, speed: -0.15 },
   },
   {
     id: "homework",
@@ -1013,6 +1083,7 @@ export const sections: Section[] = [
       "You don't cross this by becoming an engineer. You cross it by knowing which work you are not doing, and directing it.",
     footnote: "The kit — checklist, prompt pack, agent instructions, ownership card, CLI reference — is at /kit. No email required.",
     footnoteHref: "/kit",
+    media: { image: genS36ThreeLines, speed: -0.18 },
   },
   {
     id: "poll-priya",
@@ -1032,6 +1103,7 @@ export const sections: Section[] = [
         { id: "priya:d", label: "D", body: "Rebuild it from scratch in the terminal" },
       ],
     },
+    media: { image: genS38AboutToSend, speed: -0.12 },
   },
   {
     id: "the-bar",
@@ -1100,6 +1172,7 @@ export const sections: Section[] = [
     ],
     kicker:
       "Eight and a half. The half is deliberate: a standard you always score full marks against is a standard you are not really applying.",
+    media: { image: genS39NineItems, speed: -0.15 },
   },
   {
     id: "qa",
@@ -1115,6 +1188,7 @@ export const sections: Section[] = [
       { label: "04", title: "How is it verified?", body: "Workflow run, failure states, review gate." },
     ],
     footnote: "Scott Ewalt · Cardinal Element · scott.e.ewalt@gmail.com",
+    media: { image: genS40Council, speed: -0.18 },
   },
   {
     id: "close",
@@ -1127,6 +1201,6 @@ export const sections: Section[] = [
     kicker: "Scott Ewalt · Cardinal Element",
     footnote: "Take the kit: /kit",
     footnoteHref: "/kit",
-    media: { image: agentA, speed: -0.16 },
+    media: { image: genS37OneObject, speed: -0.12 },
   },
 ];
