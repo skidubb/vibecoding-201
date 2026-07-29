@@ -5,12 +5,12 @@ import { SurfacedPanel } from "@/components/interactive/SurfacedPanel";
 import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 
 /**
- * The room's own work, read back to it.
+ * The slide that shows the specs shared with the room.
  *
- * Its own slide rather than a panel on the exercise, because by the time the
- * presenter is reading two specs aloud the room has scrolled past the box they
- * wrote them in — and because a slide is a place to stand. It renders no control
- * that writes; see `SurfacedPanel`.
+ * A separate slide rather than a panel on the exercise: by the time the presenter
+ * reads two specs aloud, the room has scrolled past the box they were written in,
+ * and the presenter needs a slide to stop on. It renders no control that writes.
+ * See `SurfacedPanel`.
  */
 export function SurfacedLayout({ section }: LayoutProps) {
   return (

@@ -7,21 +7,19 @@ import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProp
 /**
  * A comparison table.
  *
- * Ten slides in this deck are grids: the three rungs against the test you can
- * observe, five data doors against what each one costs you, vague against
- * testable. The alignment *is* the argument on every one of them — read a column
- * down and you get the claim — so flattening them into cards loses the thing the
- * slide is for.
+ * Eight slides compare items across two or three columns: the three kinds of
+ * software against the test that identifies each, five ways to connect to data
+ * against what each one costs. Column alignment carries the comparison, so
+ * rendering these as cards would lose it.
  *
- * **One DOM, not two.** The obvious build is a `<table>` for desktop and a card
- * list for mobile, and it is wrong here: duplicated markup makes `innerText` see
- * every cell twice, so `tests/registry-integrity.spec.ts`'s drop-guard passes
- * while the desktop table is broken. Instead the same cells restyle from
- * `table-row` to `block` at `md`, and only the *header string* is reprinted above
- * each stacked cell.
+ * One DOM, not two. A `<table>` for desktop plus a separate card list for mobile
+ * duplicates every cell, which makes `innerText` report each one twice and lets
+ * the content check in `tests/registry-integrity.spec.ts` pass while the desktop
+ * table is broken. Instead the same cells change from `table-row` to `block` at
+ * `md`, and only the header string is repeated above each stacked cell.
  *
- * Column 0 is a `<th scope="row">`. The bold leading cell is then semantic rather
- * than decorative, which is also why `Matrix` carries no per-row bold flag.
+ * Column 0 is a `<th scope="row">`, so its weight comes from the markup rather
+ * than a style rule. That is also why `Matrix` has no per-row bold flag.
  */
 export function MatrixLayout({ section }: LayoutProps) {
   const matrix = section.matrix;
@@ -39,9 +37,9 @@ export function MatrixLayout({ section }: LayoutProps) {
       <div className={CONTAINER}>
         <SectionHeader section={section} />
 
-        {/* Definitions above the grid, where a slide has both — the spec slide
-            states Job, User and Done, then contrasts vague against testable, and
-            the two are different kinds of thing. */}
+        {/* Definitions above the table, for slides that carry both. The spec
+            slide states Job, User and Done, then compares a vague acceptance
+            test against a checkable one. */}
         {section.cards && section.cards.length > 0 && (
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {section.cards.map((card, i) => (
@@ -72,8 +70,8 @@ export function MatrixLayout({ section }: LayoutProps) {
             <div className="neu-inset neu-edge mt-10 rounded-[24px] px-4 py-3 md:px-7 md:py-5">
               <table className="w-full border-collapse">
                 {head && (
-                  // Chrome on mobile: each cell reprints its own header below,
-                  // so a header row there would say everything twice.
+                  // Hidden on mobile: each cell repeats its own header below, so a
+                  // header row would state every label twice.
                   <thead className="hidden md:table-header-group">
                     <tr>
                       {head.map((label, c) => (

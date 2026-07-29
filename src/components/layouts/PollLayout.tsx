@@ -40,13 +40,13 @@ export function PollLayout({ section }: LayoutProps) {
         variant={poll.variant}
       />
 
-      {/* The Q&A slide's four buckets live here. A poll may carry no kicker —
-          `registry-integrity` fails the build over it, because a kicker under a
-          live poll is commentary on screen while the room is still voting — so
-          without `strip` this layout had nowhere to put content that is not the
-          question. */}
+      {/* Used by the Q&A slide for its four categories. A poll section may not
+          carry a `kicker`: `registry-integrity` fails the build if it does, because
+          a kicker under an open poll is commentary shown while the room is still
+          voting. Without `strip`, this layout had nowhere to render content other
+          than the question. */}
       {section.strip && <Strip {...section.strip} />}
-      {/* The Q&A slide closes the deck, so the contact line lands here. */}
+      {/* The Q&A slide is the last one, so the contact line renders here. */}
       {section.links && <LinkChips links={section.links} />}
       {section.kicker && <Kicker>{section.kicker}</Kicker>}
       {section.deeper && <Deeper deeper={section.deeper} sectionId={section.id} />}

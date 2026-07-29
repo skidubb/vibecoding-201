@@ -33,11 +33,11 @@ const REFRESH_MS = 10_000;
 const VERCEL_ANALYTICS_URL = "https://vercel.com/scottes-projects/crossing-the-gap-site/analytics";
 
 /**
- * Exercises that can actually hold a submission.
+ * Exercises that can hold a submission.
  *
- * Timer-only exercises are excluded: the room scores those against a list on the
- * slide and submits nothing, so listing them here would give the console two
- * panels that are permanently empty and read as a backend fault mid-class.
+ * Timer-only exercises are excluded. Attendees score those against a list on the
+ * slide and submit nothing, so including them would add two permanently empty
+ * panels to the console, which during class would look like a backend fault.
  */
 const EXERCISE_IDS = sections
   .filter((s) => s.exercise && s.exercise.mode !== "timer")

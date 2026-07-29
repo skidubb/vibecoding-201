@@ -55,17 +55,16 @@ export function SectionBackdrop({
 }
 
 /**
- * Spec → Plan → Build → Test → Ship → Run, with the current step lit.
+ * Spec → Plan → Build → Test → Ship → Run, with the current step highlighted.
  *
- * Five slides are stages of one loop, and before this existed they carried
- * "STEP 1 OF 6" against a loop the deck introduced on a slide that had been cut
- * in a merge — a reference to nothing. A strip that always prints all six steps
- * cannot go stale that way: the map is on every slide that claims a position on
- * it.
+ * Five slides are stages of one sequence. They previously read "STEP 1 OF 6" while
+ * the slide introducing the six steps had been cut, so the label referred to
+ * nothing. Printing all six steps on each of those slides removes that dependency.
  *
- * `--text-faint` is correct for the inactive steps and is the one place in this
- * file it is. These are chrome, the same category as the eyebrow above them, not
- * body copy — do not "fix" this against `tests/contrast.spec.ts`.
+ * The inactive steps use `--text-faint`, which is correct here and nowhere else in
+ * this file: they are chrome, in the same category as the eyebrow above them,
+ * rather than body copy. Do not raise the contrast to satisfy
+ * `tests/contrast.spec.ts`.
  */
 export function StepStrip({
   steps,
@@ -203,17 +202,16 @@ export function Footnote({
 }
 
 /**
- * The GO DEEPER strip: a claim worth chasing, and where to chase it.
+ * The GO DEEPER strip: one claim, and a link to the source.
  *
- * Follows `Footnote`'s conventions rather than `Strip`'s, and that distinction is
- * the whole design. `Strip` gets a carved `neu-inset` surface because it carries
- * content the headline just promised; this is a citation, so it gets a hairline
- * rule and the page ground. Giving it a panel too would end fourteen slides in
- * two competing bands.
+ * Styled like `Footnote` rather than `Strip`. `Strip` sits on a `neu-inset` panel
+ * because it carries content the headline introduced; this is a citation, so it
+ * gets a hairline rule and no panel. Two stacked panels at the foot of fourteen
+ * slides would compete for attention.
  *
- * The claim is set in `--text`, not `--text-faint`. It is small and it is chrome
- * in the room, but it is content on the recording, and `tests/contrast.spec.ts`
- * is the record of what faint body copy does on a projector.
+ * The claim uses `--text`, not `--text-faint`. It is small, but it is still
+ * content, and faint body copy fails the legibility floor in
+ * `tests/contrast.spec.ts` when projected.
  */
 export function Deeper({
   deeper,
@@ -275,17 +273,16 @@ export function Deeper({
 }
 
 /**
- * The tail every layout ends with, in the one order the deck reads.
+ * The four optional tiers at the foot of a section, in render order.
  *
- * This exists because "each of twelve layouts must remember four optional
- * fields" is a defect generator, not a convention: `strip`, `footnoteHref`,
- * `brand` and `media` have each been silently dropped by a layout that did not
- * know about them, and `tests/registry-integrity.spec.ts` exists because of it.
- * `deeper` would have been the fifth. One component means adding a sixth tier is
- * one edit rather than twelve.
+ * Previously each of the twelve layouts rendered these individually. Four registry
+ * fields — `strip`, `footnoteHref`, `brand` and `media` — have each been dropped by
+ * a layout that did not handle them, with no build or test failure;
+ * `tests/registry-integrity.spec.ts` was added in response. `deeper` would have
+ * been the fifth. Collecting them here means a new tier is one edit, not twelve.
  *
- * The layouts with a bespoke centered or column-scoped footnote — claim, cta,
- * poll, hero, chart — append `<Deeper>` alone instead of calling this.
+ * The layouts with a centred or column-scoped footnote (claim, cta, poll, hero,
+ * chart) append `<Deeper>` directly instead of calling this.
  */
 export function SectionTail({ section }: { section: Section }) {
   return (

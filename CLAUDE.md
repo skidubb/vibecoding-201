@@ -6,26 +6,46 @@
 The README above is the source of truth for architecture and commands. These are the
 operational rules that don't belong in it.
 
-- **Titles come from the deck, verbatim.** If you find yourself writing a title, stop —
+- **No metaphors, in slide copy or in comments. This rule overrides verbatim.** On
+  2026-07-29 Scott listed five phrases to remove: "Four questions before you climb", "Grade
+  what you already built", "Which rung is it on today?", "Then the four questions. Yes or
+  no.", and "Score the thing you graded at the start". Each was quoted accurately from
+  `../deck-content-v7.md`, so the verbatim rule is what kept them in. Two separate problems
+  were involved:
+  - **Terms that only make sense inside this deck**: rungs, climbing, doors, harnesses,
+    crossing. Write what the thing actually is.
+  - **Lines that refer to something not on the slide.** "Then the four questions" appeared
+    on a slide showing no questions; they were on the previous slide. "This is Thursday,
+    repaired" appeared sixteen slides after Thursday. Repeat the content the line depends
+    on, even when that duplicates an earlier slide.
+  Do not restore any of this to match the outline. If a later outline reintroduces it,
+  rewrite it and note the change.
+- **Write comments as plain technical prose.** State the mechanism and the failure it
+  prevents. No aphorisms, no "not X but Y" constructions, no closing epigram. Comments in
+  this repo were rewritten once for this reason; match the current style rather than the git
+  history.
+- **Titles come from the deck, verbatim**, subject to the two rules above. If you find
+  yourself writing a title, stop —
   you are decorating, and it reads as hiding the point. Every eyebrow, headline, body
   line, table cell and kicker in `src/content/sections.ts` is quoted from
   `../deck-content-v7.md` (26 sections; the earlier 40-section cut came from
   `../Vibecoding-201-Production-GTM-Tools-v6.pptx`). The deck's slide numbering and
   speaker notes are noise and are deliberately not mirrored anywhere on the site.
-- **v7's own three rules govern the registry**, and they are why this file looks sparser
-  than the talk: if it is said out loud it is not printed, no sentence restates the one
-  before it, and every headline has to stand on its own with the slide covered up. A
-  spoken punchline added to a slide is a regression even though nothing fails.
-- **The GO DEEPER strip is on 14 of the 26, and absent from 12 on purpose.** A pointer on
-  a poll, a timer or the demo is filler, and filler in that slot teaches the room to stop
-  reading the slot. Do not "finish" the set.
-- **Four optional tiers render through one `SectionTail`.** `strip`, `kicker`, `footnote`
-  and `deeper` have one call site per layout, not four. Five registry fields have now been
-  silently dropped by a layout that did not know about them — add a new tier there, not in
-  twelve components, and extend `tests/registry-integrity.spec.ts` in the same commit.
-- **Short registry fields need a structural test, not a text one.** The drop-guard
-  discards strings of eight characters or fewer, so "Build", "Ship", "Run" and "Test" are
-  invisible to it. Do not lower that floor — count the rendered nodes instead.
+- **The registry follows v7's three rules**, which is why it reads sparser than the talk:
+  anything said out loud is not printed, no sentence restates the one before it, and every
+  headline has to make sense with the rest of the slide covered. Adding a spoken line to a
+  slide is a regression that no test will catch.
+- **The GO DEEPER strip is on 14 of the 26 sections.** The other 12 are the polls, the
+  timers and the demo, where the room is talking rather than reading. Do not add strips to
+  complete the set.
+- **`SectionTail` renders `strip`, `kicker`, `footnote` and `deeper`** so each layout has one
+  call site instead of four. Five registry fields have been dropped by layouts that did not
+  handle them. Add any new tier there rather than in twelve components, and extend
+  `tests/registry-integrity.spec.ts` in the same commit.
+- **Short registry fields need a test that counts nodes, not one that matches text.** The
+  content check discards strings of eight characters or fewer, so "Build", "Ship", "Run" and
+  "Test" are invisible to it. Lowering the threshold causes false matches on footnote
+  fragments.
 - **`AGENTS.md` is generated.** Never hand-edit between the `BEGIN/END:nextjs-agent-rules`
   markers — a tool regenerates that block and will clobber anything added there. Durable
   rules go in the README, or here.

@@ -99,7 +99,7 @@ test("a timer-only exercise offers nothing to submit", async ({ page }) => {
   // Two of the three exercises are self-scoring against a list on the slide.
   // They keep the clock and lose the box — a Submit button on a slide with
   // nothing to store is a control that can only fail.
-  for (const id of ["grade-yours", "the-bar"]) {
+  for (const id of ["place-yours", "the-bar"]) {
     await page.goto(`/#${id}`);
     await ready(page);
     await settle(page);

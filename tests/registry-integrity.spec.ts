@@ -36,14 +36,14 @@ function sectionBlocks(source: string = SOURCE): string[] {
 }
 
 /**
- * The same blocks, comments intact.
+ * The same blocks, with comments left in.
  *
- * `SOURCE` strips `//` to the end of the line, which also decapitates every URL
- * in the file: `href: "https://example.com"` becomes `href: "https:`. That was
- * harmless while nothing read a URL out of the registry text, and it silently
- * defeated the first version of the GO DEEPER link test below — fourteen of
- * fifteen sections reported zero links to check, and the test passed by finding
- * nothing to fail on. Anything reading an href must use this instead.
+ * `SOURCE` strips `//` to the end of the line, which also truncates every URL in
+ * the file: `href: "https://example.com"` becomes `href: "https:`. That had no
+ * effect while nothing read a URL out of the registry text. It did break the first
+ * version of the GO DEEPER link test below, which parsed zero links from fourteen
+ * of fifteen sections and passed because it had nothing left to check. Any test
+ * reading an href must use this function.
  */
 function sectionBlocksWithUrls(): string[] {
   return sectionBlocks(RAW);
@@ -55,9 +55,9 @@ test("a poll section gives nothing away before the reveal", () => {
   // must not carry any commentary alongside the question — a kicker under a
   // live poll is on screen while the room is still voting.
   //
-  // This is not hypothetical: the first version of the debugging poll shipped
-  // with "the trap is believing you have to read the code yourself" under the
-  // options, which rules out D and points at C before a single vote is cast.
+  // The first version of the debugging poll shipped with "the trap is believing you
+  // have to read the code yourself" under the options, which eliminates D and
+  // indicates C before anyone has voted.
   const offenders = sectionBlocks()
     .filter((block) => block.includes('layout: "poll"'))
     .filter((block) => /\n\s{4}kicker:/.test(block))
@@ -86,10 +86,9 @@ test("no layout silently drops content it was handed", async ({ page }) => {
   // subset it knows about, so giving a section a field its layout ignores
   // deletes that content from the deck with nothing failing anywhere.
   //
-  // That is not hypothetical. `strip` was added to the cards and claim
-  // layouts, and Jordan's three authorization rules — which live on a split
-  // layout — stopped appearing at all. The build passed, every test passed,
-  // and the rules were simply gone from the slide.
+  // `strip` was added to the cards and claim layouts only, and Jordan's three
+  // authorization rules, which sit on a split layout, stopped rendering. The build
+  // passed and so did every test.
   await page.goto("/");
 
   const missing: string[] = [];
@@ -124,9 +123,9 @@ test("no layout silently drops content it was handed", async ({ page }) => {
       for (const item of strip.matchAll(/^\s*"((?:[^"\\]|\\.)*)",?$/gm)) push(item[1]);
     }
 
-    // The GO DEEPER strip is the fifth tier a layout can forget, and the most
-    // likely to be: it is on fourteen sections across eight layouts, and two of
-    // those layouts rendered no tail at all until it was added.
+    // The fifth tier a layout can omit. It appears on fourteen sections across
+    // eight layouts, and two of those layouts rendered none of the tail fields
+    // until it was added.
     const deeper = block.match(/deeper: \{([\s\S]*?)\n {4}\}/)?.[1];
     if (deeper) {
       for (const m of deeper.matchAll(
@@ -155,10 +154,9 @@ test("no layout silently drops content it was handed", async ({ page }) => {
 });
 
 test("every GO DEEPER url reaches the page as a link", async ({ page }) => {
-  // The text guard above cannot see this. A layout that prints the claim and
-  // drops the anchors passes it — and a GO DEEPER strip with no link is a
-  // sentence about a source rather than a route to one, which is the entire
-  // point of the tier.
+  // The text check above cannot detect this: a layout that renders the claim but
+  // omits the anchors still passes it. A GO DEEPER strip describes a source and
+  // then has to link to it.
   await page.goto("/");
 
   const missing: string[] = [];
@@ -170,13 +168,10 @@ test("every GO DEEPER url reaches the page as a link", async ({ page }) => {
     const deeper = block.match(/deeper: \{([\s\S]*?)\n {4}\}/)?.[1];
     if (!id || !deeper) continue;
 
-    // Read the rendered hrefs once and compare in JS.
-    //
-    // Interpolating a URL into an attribute selector is what the obvious version
-    // did, and it threw "Unsupported token BADSTRING" on the first URL the
-    // formatter had wrapped across two lines: `[^"]+` happily matched the
-    // newline and everything after it. Comparing values sidesteps CSS escaping
-    // entirely.
+    // Read the rendered hrefs once, then compare in JS. Interpolating a URL into
+    // an attribute selector threw "Unsupported token BADSTRING", because `[^"]+`
+    // matched across a newline where the formatter had wrapped the line. Comparing
+    // values avoids CSS escaping.
     const rendered = new Set(
       await page.locator(`#${id} a`).evaluateAll((els) =>
         els.map((el) => el.getAttribute("href") ?? ""),
@@ -193,19 +188,18 @@ test("every GO DEEPER url reaches the page as a link", async ({ page }) => {
     [],
   );
 
-  // A run that checked nothing is not a green run. This test has already passed
-  // once by parsing zero links out of fifteen strips.
+  // Guards against the failure described above, where the test passed after
+  // parsing zero links from fifteen strips.
   expect(checked, "no GO DEEPER links were parsed at all").toBeGreaterThan(14);
 });
 
 test("a section with steps renders all of them and marks the current one", async ({
   page,
 }) => {
-  // Structural rather than textual, deliberately. The drop-guard's push() helper
-  // discards anything eight characters or shorter, and "Build", "Ship", "Run" and
-  // "Test" are all shorter than that — so the step strip is invisible to it.
-  // Lowering that floor is not the fix: at eight characters ordinary footnote
-  // fragments start matching by accident. Short registry fields need a count.
+  // Counts nodes rather than matching text. The push() helper in the check above
+  // discards strings of eight characters or fewer, and "Build", "Ship", "Run" and
+  // "Test" are all shorter, so that check cannot see the step strip. Lowering the
+  // threshold would cause ordinary footnote fragments to match by coincidence.
   await page.goto("/");
 
   const problems: string[] = [];
@@ -225,8 +219,8 @@ test("a section with steps renders all of them and marks the current one", async
     const all = list("all");
     const current = list("current");
 
-    // A step named in `current` that is not in `all` is a silent no-op: it
-    // highlights nothing and no type can catch the typo.
+    // A step listed in `current` but not in `all` highlights nothing, and no type
+    // can catch the typo.
     for (const step of current) {
       if (!all.includes(step)) problems.push(`${id}: current "${step}" is not in all`);
     }
@@ -248,10 +242,10 @@ test("a section with steps renders all of them and marks the current one", async
 });
 
 test("every matrix renders as many rows and columns as it declares", async ({ page }) => {
-  // Guards the single-DOM decision in MatrixLayout. The obvious build — a table
-  // for desktop and a card list for mobile — duplicates every cell, which makes
-  // innerText see each one twice and lets the drop-guard pass while the desktop
-  // table is broken. Counting rows catches that immediately.
+  // Guards the single-DOM approach in MatrixLayout. Rendering a table for desktop
+  // and a separate card list for mobile duplicates every cell, which makes
+  // innerText report each one twice and lets the content check pass while the
+  // desktop table is broken. Counting rows detects that.
   await page.goto("/");
 
   const problems: string[] = [];
@@ -272,8 +266,7 @@ test("every matrix renders as many rows and columns as it declares", async ({ pa
     );
     if (rows.length === 0) continue;
 
-    // A ragged table is the one thing a table must not be, and `string[][]`
-    // cannot express "every row is as wide as the header".
+    // `string[][]` cannot express "every row has as many cells as the header".
     const width = head.length || rows[0].length;
     for (const [i, row] of rows.entries()) {
       if (row.length !== width) {
@@ -288,8 +281,9 @@ test("every matrix renders as many rows and columns as it declares", async ({ pa
       );
     }
 
-    // One `th scope="row"` per row: the bold leading cell is semantic, and a
-    // regression to a plain `td` would lose that silently.
+    // One `th scope="row"` per row. The leading cell's weight comes from the
+    // markup, so a change to a plain `td` would alter it without failing anything
+    // else.
     const labels = await page.locator(`#${id} tbody tr th[scope="row"]`).count();
     if (labels !== rows.length) {
       problems.push(`${id}: ${rows.length} rows but ${labels} row labels`);
@@ -309,9 +303,9 @@ test("every matrix renders as many rows and columns as it declares", async ({ pa
 });
 
 test("the loop slide does not also carry a step strip", () => {
-  // `loopSteps` and `steps` share six strings and no rendering: one is a ring of
-  // panels that is the whole argument of its slide, the other an 11px position
-  // indicator above a headline. A section carrying both prints the same six words
+  // `loopSteps` and `steps` hold the same six strings and render completely
+  // differently: one is a row of panels that occupies the slide, the other an 11px
+  // indicator above the headline. A section with both would print the six words
   // twice.
   const offenders = sectionBlocks()
     .filter((block) => /\n\s{4}loopSteps:/.test(block))

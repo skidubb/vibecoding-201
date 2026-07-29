@@ -58,13 +58,11 @@ export function PresenterBar() {
   const section = sections[activeIndex];
   const slug = section?.poll?.slug ?? null;
 
-  // Two sources, and the second is the one that matters in the room.
-  //
-  // A timer-only exercise has no submissions, so binding Shift-S to it would put
-  // a "Shared 0" chip on a slide that can never have any. And the review slide is
-  // where the presenter is actually standing when they surface a spec — before
-  // this fell back to `surfaced`, surfacing required walking back to the exercise
-  // slide the room had already scrolled past.
+  // Two sources. A timer-only exercise stores no submissions, so binding Shift-S
+  // to one would show a "Shared 0" control on a slide that can never have any. The
+  // fallback to `surfaced` matters more: the presenter puts a spec on screen while
+  // standing on the review slide, and without it they would have to navigate back
+  // to the exercise slide first.
   const exerciseId =
     (section?.exercise && section.exercise.mode !== "timer"
       ? section.exercise.id

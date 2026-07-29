@@ -9,11 +9,9 @@ import failureB from "@/assets/failure-b.webp";
 /**
  * Backdrops.
  *
- * The generated set is keyed to the *previous* cut of the deck, which ran forty
- * slides — so these names no longer track slide numbers and are matched by
- * subject instead. That is the right way round: `s12-timer` belongs on whichever
- * slide holds a clock, and pinning art to an ordinal is how a re-cut deck ends up
- * with a photograph of six binders behind a slide about credentials.
+ * These filenames are numbered for the earlier forty-slide cut, so they no longer
+ * match slide positions and are chosen by subject instead. `s12-timer` goes on
+ * whichever slide has a clock.
  */
 import genS01Doorway from "@/assets/generated/s01-doorway.webp";
 import genS02TwoLaptops from "@/assets/generated/s02-two-laptops.webp";
@@ -86,10 +84,9 @@ export type Card = {
   /**
    * What this site actually did at this step.
    *
-   * Only on the pipeline, and load-bearing there: the stack slide recommends
-   * six tools, and a receipt under each is the difference between a
-   * recommendation and a demonstration. It is also where the slide has to
-   * admit that this site skipped step one.
+   * Used only by the pipeline layout. The stack slide recommends six tools, and
+   * the receipt under each one records what this site actually did at that step,
+   * including the step it skipped.
    */
   receipt?: string;
 };
@@ -101,12 +98,10 @@ export type TimelineStop = {
   image?: StaticImageData;
   tone?: "neutral" | "bad";
   /**
-   * Where in the hour this day's failure gets repaired.
+   * The point in the hour where this day's failure is addressed.
    *
-   * The running case and the promise of the class used to be two slides, and the
-   * promise slide was a list of defects with no time attached. Putting the
-   * timestamp on the day it belongs to makes the week and the agenda one object:
-   * every failure the room watches has a stated place where it is answered.
+   * The week and the agenda used to be two slides. Putting the timestamp on the
+   * day removes the second slide and keeps the two from drifting apart.
    */
   repaired?: string;
 };
@@ -149,27 +144,24 @@ export type Poll = {
 export type Exercise =
   | { id: string; seconds: number; mode?: "write"; placeholder: string }
   /**
-   * A clock and nothing else, for the two self-scoring exercises.
+   * A clock with nothing to submit, for the two self-scoring exercises.
    *
-   * The room grades work it already has against a list on the slide, so there is
-   * nothing to submit and no reason to open a connection. A union rather than a
-   * `submit: false` flag because the illegal states — a timer with a placeholder,
-   * a writing box without one — then cannot be written, and `npm run build`
-   * becomes the gate instead of a code review.
+   * The room scores work it already has against a list on the slide, so this mode
+   * opens no database connection. A union rather than a `submit: false` flag so a
+   * timer cannot carry a placeholder and a writing box cannot omit one, which
+   * makes `npm run build` catch the mistake.
    */
   | { id: string; seconds: number; mode: "timer"; placeholder?: never };
 
 /**
  * A comparison table.
  *
- * Column 0 is always the row's label and always the emphasised cell: ten of the
- * deck's slides are "this, against what it becomes", and the label is the spine
- * of every one. There is deliberately no per-row bold flag — a formatting switch
- * in the content registry is how a content file turns into a stylesheet.
+ * Column 0 holds the row label and renders as a `<th scope="row">`, so it reads
+ * bold for a structural reason rather than a styling one. There is no per-row bold
+ * flag: formatting belongs in the component, not in this file.
  *
- * `head` may open with an empty string. The label column is unnamed on several
- * slides, and an absent entry would leave the header ragged against the rows,
- * which is the one thing a table must not be.
+ * `head` may start with an empty string. Several of these tables leave the label
+ * column unnamed, and omitting the entry misaligns the header against the rows.
  */
 export type Matrix = {
   head?: string[];
@@ -179,28 +171,26 @@ export type Matrix = {
 };
 
 /**
- * Where this slide sits in Spec → Plan → Build → Test → Ship → Run.
+ * The slide's position in Spec → Plan → Build → Test → Ship → Run.
  *
- * `all` is the whole loop every time: this is a position indicator, and one that
- * prints only the steps near you is a breadcrumb rather than a map. `current` is
- * matched by value, not by index, because the two steps bold on the test-and-ship
- * slide need not be adjacent and the registry then reads as English.
+ * `all` lists all six steps every time, so the strip always shows the whole
+ * sequence. `current` matches by value rather than index, which keeps the entry
+ * readable and allows two highlighted steps that are not adjacent.
  */
 export type Steps = { all: string[]; current: string[] };
 
 /**
- * A read-only view of what the presenter has put on screen, for an exercise that
- * happened earlier in the deck.
+ * A read-only view of the submissions the presenter has put on screen.
  *
- * Deliberately not an `Exercise` with the same id: that would render a second
- * writing box and a second Share button, which would let an attendee edit their
- * spec while it is being read out to the room. This section has no clock, nothing
- * to submit, and must never render a control that writes. Surfacing stays in the
- * presenter bar, where `authors_cannot_surface` can keep meaning what it says.
+ * Not an `Exercise` with the same id: that would render a second writing box and a
+ * second Share button, letting an attendee edit their spec while it is being read
+ * aloud. This section has no clock and no control that writes. Surfacing happens
+ * in the presenter bar, which is what keeps `authors_cannot_surface` enforced in
+ * the database rather than in the interface.
  */
 export type Surfaced = {
   exerciseId: string;
-  /** What the slide says while nothing is up yet. Never an empty slide. */
+  /** What the slide says before anything has been put up. */
   empty?: string;
 };
 
@@ -226,30 +216,27 @@ export type LinkRef = {
 export type DeeperLink = { label: string; href: string };
 
 /**
- * The small strip under a slide: a claim worth chasing, and where to chase it.
+ * The small strip at the bottom of a slide: one claim, and where to read more.
  *
- * Aimed at the fifteen percent who came in already knowing the material. Never
- * read aloud — reading it costs thirty seconds and serves people who will
- * screenshot it anyway — so it has to work silently, on the recording and for
- * the person scrolling this site a week later.
+ * For people who already know the material. It is never read aloud, so it has to
+ * work on the recording and for anyone scrolling the site later.
  *
- * Deliberately not a `LinkRef[]`: `LinkRef` carries `note` and `install` and this
- * strip renders neither, and a field a component silently ignores is the exact
- * defect `tests/registry-integrity.spec.ts` exists to catch. The type says only
- * what gets drawn.
+ * Not a `LinkRef[]`: `LinkRef` carries `note` and `install`, which this strip does
+ * not render, and a field a component ignores is the defect
+ * `tests/registry-integrity.spec.ts` exists to catch. The type lists only what is
+ * drawn.
  *
- * Fourteen sections carry one and twelve do not, which is deliberate rather than
- * unfinished: a pointer on a poll, a timer or the demo is filler, and filler in
- * this slot teaches the room to stop reading the slot.
+ * Fourteen sections have one and twelve do not. The twelve are the polls, the
+ * timers and the demo, where the room is talking rather than reading.
  */
 export type Deeper = {
   /** Defaults to "Go deeper". */
   label?: string;
-  /** The one sentence the strip makes. Emphasised, but small. */
+  /** The one sentence the strip makes. */
   claim: string;
-  /** A trailing qualifier — a caveat, a scope note, a "not a benchmark". */
+  /** A trailing qualifier: a caveat or a note on scope. */
   note?: string;
-  /** One or two. Three is a reading list, not a strip. */
+  /** One or two. More does not fit on one line. */
   links: DeeperLink[];
 };
 
@@ -301,19 +288,17 @@ export type Section = {
 /**
  * The deck, in order.
  *
- * Twenty-six sections, quoted verbatim from `deck-content-v7.md`. Three rules
- * from that file govern every entry here and are worth restating, because they
- * are what makes a slide different from a script:
+ * Twenty-six sections, quoted from `deck-content-v7.md`. Three rules from that
+ * file apply to every entry:
  *
- *   1. If it is said out loud, it is not printed. A line lands harder spoken when
- *      the room has not already read it — so the punchlines are in the deck's
- *      speaker notes, not here, and this file will look sparser than the talk.
+ *   1. Anything said out loud is not printed. The spoken lines stay in the deck's
+ *      speaker notes, so this file reads sparser than the talk.
  *   2. No sentence restates the one before it.
- *   3. Every headline stands on its own with the slide covered up.
+ *   3. Every headline has to make sense with the rest of the slide covered.
  *
- * The GO DEEPER strip is on fourteen of the twenty-six. The twelve without one
- * are deliberate, not unfinished: a pointer on a poll, a timer or the demo is
- * filler, and filler in that slot teaches the room to stop reading the slot.
+ * A fourth rule overrides those three wherever they conflict: no metaphors, and no
+ * line that refers to something not on the slide. Several phrases quoted faithfully
+ * from the outline broke both and were rewritten. See CLAUDE.md.
  */
 export const sections: Section[] = [
   {
@@ -445,7 +430,7 @@ export const sections: Section[] = [
   },
 
   {
-    id: "the-rung",
+    id: "three-kinds",
     theme: "dark",
     layout: "matrix",
     eyebrow: "Before you commit",
@@ -472,7 +457,7 @@ export const sections: Section[] = [
       ],
     },
     strip: {
-      label: "Four questions before you climb",
+      label: "Four questions",
       items: [
         "Is the workflow frequent or consequential enough to matter?",
         "Is the process stable enough to encode?",
@@ -484,16 +469,26 @@ export const sections: Section[] = [
   },
 
   {
-    id: "grade-yours",
+    id: "place-yours",
     theme: "light",
     layout: "exercise",
     eyebrow: "Hands on · 90 seconds",
-    title: "Grade what you already built",
-    accent: "already built",
-    lede: "Which rung is it on today?",
-    exercise: { id: "grade", seconds: 90, mode: "timer" },
-    strip: { items: ["Prototype", "Tool", "System"] },
-    kicker: "Then the four questions. Yes or no.",
+    title: "Pick something you have built. Prototype, tool, or system?",
+    accent: "Prototype, tool, or system?",
+    exercise: { id: "place-yours", seconds: 90, mode: "timer" },
+    // The four questions are repeated from the previous slide. This slide
+    // previously read "Then the four questions. Yes or no." while showing none of
+    // them, so the instruction referred to content the room could not see.
+    //
+    // Cards rather than a `strip`: `Strip` joins its items with a dot separator,
+    // which turned four full questions into one unreadable run of text.
+    cards: [
+      { title: "Is the workflow frequent or consequential enough to matter?" },
+      { title: "Is the process stable enough to encode?" },
+      { title: "Is there a named user, outcome, and owner?" },
+      { title: "What new risk appears when others depend on it?" },
+    ],
+    kicker: "Answer each one yes or no.",
     media: { image: genS14TheQuestion, speed: -0.12 },
   },
 
@@ -976,7 +971,8 @@ export const sections: Section[] = [
       ],
     },
     lede: "The model does not invent the churn score from raw CRM data.",
-    kicker: "This is Thursday, repaired.",
+    kicker:
+      "This fixes Thursday, when nobody could explain the risk score.",
     media: { image: genS26LedgerAndNote, speed: -0.15 },
   },
 
@@ -1087,7 +1083,7 @@ export const sections: Section[] = [
     },
     kicker:
       "Planning how a tool ends costs an afternoon. Skipping it is how a working tool becomes somebody's unpaid second job.",
-    footnote: "This is Friday, repaired.",
+    footnote: "This fixes Friday, when the spreadsheet came back.",
     deeper: {
       claim: "This project's OWNERSHIP.md,",
       note: "including the two items still marked undecided.",
@@ -1106,8 +1102,8 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "exercise",
     eyebrow: "Hands on · 90 seconds",
-    title: "Score the thing you graded at the start",
-    accent: "at the start",
+    title: "Score the same tool against these nine",
+    accent: "these nine",
     railLabel: "Nine things to check",
     cards: [
       {
@@ -1193,7 +1189,8 @@ export const sections: Section[] = [
         body: "The item that proves you verified it.",
       },
     ],
-    lede: "You cross this by knowing which work you are not doing, and directing it.",
+    lede:
+      "The skill is knowing which work you are not doing, and directing it instead.",
     kicker: "Ship something small. Make sure it gets used.",
     footnote: "The kit is at /kit. No email required",
     footnoteHref: "/kit",
@@ -1239,7 +1236,7 @@ export const sections: Section[] = [
     strip: {
       label: "Four buckets",
       items: [
-        "Should this cross? Rung, frequency, consequence, owner",
+        "Should you build it? Prototype or tool, frequency, consequence, owner",
         "How do I specify it? Job, user, checkable Done, non-goals",
         "How should it connect? The proportionate door",
         "How is it verified? Workflow run, failure states, review gate",

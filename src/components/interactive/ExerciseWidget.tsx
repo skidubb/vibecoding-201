@@ -13,13 +13,11 @@ import {
 type Status = "offline" | "loading" | "ready" | "saving" | "saved" | "error";
 
 /**
- * The hands-on exercises: a clock, and — for the assignment — somewhere to write.
+ * The hands-on exercises: a clock, plus a writing box for the assignment.
  *
- * Two of the three exercises in this deck are self-scoring against a list on the
- * slide, so they run in `mode: "timer"` and this component opens no connection at
- * all for them. That is not an optimisation: a slide with nothing to submit should
- * not read a session, should not poll every four seconds, and should not be able
- * to.
+ * Two of the three exercises are scored by the attendee against a list on the
+ * slide. Those run in `mode: "timer"`, and this component opens no database
+ * connection for them: it reads no session and starts no polling interval.
  *
  * Three things happen here and they are deliberately separate, because the
  * separation is the lesson. Writing is local and works with no backend at all.
@@ -95,8 +93,7 @@ export function ExerciseWidget({
   // and it only runs while the section is actually on screen — a hundred
   // browsers left open on a laptop overnight should not be querying anything.
   useEffect(() => {
-    // A timer-only exercise has nothing to read and nothing to store, so it
-    // opens no connection at all.
+    // A timer-only exercise has nothing to read and nothing to store.
     if (!writing) return;
 
     const client = supabase();
@@ -159,11 +156,9 @@ export function ExerciseWidget({
       return;
     }
 
-    // Not a disabled button. The suite runs with the backend switched off and
-    // the class argues all hour that a control which fails silently is worse
-    // than one that fails in words — a greyed-out Submit with no explanation is
-    // exactly the failure being argued against, and it would also put this
-    // refusal beyond the reach of the test that guards it.
+    // Not a disabled button. The suite runs with the backend switched off, and a
+    // greyed-out Submit gives the writer no explanation. Disabling it would also
+    // put this refusal out of reach of the test that covers it.
     const client = supabase();
     if (!client) {
       setMessage("Submissions are offline. Nothing was sent — keep your copy.");

@@ -2,15 +2,14 @@
 #
 # Runs supabase/tests/authorization.sql against a throwaway Postgres.
 #
-# This exists so CI and a person at a laptop run the *same* thing. The steps used
-# to live only in supabase/tests/README.md as a block to paste, which is how that
-# block came to reference a `supabase/seed.sql` that does not exist: prose drifts
-# from the schema and nothing fails. Now the drift breaks a build.
+# CI and a developer at a laptop run the same script. The steps previously existed
+# only as a block to copy from supabase/tests/README.md, which is how that block
+# came to reference a `supabase/seed.sql` that does not exist: documentation can
+# drift from the schema without anything failing. A script cannot.
 #
-# Slide 14 tells the room these policies are covered by a test that runs on every
-# pull request. Until this script was wired into .github/workflows/ci.yml that
-# sentence was false — the workflow ran Playwright only. A deck whose whole
-# argument is "check the claim against the repo" cannot carry an unchecked claim.
+# The security-test slide states that these policies are covered by a test that runs
+# on every pull request. That was inaccurate until this script was added to
+# .github/workflows/ci.yml, which previously ran Playwright only.
 #
 #   ./scripts/authorization-test.sh                  # spins up its own container
 #   PGURL=postgres://… ./scripts/authorization-test.sh   # use a Postgres you have
@@ -34,13 +33,12 @@ else
   # often not granted. These tests need only Postgres, so they skip it.
   docker run -d --name "$CONTAINER" -e POSTGRES_PASSWORD=pg -p 55432:5432 "$IMAGE" >/dev/null
 
-  # Readiness needs three consecutive successes, not one.
-  #
-  # This image runs initdb and its own bootstrap SQL, then *restarts* Postgres.
-  # `pg_isready` answers yes during that first phase, so a single check let the
-  # migrations start against a server that was about to go away — the run died
-  # half way through init.sql with "terminating connection due to administrator
-  # command", which reads like a broken migration and is not one.
+  # Requires three consecutive successful queries, not one. This image runs initdb
+  # and its bootstrap SQL, then restarts Postgres. `pg_isready` succeeds during that
+  # first phase, so a single check allowed the migrations to start against a server
+  # that was about to shut down. The run then failed part way through init.sql with
+  # "terminating connection due to administrator command", which looks like a broken
+  # migration.
   echo "waiting for postgres…"
   ok=0
   for _ in $(seq 1 90); do
@@ -80,9 +78,8 @@ for m in supabase/migrations/*.sql; do
   psql -v ON_ERROR_STOP=1 < "$m"
 done
 
-# No ON_ERROR_STOP here: check 6 *passes* by raising "permission denied for table
-# polls" — that error is the correct answer refusing to be read while the poll is
-# still open.
+# No ON_ERROR_STOP here. Check 6 passes by raising "permission denied for table
+# polls": that error is the correct answer being withheld while the poll is open.
 echo "--- authorization.sql ---"
 OUT="$(psql < supabase/tests/authorization.sql 2>&1)"
 echo "$OUT"
@@ -98,9 +95,8 @@ if [[ "$FAILED" != "0" ]]; then
   exit 1
 fi
 
-# A zero-pass run means the script never reached its assertions — an empty result
-# is not a green one, and reporting it as one is the silent failure this whole
-# class is about.
+# A run with no passing checks means the script never reached its assertions.
+# Without this, that would be reported as success.
 if [[ "$PASSED" -lt 13 ]]; then
   echo "expected at least 13 passing checks, saw $PASSED — did the script run at all?" >&2
   exit 1

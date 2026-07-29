@@ -26,7 +26,13 @@ export function ExerciseLayout({ section }: LayoutProps) {
         <SectionHeader section={section} />
 
         {section.cards && section.cards.length > 0 && (
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <div
+            className={`mt-8 grid gap-4 ${
+              // Four items read as a 2x2 block. At three columns the fourth card
+              // sits alone on a second row.
+              section.cards.length === 4 ? "md:grid-cols-2" : "md:grid-cols-3"
+            }`}
+          >
             {section.cards.map((card, i) => (
               <Reveal key={card.title} delay={0.08 + i * 0.07}>
                 <NeuPanel radius="rounded-[24px]" className="flex h-full flex-col p-5 md:p-6">
@@ -52,11 +58,10 @@ export function ExerciseLayout({ section }: LayoutProps) {
                       {card.meta}
                     </p>
                   )}
-                  {/* Evidence, on the slide that asks the room to score this
-                      site against nine items. Dropping it here would make the
-                      one section built to be checkable the one section with
-                      nothing to check — and `met: false` is the whole point of
-                      the item this site does not pass. */}
+                  {/* Evidence links, on the slide that asks the room to score this
+                      site against nine items. Each link points at the file that
+                      demonstrates the item; `met: false` marks the one item this
+                      site does not pass. */}
                   {card.href && (
                     <a
                       href={card.href}

@@ -10,18 +10,16 @@ export type SurfacedRow = { id: number; body: string };
 export const REFRESH_MS = 4000;
 
 /**
- * What the presenter has put on screen, for one exercise.
+ * Reads the submissions the presenter has put on screen for one exercise.
  *
- * Extracted so the exercise slide and the standalone review slide read through
- * the same query. Two copies of the query that decides what a hundred people see
- * is how the two drift, and the one that drifts is whichever is not being looked
- * at during rehearsal.
+ * Shared by the exercise slide and the standalone review slide so both use the
+ * same query. Keeping two copies would let them diverge, and the divergence would
+ * only appear in whichever slide was not being rehearsed.
  *
- * Polled rather than subscribed: `submissions` is not in the realtime
- * publication, and adding it is a schema change this does not need. Four seconds
- * is invisible next to the presenter walking to the next slide, and it only runs
- * while the section is actually on screen — a hundred browsers left open on a
- * laptop overnight should not be querying anything.
+ * Polled rather than subscribed, because `submissions` is not in the realtime
+ * publication and adding it is a schema change this does not require. The four
+ * second interval is short relative to how long a presenter spends on a slide, and
+ * it runs only while the section is on screen so that idle tabs issue no queries.
  */
 export function useSurfaced(exerciseId: string, root: React.RefObject<HTMLElement | null>) {
   const [rows, setRows] = useState<SurfacedRow[]>([]);
@@ -89,21 +87,18 @@ export function SurfacedGrid({ rows }: { rows: SurfacedRow[] }) {
 }
 
 /**
- * The standalone review slide: the room's own specs, and nothing that writes.
+ * The review slide: the specs shared with the room, read-only.
  *
- * No textarea, no Submit, no Share, and above all no put-it-on-screen control.
- * Surfacing stays in the presenter bar — a write control on this slide would put
- * the `authors_cannot_surface` guarantee back into the UI's hands, and that
- * guarantee is the one the class spends an hour arguing belongs in the database.
+ * Renders no textarea, no Submit, no Share and no control that sets `surfaced_at`.
+ * Surfacing happens in the presenter bar. Putting a write control here would move
+ * the `authors_cannot_surface` guarantee from the database into the interface.
  *
- * The read is granted `to authenticated`, and an attendee who never submitted has
- * no session — so it signs in anonymously first. On the exercise slide that was
- * masked, because everyone there had just minted a session by submitting; on a
- * standalone slide it would have been "the room sees a blank panel while the
- * projector shows the work". Widening the policy to `anon` would have fixed it
- * too, and that grant is worth keeping narrow.
- */
-export function SurfacedPanel({
+ * The select policy is granted `to authenticated`, and an attendee who never
+ * submitted has no session, so this signs in anonymously before reading. The
+ * problem did not appear on the exercise slide because everyone there had a session
+ * from submitting. Widening the policy to `anon` would also fix it, but that grant
+ * is worth keeping narrow.
+ */export function SurfacedPanel({
   exerciseId,
   empty,
 }: {
@@ -128,8 +123,8 @@ export function SurfacedPanel({
   }, [read]);
 
   return (
-    // Reserved height. Surfacing the first spec mid-class must not shift the
-    // section the presenter is standing on.
+    // Reserved height, so putting up the first spec does not change the height of
+    // the section the presenter is currently on.
     <div ref={root} data-deck-keys="off" className="mt-10 min-h-[18rem]">
       {rows.length > 0 ? (
         <SurfacedGrid rows={rows} />
