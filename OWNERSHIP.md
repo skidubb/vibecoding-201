@@ -75,8 +75,8 @@ Verified against the repository as it stands, not inferred from the plan.
 
 - **The backend is real and load-bearing.** Supabase Postgres (eight migrations), Google +
   anonymous auth, live polls, the spec exercise, an events log, the `/admin` presenter
-  console, and the `/admin/export` CSV route. All forty sections of
-  `Vibecoding-201-Production-GTM-Tools-v6.pptx` are on the page, titles verbatim, and
+  console, and the `/admin/export` CSV route. All twenty-six sections of
+  `deck-content-v7.md` are on the page, titles verbatim, and
   production deploys from `main` via Git. Shutting the site down now also means deciding
   what happens to the Supabase project and the data in it — see the shutdown DECIDE block.
 - **The progress rail disappears below the `md` breakpoint** (`ProgressRail.tsx:39`). On a

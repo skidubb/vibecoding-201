@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import { Glow } from "@/components/core/ParallaxLayer";
 import { AccentTitle, NeuBadge } from "@/components/neu/Neu";
-import { CONTAINER, SectionBackdrop, Strip, type LayoutProps } from "./shared";
+import { CONTAINER, SectionBackdrop, Strip, Deeper, type LayoutProps } from "./shared";
 
 /**
  * A pure typographic beat. No panel, no image — the page goes quiet so one
@@ -130,6 +130,10 @@ export function ClaimLayout({ section }: LayoutProps) {
               section.footnote
             )}
           </motion.p>
+        )}
+
+        {section.deeper && (
+          <Deeper deeper={section.deeper} sectionId={section.id} align="center" />
         )}
       </div>
     </>

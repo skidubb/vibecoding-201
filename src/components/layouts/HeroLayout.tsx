@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ImageBackdrop, Glow } from "@/components/core/ParallaxLayer";
 import { NeuBadge, AccentTitle } from "@/components/neu/Neu";
-import { CONTAINER, type LayoutProps } from "./shared";
+import { CONTAINER, Deeper, type LayoutProps } from "./shared";
 
 export function HeroLayout({ section }: LayoutProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -87,6 +87,9 @@ export function HeroLayout({ section }: LayoutProps) {
           >
             {section.footnote}
           </span>
+          {section.deeper && (
+            <Deeper deeper={section.deeper} sectionId={section.id} />
+          )}
         </motion.div>
       </motion.div>
 

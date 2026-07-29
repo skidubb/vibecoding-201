@@ -4,16 +4,22 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Exercise } from "@/content/sections";
 import { backendConfigured, supabase } from "@/lib/supabase/client";
 import { NeuPanel } from "@/components/neu/Neu";
+import {
+  REFRESH_MS,
+  SurfacedGrid,
+  type SurfacedRow,
+} from "@/components/interactive/SurfacedPanel";
 
 type Status = "offline" | "loading" | "ready" | "saving" | "saved" | "error";
 
-type Surfaced = { id: number; body: string };
-
-/** How often the room's screen re-reads what the presenter has put up. */
-const REFRESH_MS = 4000;
-
 /**
- * The 120-second spec exercise.
+ * The hands-on exercises: a clock, and — for the assignment — somewhere to write.
+ *
+ * Two of the three exercises in this deck are self-scoring against a list on the
+ * slide, so they run in `mode: "timer"` and this component opens no connection at
+ * all for them. That is not an optimisation: a slide with nothing to submit should
+ * not read a session, should not poll every four seconds, and should not be able
+ * to.
  *
  * Three things happen here and they are deliberately separate, because the
  * separation is the lesson. Writing is local and works with no backend at all.
@@ -36,6 +42,8 @@ export function ExerciseWidget({
   exercise: Exercise;
   sectionId: string;
 }) {
+  const writing = exercise.mode !== "timer";
+
   const [remaining, setRemaining] = useState(exercise.seconds);
   const [running, setRunning] = useState(false);
 
@@ -46,7 +54,7 @@ export function ExerciseWidget({
   const [message, setMessage] = useState<string | null>(null);
   const [rowId, setRowId] = useState<number | null>(null);
   const [shared, setShared] = useState(false);
-  const [surfaced, setSurfaced] = useState<Surfaced[]>([]);
+  const [surfaced, setSurfaced] = useState<SurfacedRow[]>([]);
 
   const root = useRef<HTMLDivElement>(null);
   const mounted = useRef(true);
@@ -69,14 +77,14 @@ export function ExerciseWidget({
   // ------------------------------------------------------ what is on screen
   const readSurfaced = useCallback(async () => {
     const client = supabase();
-    if (!client) return;
+    if (!client || exercise.mode === "timer") return;
     const { data } = await client
       .from("submissions")
       .select("id, body")
       .eq("exercise_id", exercise.id)
       .not("surfaced_at", "is", null)
       .order("surfaced_at", { ascending: true });
-    if (mounted.current) setSurfaced((data as Surfaced[] | null) ?? []);
+    if (mounted.current) setSurfaced((data as SurfacedRow[] | null) ?? []);
   }, [exercise.id]);
 
   // Own row first, then poll for whatever the presenter has surfaced.
@@ -87,6 +95,10 @@ export function ExerciseWidget({
   // and it only runs while the section is actually on screen — a hundred
   // browsers left open on a laptop overnight should not be querying anything.
   useEffect(() => {
+    // A timer-only exercise has nothing to read and nothing to store, so it
+    // opens no connection at all.
+    if (!writing) return;
+
     const client = supabase();
     if (!client) return;
 
@@ -134,7 +146,7 @@ export function ExerciseWidget({
       window.clearInterval(timer);
       observer.disconnect();
     };
-  }, [exercise.id, readSurfaced]);
+  }, [exercise.id, readSurfaced, writing]);
 
   // ----------------------------------------------------------------- submit
   async function submit() {
@@ -242,7 +254,13 @@ export function ExerciseWidget({
 
   return (
     <div ref={root} data-deck-keys="off" className="mt-10">
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
+      <div
+        className={
+          writing
+            ? "grid gap-5 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]"
+            : "grid gap-5"
+        }
+      >
         {/* ------------------------------------------------------- the clock */}
         <NeuPanel radius="rounded-[24px]" className="flex flex-col justify-between p-6">
           <p
@@ -293,6 +311,7 @@ export function ExerciseWidget({
         </NeuPanel>
 
         {/* ------------------------------------------------------ the writing */}
+        {writing && (
         <NeuPanel radius="rounded-[24px]" className="p-6">
           <label
             htmlFor={`${sectionId}-body`}
@@ -362,29 +381,11 @@ export function ExerciseWidget({
                     : "Nobody sees this until you share it. Sharing is a separate press."))}
           </p>
         </NeuPanel>
+        )}
       </div>
 
       {/* ------------------------------------------------ what is on screen */}
-      {surfaced.length > 0 && (
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {surfaced.map((row) => (
-            <NeuPanel key={row.id} variant="inset" radius="rounded-2xl" className="px-6 py-5">
-              <p
-                className="font-sans text-[11px] font-medium uppercase tracking-[0.2em]"
-                style={{ color: "var(--accent)" }}
-              >
-                On screen · shared by its author
-              </p>
-              <p
-                className="mt-3 whitespace-pre-wrap text-[0.98rem] leading-relaxed"
-                style={{ color: "var(--text)" }}
-              >
-                {row.body}
-              </p>
-            </NeuPanel>
-          ))}
-        </div>
-      )}
+      <SurfacedGrid rows={surfaced} />
     </div>
   );
 }

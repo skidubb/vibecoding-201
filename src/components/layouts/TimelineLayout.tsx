@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, SectionBackdrop, SectionHeader, type LayoutProps } from "./shared";
+import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 
 /**
  * Jordan's week. The spine draws itself as you scroll and turns magenta once
@@ -90,6 +90,17 @@ export function TimelineLayout({ section }: LayoutProps) {
                           {stop.body}
                         </p>
                       )}
+                      {/* Where this day gets answered. The week and the agenda
+                          are one object: every failure the room watches carries
+                          the point in the hour where it is repaired. */}
+                      {stop.repaired && (
+                        <p
+                          className="mt-3 font-sans text-[11px] font-medium uppercase tracking-[0.18em] tabular-nums"
+                          style={{ color: "var(--accent)" }}
+                        >
+                          Repaired {stop.repaired}
+                        </p>
+                      )}
                     </div>
                     {stop.image && (
                       <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-[14px] md:h-20 md:w-40">
@@ -114,7 +125,12 @@ export function TimelineLayout({ section }: LayoutProps) {
             </Reveal>
           ))}
         </div>
+
       </div>
+
+      {/* Outside the spine wrapper: that div carries the left padding the
+          timeline nodes hang off, and the tail is not part of the week. */}
+      <SectionTail section={section} />
     </div>
     </>
   );

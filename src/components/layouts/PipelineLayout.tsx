@@ -3,7 +3,7 @@
 import { Glow } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
 import { Logo } from "@/components/layouts/Logo";
-import { CONTAINER, Footnote, Kicker, SectionBackdrop, SectionHeader, Strip, type LayoutProps } from "./shared";
+import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 
 /**
  * The build stack, as a run of stages rather than a grid of cards.
@@ -77,9 +77,7 @@ export function PipelineLayout({ section }: LayoutProps) {
           ))}
         </ol>
 
-        {section.strip && <Strip {...section.strip} />}
-        {section.kicker && <Kicker>{section.kicker}</Kicker>}
-        {section.footnote && <Footnote href={section.footnoteHref}>{section.footnote}</Footnote>}
+        <SectionTail section={section} />
       </div>
     </>
   );

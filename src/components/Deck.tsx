@@ -18,6 +18,8 @@ import { PromptLayout } from "@/components/layouts/PromptLayout";
 import { PollLayout } from "@/components/layouts/PollLayout";
 import { ExerciseLayout } from "@/components/layouts/ExerciseLayout";
 import { PipelineLayout } from "@/components/layouts/PipelineLayout";
+import { MatrixLayout } from "@/components/layouts/MatrixLayout";
+import { SurfacedLayout } from "@/components/layouts/SurfacedLayout";
 
 type LayoutComponent = (props: { section: Section; index: number }) => React.ReactNode;
 
@@ -35,6 +37,8 @@ const LAYOUTS: Record<LayoutKind, LayoutComponent> = {
   poll: PollLayout,
   exercise: ExerciseLayout,
   pipeline: PipelineLayout,
+  matrix: MatrixLayout,
+  surfaced: SurfacedLayout,
 };
 
 /**

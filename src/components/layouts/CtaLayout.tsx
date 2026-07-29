@@ -5,7 +5,7 @@ import { Glow, ImageBackdrop } from "@/components/core/ParallaxLayer";
 import { NeuBadge, NeuButton } from "@/components/neu/Neu";
 import { useDeck } from "@/lib/deck-context";
 import { LinkChips } from "./LinkChips";
-import { CONTAINER, type LayoutProps } from "./shared";
+import { CONTAINER, Deeper, type LayoutProps } from "./shared";
 
 /** The three-line close, delivered one line at a time. */
 export function CtaLayout({ section }: LayoutProps) {
@@ -105,6 +105,10 @@ export function CtaLayout({ section }: LayoutProps) {
             >
               {section.footnote} <span aria-hidden>→</span>
             </a>
+          )}
+
+          {section.deeper && (
+            <Deeper deeper={section.deeper} sectionId={section.id} align="center" />
           )}
         </motion.div>
       </div>

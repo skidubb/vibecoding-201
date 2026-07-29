@@ -1,6 +1,7 @@
 "use client";
 
-import { CONTAINER, Footnote, Kicker, SectionBackdrop, SectionHeader, type LayoutProps } from "./shared";
+import { CONTAINER, Footnote, Kicker, SectionBackdrop, SectionHeader, Strip, Deeper, type LayoutProps } from "./shared";
+import { LinkChips } from "@/components/layouts/LinkChips";
 import { PollWidget } from "@/components/interactive/PollWidget";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
 
@@ -39,7 +40,16 @@ export function PollLayout({ section }: LayoutProps) {
         variant={poll.variant}
       />
 
+      {/* The Q&A slide's four buckets live here. A poll may carry no kicker —
+          `registry-integrity` fails the build over it, because a kicker under a
+          live poll is commentary on screen while the room is still voting — so
+          without `strip` this layout had nowhere to put content that is not the
+          question. */}
+      {section.strip && <Strip {...section.strip} />}
+      {/* The Q&A slide closes the deck, so the contact line lands here. */}
+      {section.links && <LinkChips links={section.links} />}
       {section.kicker && <Kicker>{section.kicker}</Kicker>}
+      {section.deeper && <Deeper deeper={section.deeper} sectionId={section.id} />}
     </div>
     </>
   );

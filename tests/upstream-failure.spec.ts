@@ -63,7 +63,7 @@ test("a poll renders and says so when there is no backend", async ({ page }) => 
 
   // The question and every option still read. A visitor months later, and the
   // room if the backend dies, both still get the teaching content.
-  await expect(section).toContainText("The first build works except for one repeatable error.");
+  await expect(section).toContainText("The build works except for one error that keeps happening.");
   await expect(section.locator("button[data-option]")).toHaveCount(4);
   await expect(section).toContainText(
     "Provide the error, reproduction steps, and expected behavior",
@@ -83,7 +83,7 @@ test("the correct answer is not in the page when no poll is revealed", async ({ 
   const html = await page.content();
 
   expect(html).not.toContain("correct_option_id");
-  expect(html).not.toContain("Debugging is delegation with evidence attached. A throws away");
+  expect(html).not.toContain("Debugging is delegation with evidence attached.");
   expect(html).not.toContain("planted distractor");
 });
 

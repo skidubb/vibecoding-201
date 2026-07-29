@@ -1,14 +1,25 @@
 # Authorization tests
 
 `authorization.sql` runs the deck's own security argument against this schema.
-Slide 21 hands the room a test they can perform without an engineer — sign in as
-one tenant, ask for another tenant's record, require the request to fail — and
-this is that test, against the votes the room itself casts.
+The security-test slide hands the room a test they can perform without an
+engineer — sign in as one tenant, ask for another tenant's record, require the
+request to fail — and this is that test, against the votes the room itself casts.
 
 ## Running it
 
-The full Supabase stack needs Docker file sharing for this directory, which is
-often not granted. These tests need only Postgres, so they run without it:
+```bash
+./scripts/authorization-test.sh
+```
+
+That is also what CI runs on every pull request, which is what makes the
+security-test slide's claim about this file true. Use `PGURL=postgres://…` to run
+against a Postgres you already have.
+
+The script does what the block below used to ask you to paste. It is kept here
+because knowing the steps matters, but the script is the copy that is executed —
+this prose had already drifted, and referred to a `supabase/seed.sql` that does
+not exist. The full Supabase stack needs Docker file sharing for this directory,
+which is often not granted; these tests need only Postgres, so they skip it:
 
 ```bash
 docker run -d --name vb201pg -e POSTGRES_PASSWORD=pg -p 55432:5432 \
@@ -29,8 +40,9 @@ create or replace function auth.uid() returns uuid language sql stable as $$
 $$;
 SQL
 
-docker exec -i vb201pg psql -U postgres -v ON_ERROR_STOP=1 < supabase/migrations/20260727000000_init.sql
-docker exec -i vb201pg psql -U postgres -v ON_ERROR_STOP=1 < supabase/seed.sql
+for m in supabase/migrations/*.sql; do
+  docker exec -i vb201pg psql -U postgres -v ON_ERROR_STOP=1 < "$m"
+done
 docker exec -i vb201pg psql -U postgres < supabase/tests/authorization.sql
 ```
 

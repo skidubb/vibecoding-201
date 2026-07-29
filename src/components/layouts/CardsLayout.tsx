@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import { Glow, ImageBackdrop } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, Footnote, Kicker, SectionHeader, Strip, type LayoutProps } from "./shared";
+import { CONTAINER, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 import { EventFeed } from "@/components/interactive/EventFeed";
 import { Logo } from "@/components/layouts/Logo";
 import { PromptBlock } from "@/components/interactive/PromptBlock";
@@ -135,9 +135,7 @@ export function CardsLayout({ section }: LayoutProps) {
             and move on, it shows this page's own. */}
         {section.id === "run" && <EventFeed />}
 
-        {section.strip && <Strip {...section.strip} />}
-        {section.kicker && <Kicker>{section.kicker}</Kicker>}
-        {section.footnote && <Footnote href={section.footnoteHref}>{section.footnote}</Footnote>}
+        <SectionTail section={section} />
       </div>
     </>
   );

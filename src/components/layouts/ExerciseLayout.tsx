@@ -2,7 +2,7 @@
 
 import { Glow } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, Footnote, Kicker, SectionBackdrop, SectionHeader, Strip, type LayoutProps } from "./shared";
+import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 import { ExerciseWidget } from "@/components/interactive/ExerciseWidget";
 
 /**
@@ -52,6 +52,26 @@ export function ExerciseLayout({ section }: LayoutProps) {
                       {card.meta}
                     </p>
                   )}
+                  {/* Evidence, on the slide that asks the room to score this
+                      site against nine items. Dropping it here would make the
+                      one section built to be checkable the one section with
+                      nothing to check — and `met: false` is the whole point of
+                      the item this site does not pass. */}
+                  {card.href && (
+                    <a
+                      href={card.href}
+                      target={card.href.startsWith("/") ? undefined : "_blank"}
+                      rel={card.href.startsWith("/") ? undefined : "noreferrer noopener"}
+                      data-deck-keys="off"
+                      className="mt-auto pt-4 font-sans text-[11px] uppercase tracking-[0.16em] underline-offset-4 hover:underline"
+                      style={{
+                        color: card.met === false ? "var(--text-faint)" : "var(--accent)",
+                      }}
+                    >
+                      {card.met === false ? "Not yet — see why" : "Evidence"}{" "}
+                      <span aria-hidden>↗</span>
+                    </a>
+                  )}
                 </NeuPanel>
               </Reveal>
             ))}
@@ -60,9 +80,7 @@ export function ExerciseLayout({ section }: LayoutProps) {
 
         {exercise && <ExerciseWidget exercise={exercise} sectionId={section.id} />}
 
-        {section.strip && <Strip {...section.strip} />}
-        {section.kicker && <Kicker>{section.kicker}</Kicker>}
-        {section.footnote && <Footnote href={section.footnoteHref}>{section.footnote}</Footnote>}
+        <SectionTail section={section} />
       </div>
     </>
   );

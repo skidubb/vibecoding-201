@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { Glow } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, Footnote, Kicker, SectionBackdrop, SectionHeader, Strip, type LayoutProps } from "./shared";
+import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 
 /**
  * The cold open: two screens that look alike and are worth wildly different
@@ -87,9 +87,7 @@ export function SplitLayout({ section }: LayoutProps) {
           })}
         </div>
 
-        {section.strip && <Strip {...section.strip} />}
-        {section.kicker && <Kicker>{section.kicker}</Kicker>}
-        {section.footnote && <Footnote href={section.footnoteHref}>{section.footnote}</Footnote>}
+        <SectionTail section={section} />
       </div>
     </>
   );

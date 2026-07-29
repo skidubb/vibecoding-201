@@ -44,6 +44,12 @@ jobs:
         env:
           CI: "true"
 
+      # Slide 14 tells the room the fifteen policies are covered by a test that
+      # runs on every pull request. That sentence was false until this step
+      # existed — the job ran Playwright only. The deck cites this workflow as
+      # its own evidence, so the claim and the job have to match.
+      - run: ./scripts/authorization-test.sh
+
       - if: failure()
         uses: actions/upload-artifact@v7
         with:

@@ -8,9 +8,24 @@ operational rules that don't belong in it.
 
 - **Titles come from the deck, verbatim.** If you find yourself writing a title, stop —
   you are decorating, and it reads as hiding the point. Every eyebrow, headline, body
-  line and kicker in `src/content/sections.ts` is quoted from
-  `../Vibecoding-201-Production-GTM-Tools-v6.pptx`; the deck's slide numbering and
+  line, table cell and kicker in `src/content/sections.ts` is quoted from
+  `../deck-content-v7.md` (26 sections; the earlier 40-section cut came from
+  `../Vibecoding-201-Production-GTM-Tools-v6.pptx`). The deck's slide numbering and
   speaker notes are noise and are deliberately not mirrored anywhere on the site.
+- **v7's own three rules govern the registry**, and they are why this file looks sparser
+  than the talk: if it is said out loud it is not printed, no sentence restates the one
+  before it, and every headline has to stand on its own with the slide covered up. A
+  spoken punchline added to a slide is a regression even though nothing fails.
+- **The GO DEEPER strip is on 14 of the 26, and absent from 12 on purpose.** A pointer on
+  a poll, a timer or the demo is filler, and filler in that slot teaches the room to stop
+  reading the slot. Do not "finish" the set.
+- **Four optional tiers render through one `SectionTail`.** `strip`, `kicker`, `footnote`
+  and `deeper` have one call site per layout, not four. Five registry fields have now been
+  silently dropped by a layout that did not know about them — add a new tier there, not in
+  twelve components, and extend `tests/registry-integrity.spec.ts` in the same commit.
+- **Short registry fields need a structural test, not a text one.** The drop-guard
+  discards strings of eight characters or fewer, so "Build", "Ship", "Run" and "Test" are
+  invisible to it. Do not lower that floor — count the rendered nodes instead.
 - **`AGENTS.md` is generated.** Never hand-edit between the `BEGIN/END:nextjs-agent-rules`
   markers — a tool regenerates that block and will clobber anything added there. Durable
   rules go in the README, or here.

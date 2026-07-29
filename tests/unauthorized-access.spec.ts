@@ -61,17 +61,55 @@ test("the kit is served without an account, and the files are real", async ({
   }
 });
 
-test("the deck points at the kit from the last slide", async ({ page }) => {
-  // The close is a `cta`, which ignored `footnote` entirely until the kit
-  // needed a home there. The room is told where to get it on the last slide
-  // they look at, so this is the link most likely to be silently missing.
-  await page.goto("/#close");
+test("the deck points at the kit from the homework slide", async ({ page }) => {
+  // The closing `cta` section was folded into homework when the deck was re-cut,
+  // so this moved with it. The claim is unchanged and is the reason the test
+  // exists: the room is told where to get the kit once, near the end, and that
+  // makes it the link most likely to go silently missing.
+  await page.goto("/#homework");
   await ready(page);
   await settle(page);
 
   await expect(
-    page.locator("#close").getByRole("link", { name: /kit/i }),
+    page.locator("#homework").getByRole("link", { name: /kit/i }).first(),
   ).toHaveAttribute("href", "/kit");
+});
+
+test("the review slide renders nothing that writes", async ({ page }) => {
+  // The room's shared specs get their own slide, and surfacing stays in the
+  // presenter bar. A write control here — a textarea, a Submit, a
+  // put-it-on-screen button — would put the `authors_cannot_surface` guarantee
+  // back in the UI's hands, and that guarantee is the one the class spends an
+  // hour arguing belongs in the database.
+  await page.goto("/#room-specs");
+  await ready(page);
+  await settle(page);
+
+  const section = page.locator("#room-specs");
+  await expect(section.locator("textarea")).toHaveCount(0);
+  await expect(section.locator("[data-submit]")).toHaveCount(0);
+  await expect(section.locator("[data-share]")).toHaveCount(0);
+  await expect(section.locator("[data-surface]")).toHaveCount(0);
+
+  // And it says so in words rather than rendering an empty slide.
+  await expect(section.getByText(/Nothing on screen yet/)).toBeVisible();
+});
+
+test("a timer-only exercise offers nothing to submit", async ({ page }) => {
+  // Two of the three exercises are self-scoring against a list on the slide.
+  // They keep the clock and lose the box — a Submit button on a slide with
+  // nothing to store is a control that can only fail.
+  for (const id of ["grade-yours", "the-bar"]) {
+    await page.goto(`/#${id}`);
+    await ready(page);
+    await settle(page);
+
+    const section = page.locator(`#${id}`);
+    await expect(section.locator("[data-timer]")).toHaveCount(1);
+    await expect(section.locator("[data-timer-toggle]")).toHaveCount(1);
+    await expect(section.locator("textarea")).toHaveCount(0);
+    await expect(section.locator("[data-submit]")).toHaveCount(0);
+  }
 });
 
 test("the report does not spoil a poll that has not been revealed", async ({ page }) => {

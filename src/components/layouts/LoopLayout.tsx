@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import { Glow, VideoBackdrop } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, Kicker, SectionHeader, type LayoutProps } from "./shared";
+import { CONTAINER, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 
 /**
  * Spec → Plan → Build → Test → Ship → Run, as a ring rather than a row: the
@@ -90,7 +90,7 @@ export function LoopLayout({ section }: LayoutProps) {
         </div>
       </Reveal>
 
-        {section.kicker && <Kicker>{section.kicker}</Kicker>}
+        <SectionTail section={section} />
       </div>
     </>
   );

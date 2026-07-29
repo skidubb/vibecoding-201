@@ -32,7 +32,16 @@ const REFRESH_MS = 10_000;
 /** The project's analytics page — team slug scottes-projects, per `vercel teams ls`. */
 const VERCEL_ANALYTICS_URL = "https://vercel.com/scottes-projects/crossing-the-gap-site/analytics";
 
-const EXERCISE_IDS = sections.filter((s) => s.exercise).map((s) => s.exercise!.id);
+/**
+ * Exercises that can actually hold a submission.
+ *
+ * Timer-only exercises are excluded: the room scores those against a list on the
+ * slide and submits nothing, so listing them here would give the console two
+ * panels that are permanently empty and read as a backend fault mid-class.
+ */
+const EXERCISE_IDS = sections
+  .filter((s) => s.exercise && s.exercise.mode !== "timer")
+  .map((s) => s.exercise!.id);
 
 const time = (iso: string) =>
   new Date(iso).toLocaleTimeString(undefined, {

@@ -3,8 +3,8 @@
 A neumorphic, parallax-scrolling presentation of *Vibecoding 201: Building Production
 GTM Tools* (Pavilion AI in GTM School) — the polls, the copyable prompts, and the tool
 the class is about, deployed for real. The site is the presentation surface, not a
-companion: all 40 sections of `Vibecoding-201-Production-GTM-Tools-v6.pptx` are on the
-page, with every title quoted from the deck verbatim. See `SPEC.md` for what this is
+companion: all 26 sections of `deck-content-v7.md` are on the page, with every title
+quoted from the deck verbatim. See `SPEC.md` for what this is
 meant to do and `ARCHITECTURE.md` for why it is built this way.
 
 **Live:** https://crossing-the-gap-site.vercel.app
@@ -42,7 +42,7 @@ The two asset scripts (`gen:media`, `assets`) are documented under
   its height: every stop is somewhere the deck can actually travel to, so no
   key press is ever a no-op
 - The right-hand rail is clickable; the bottom-left readout shows position in
-  this deck (`7 / 40`) and nothing else — the source deck's numbering is
+  this deck (`7 / 26`) and nothing else — the source deck's numbering is
   deliberately not mirrored
 
 **The login is on the deck itself**: signed out, a **Sign in** pill sits fixed
@@ -85,7 +85,8 @@ the deck, verbatim; if you find yourself writing one, stop.
 {
   id: "the-bar",
   theme: "dark",          // flips every neumorphic surface beneath it
-  layout: "cards",        // hero | split | claim | cards | timeline | chart | loop | cta | prompt | poll | exercise
+  layout: "cards",        // hero | split | claim | cards | timeline | chart | loop
+                          // | cta | prompt | poll | exercise | pipeline | matrix | surfaced
   eyebrow: "The bar",
   title: "A production standard.",
   accent: "production standard.",   // rendered in magenta

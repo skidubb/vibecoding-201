@@ -7,7 +7,7 @@ import { AccentTitle, NeuBadge, Reveal } from "@/components/neu/Neu";
 import { SCurveChart } from "@/components/charts/SCurveChart";
 import { GapChasmChart } from "@/components/charts/GapChasmChart";
 import { LadderDiagram } from "@/components/charts/LadderDiagram";
-import { CONTAINER, type LayoutProps } from "./shared";
+import { CONTAINER, Deeper, type LayoutProps } from "./shared";
 
 /**
  * Tall section with a sticky viewport-height stage. Scrolling through the extra
@@ -128,6 +128,9 @@ export function ChartLayout({ section }: LayoutProps) {
                 >
                   {section.footnote}
                 </p>
+              )}
+              {section.deeper && (
+                <Deeper deeper={section.deeper} sectionId={section.id} />
               )}
             </div>
 

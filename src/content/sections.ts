@@ -1,29 +1,29 @@
 import type { StaticImageData } from "next/image";
 import type { BrandKey } from "@/components/layouts/Logo";
 
-import threshold from "@/assets/threshold.webp";
-import recordRefreshB from "@/assets/record-refresh-b.webp";
 import opsRoomA from "@/assets/ops-room-a.webp";
 import opsRoomB from "@/assets/ops-room-b.webp";
-import opsRoomC from "@/assets/ops-room-c.webp";
-import agentA from "@/assets/agent-a.webp";
-import agentB from "@/assets/agent-b.webp";
+import recordRefreshB from "@/assets/record-refresh-b.webp";
 import failureB from "@/assets/failure-b.webp";
 
+/**
+ * Backdrops.
+ *
+ * The generated set is keyed to the *previous* cut of the deck, which ran forty
+ * slides — so these names no longer track slide numbers and are matched by
+ * subject instead. That is the right way round: `s12-timer` belongs on whichever
+ * slide holds a clock, and pinning art to an ordinal is how a re-cut deck ends up
+ * with a photograph of six binders behind a slide about credentials.
+ */
 import genS01Doorway from "@/assets/generated/s01-doorway.webp";
-import genS02bTwoDoors from "@/assets/generated/s02b-two-doors.webp";
+import genS02TwoLaptops from "@/assets/generated/s02-two-laptops.webp";
 import genS03UnderTheDesk from "@/assets/generated/s03-under-the-desk.webp";
 import genS04Monday from "@/assets/generated/s04-monday.webp";
-import genS05SixNotes from "@/assets/generated/s05-six-notes.webp";
-import genS07Turnstile from "@/assets/generated/s07-turnstile.webp";
-import genS08LightsOut from "@/assets/generated/s08-lights-out.webp";
+import genS06ThreeObjects from "@/assets/generated/s06-three-objects.webp";
 import genS10PagePassed from "@/assets/generated/s10-page-passed.webp";
 import genS11TwoSheets from "@/assets/generated/s11-two-sheets.webp";
 import genS12Timer from "@/assets/generated/s12-timer.webp";
-import genS13HoveringPen from "@/assets/generated/s13-hovering-pen.webp";
 import genS14TheQuestion from "@/assets/generated/s14-the-question.webp";
-import genS15Relay from "@/assets/generated/s15-relay.webp";
-import genS16ThreeDrawers from "@/assets/generated/s16-three-drawers.webp";
 import genS17OverShoulder from "@/assets/generated/s17-over-shoulder.webp";
 import genS18SixBinders from "@/assets/generated/s18-six-binders.webp";
 import genS19HandsUp from "@/assets/generated/s19-hands-up.webp";
@@ -36,15 +36,8 @@ import genS25TwoParcels from "@/assets/generated/s25-two-parcels.webp";
 import genS26LedgerAndNote from "@/assets/generated/s26-ledger-and-note.webp";
 import genS27HandsUp2 from "@/assets/generated/s27-hands-up-2.webp";
 import genS28GreenLights from "@/assets/generated/s28-green-lights.webp";
-import genS29RelayHands from "@/assets/generated/s29-relay-hands.webp";
-import genS30Unplugging from "@/assets/generated/s30-unplugging.webp";
-import genS31ThreeDoors from "@/assets/generated/s31-three-doors.webp";
-import genS32ManyPhones from "@/assets/generated/s32-many-phones.webp";
 import genS33WallDisplay from "@/assets/generated/s33-wall-display.webp";
-import genS34Nameplate from "@/assets/generated/s34-nameplate.webp";
-import genS35RingWithGate from "@/assets/generated/s35-ring-with-gate.webp";
 import genS36ThreeLines from "@/assets/generated/s36-three-lines.webp";
-import genS37OneObject from "@/assets/generated/s37-one-object.webp";
 import genS38AboutToSend from "@/assets/generated/s38-about-to-send.webp";
 import genS39NineItems from "@/assets/generated/s39-nine-items.webp";
 import genS40Council from "@/assets/generated/s40-council.webp";
@@ -61,7 +54,9 @@ export type LayoutKind =
   | "prompt"
   | "poll"
   | "exercise"
-  | "pipeline";
+  | "pipeline"
+  | "matrix"
+  | "surfaced";
 
 export type Media = {
   image?: StaticImageData;
@@ -105,6 +100,15 @@ export type TimelineStop = {
   body?: string;
   image?: StaticImageData;
   tone?: "neutral" | "bad";
+  /**
+   * Where in the hour this day's failure gets repaired.
+   *
+   * The running case and the promise of the class used to be two slides, and the
+   * promise slide was a list of defects with no time attached. Putting the
+   * timestamp on the day it belongs to makes the week and the agenda one object:
+   * every failure the room watches has a stated place where it is answered.
+   */
+  repaired?: string;
 };
 
 /** One answer in a poll. `id` matches poll_options.id in Postgres. */
@@ -142,10 +146,62 @@ export type Poll = {
  * here — the author sets `shared_at` on their own row, an admin sets
  * `surfaced_at`, and a check constraint refuses the second without the first.
  */
-export type Exercise = {
-  id: string;
-  seconds: number;
-  placeholder: string;
+export type Exercise =
+  | { id: string; seconds: number; mode?: "write"; placeholder: string }
+  /**
+   * A clock and nothing else, for the two self-scoring exercises.
+   *
+   * The room grades work it already has against a list on the slide, so there is
+   * nothing to submit and no reason to open a connection. A union rather than a
+   * `submit: false` flag because the illegal states — a timer with a placeholder,
+   * a writing box without one — then cannot be written, and `npm run build`
+   * becomes the gate instead of a code review.
+   */
+  | { id: string; seconds: number; mode: "timer"; placeholder?: never };
+
+/**
+ * A comparison table.
+ *
+ * Column 0 is always the row's label and always the emphasised cell: ten of the
+ * deck's slides are "this, against what it becomes", and the label is the spine
+ * of every one. There is deliberately no per-row bold flag — a formatting switch
+ * in the content registry is how a content file turns into a stylesheet.
+ *
+ * `head` may open with an empty string. The label column is unnamed on several
+ * slides, and an absent entry would leave the header ragged against the rows,
+ * which is the one thing a table must not be.
+ */
+export type Matrix = {
+  head?: string[];
+  rows: string[][];
+  /** Per column, defaulting to left. Only the slide with a time column sets it. */
+  align?: ("left" | "right")[];
+};
+
+/**
+ * Where this slide sits in Spec → Plan → Build → Test → Ship → Run.
+ *
+ * `all` is the whole loop every time: this is a position indicator, and one that
+ * prints only the steps near you is a breadcrumb rather than a map. `current` is
+ * matched by value, not by index, because the two steps bold on the test-and-ship
+ * slide need not be adjacent and the registry then reads as English.
+ */
+export type Steps = { all: string[]; current: string[] };
+
+/**
+ * A read-only view of what the presenter has put on screen, for an exercise that
+ * happened earlier in the deck.
+ *
+ * Deliberately not an `Exercise` with the same id: that would render a second
+ * writing box and a second Share button, which would let an attendee edit their
+ * spec while it is being read out to the room. This section has no clock, nothing
+ * to submit, and must never render a control that writes. Surfacing stays in the
+ * presenter bar, where `authors_cannot_surface` can keep meaning what it says.
+ */
+export type Surfaced = {
+  exerciseId: string;
+  /** What the slide says while nothing is up yet. Never an empty slide. */
+  empty?: string;
 };
 
 /** A prompt the reader copies into their own agent. Quoted from the deck verbatim. */
@@ -166,11 +222,44 @@ export type LinkRef = {
   install?: string;
 };
 
+/** One outbound reference on a GO DEEPER strip. */
+export type DeeperLink = { label: string; href: string };
+
+/**
+ * The small strip under a slide: a claim worth chasing, and where to chase it.
+ *
+ * Aimed at the fifteen percent who came in already knowing the material. Never
+ * read aloud — reading it costs thirty seconds and serves people who will
+ * screenshot it anyway — so it has to work silently, on the recording and for
+ * the person scrolling this site a week later.
+ *
+ * Deliberately not a `LinkRef[]`: `LinkRef` carries `note` and `install` and this
+ * strip renders neither, and a field a component silently ignores is the exact
+ * defect `tests/registry-integrity.spec.ts` exists to catch. The type says only
+ * what gets drawn.
+ *
+ * Fourteen sections carry one and twelve do not, which is deliberate rather than
+ * unfinished: a pointer on a poll, a timer or the demo is filler, and filler in
+ * this slot teaches the room to stop reading the slot.
+ */
+export type Deeper = {
+  /** Defaults to "Go deeper". */
+  label?: string;
+  /** The one sentence the strip makes. Emphasised, but small. */
+  claim: string;
+  /** A trailing qualifier — a caveat, a scope note, a "not a benchmark". */
+  note?: string;
+  /** One or two. Three is a reading list, not a strip. */
+  links: DeeperLink[];
+};
+
 export type Section = {
   id: string;
   theme: "dark" | "light";
   layout: LayoutKind;
   eyebrow?: string;
+  /** The progress strip through the 201 Loop. Renders under the eyebrow. */
+  steps?: Steps;
   title: string;
   /**
    * What the navigation rail calls this section.
@@ -193,18 +282,39 @@ export type Section = {
   footnote?: string;
   /** Makes the footnote a link — evidence a reader can open. */
   footnoteHref?: string;
+  /** Renders below the footnote, faint, at the very bottom of the slide. */
+  deeper?: Deeper;
   media?: Media;
   cards?: Card[];
   timeline?: TimelineStop[];
   chart?: "ladder" | "scurve" | "gap";
+  matrix?: Matrix;
   split?: { label: string; title: string; body: string; image: StaticImageData }[];
   loopSteps?: string[];
   prompts?: Prompt[];
   links?: LinkRef[];
   poll?: Poll;
   exercise?: Exercise;
+  surfaced?: Surfaced;
 };
 
+/**
+ * The deck, in order.
+ *
+ * Twenty-six sections, quoted verbatim from `deck-content-v7.md`. Three rules
+ * from that file govern every entry here and are worth restating, because they
+ * are what makes a slide different from a script:
+ *
+ *   1. If it is said out loud, it is not printed. A line lands harder spoken when
+ *      the room has not already read it — so the punchlines are in the deck's
+ *      speaker notes, not here, and this file will look sparser than the talk.
+ *   2. No sentence restates the one before it.
+ *   3. Every headline stands on its own with the slide covered up.
+ *
+ * The GO DEEPER strip is on fourteen of the twenty-six. The twelve without one
+ * are deliberate, not unfinished: a pointer on a poll, a timer or the demo is
+ * filler, and filler in that slot teaches the room to stop reading the slot.
+ */
 export const sections: Section[] = [
   {
     id: "title",
@@ -213,19 +323,57 @@ export const sections: Section[] = [
     eyebrow: "Vibecoding 201",
     title: "Building Production GTM Tools",
     accent: "Production",
-    lede: "Taking one GTM prototype from a chat window to a tool your team depends on.",
+    lede: "One GTM prototype, from a chat window to a tool your team depends on.",
     kicker: "Scott Ewalt · Founder, Cardinal Element",
-    footnote: "Pavilion AI in GTM School · 90 minutes: 60 content, 30 Q&A",
-    media: { image: genS01Doorway, speed: -0.18 },
+    footnote: "Pavilion AI in GTM School",
+    deeper: {
+      claim: "This deck's own source code.",
+      note: "Every claim in the next hour is checkable against it.",
+      links: [
+        {
+          label: "github.com/skidubb/vibecoding-201",
+          href: "https://github.com/skidubb/vibecoding-201",
+        },
+      ],
+    },
+    media: { image: genS01Doorway, speed: -0.12 },
   },
+
   {
+    id: "what-changed",
+    theme: "dark",
+    layout: "claim",
+    eyebrow: "101 · May 20",
+    title: "You built prototypes. Today you build something people depend on.",
+    accent: "depend on.",
+    railLabel: "What changed since 101",
+    kicker:
+      "Everything you can see is cheap to build now. Everything underneath is where tools die.",
+    deeper: {
+      claim:
+        "Google's New SDLC whitepaper draws the same line between vibe coding and agentic engineering.",
+      links: [
+        {
+          label: "The New SDLC With Vibe Coding",
+          href: "https://www.kaggle.com/whitepaper-the-new-SDLC-with-vibe-coding",
+        },
+      ],
+    },
+    media: { image: genS03UnderTheDesk, speed: -0.15 },
+  },
+
+  {
+    // `cold-open`, not `two-screens`: the id is the poll slug's twin and the
+    // anchor two specs locate this section by. The slide's name changed; what
+    // the section *is* did not.
     id: "cold-open",
     theme: "dark",
     layout: "poll",
-    eyebrow: "Cold open",
-    title: "Two identical screens. Radically different value.",
-    accent: "Radically different value.",
-    lede: "Which one would you trust to run Monday's retention meeting? Vote in the chat.",
+    eyebrow: "Two screens",
+    railLabel: "Two screens",
+    title: "Which one runs Monday's retention meeting?",
+    accent: "Monday's retention meeting?",
+    lede: "Vote in the chat.",
     poll: {
       slug: "cold-open",
       variant: "two-up",
@@ -234,7 +382,7 @@ export const sections: Section[] = [
           id: "cold-open:a",
           label: "A",
           name: "Screen A",
-          body: "Built in 12 minutes. Sample data. Open link.",
+          body: "Built in twelve minutes. Sample data. Open link.",
         },
         {
           id: "cold-open:b",
@@ -244,31 +392,21 @@ export const sections: Section[] = [
         },
       ],
     },
-    media: { image: genS02bTwoDoors, speed: -0.12 },
+    media: { image: genS02TwoLaptops, speed: -0.12 },
   },
-  {
-    id: "governing-claim",
-    theme: "dark",
-    layout: "claim",
-    eyebrow: "The governing claim",
-    title:
-      "AI made the visible part of software cheap. The remaining value and risk sit in the invisible system underneath it.",
-    accent: "invisible system underneath it.",
-    kicker: "Code is no longer the primary bottleneck. Judgment is.",
-    media: { image: genS03UnderTheDesk, speed: -0.15 },
-  },
+
   {
     id: "jordan",
-    railLabel: "The running case",
     theme: "light",
     layout: "timeline",
-    eyebrow: "The running case · Jordan, VP RevOps",
-    title: "The week Jordan's prototype died.",
-    accent: "died.",
+    eyebrow: "Running case · Jordan, VP RevOps",
+    title: "The week the prototype died",
+    accent: "died",
+    railLabel: "Jordan's week",
     timeline: [
       {
         day: "Sunday",
-        title: "Builds a polished churn-risk dashboard in Lovable",
+        title: "Builds a churn-risk dashboard in Lovable",
         image: opsRoomA,
       },
       {
@@ -280,111 +418,96 @@ export const sections: Section[] = [
         day: "Tuesday",
         title: "The team asks for logins and real accounts",
         tone: "bad",
+        repaired: "0:44",
       },
       {
         day: "Wednesday",
         title: "The data disappears after a refresh",
         tone: "bad",
-        image: opsRoomC,
+        repaired: "0:20",
+        image: recordRefreshB,
       },
       {
         day: "Thursday",
         title: "Nobody can explain the risk score",
         tone: "bad",
+        repaired: "0:55",
       },
       {
         day: "Friday",
         title: "The spreadsheet returns",
         tone: "bad",
+        repaired: "1:03",
+        image: failureB,
       },
     ],
-    media: { image: genS04Monday, speed: -0.18 },
+    media: { image: genS04Monday, speed: -0.12 },
   },
+
   {
-    id: "six-defects",
+    id: "the-rung",
     theme: "dark",
-    layout: "cards",
-    eyebrow: "The promise of the next hour",
-    title: "The six defects we will repair",
-    accent: "six defects",
-    cards: [
-      { title: "Data disappears after refresh", meta: "Build · persistence" },
-      { title: "No sign-in or access control", meta: "Build · identity" },
-      { title: "The CRM connection is manual", meta: "Build · the data door" },
-      { title: "Failed refreshes look successful", meta: "Build · the freshness surface" },
-      { title: "Nobody can explain the risk score", meta: "Build · the AI insight rule" },
-      { title: "Only Jordan knows how it works", meta: "Run · ownership" },
-    ],
-    kicker: "The last three fail silently. That is what makes them expensive.",
-    media: { image: genS05SixNotes, speed: -0.12 },
-  },
-  {
-    id: "ladder",
-    theme: "dark",
-    layout: "chart",
-    chart: "ladder",
-    eyebrow: "Prototype, tool, system",
-    title: "How to tell them apart",
-    accent: "apart",
-    kicker: "Most prototypes should not become production tools.",
-    media: {
-      video: "/media/three-environments.mp4",
-      poster: "/media/three-environments-poster.jpg",
-      speed: -0.12,
+    layout: "matrix",
+    eyebrow: "Before you commit",
+    title: "Is it a prototype, a tool, or a system?",
+    accent: "prototype, a tool, or a system?",
+    matrix: {
+      head: ["", "Test you can observe", "What it changes"],
+      rows: [
+        [
+          "System",
+          "Runs across teams, data sources, permissions, time, and failure",
+          "The business",
+        ],
+        [
+          "Tool",
+          "A defined group reliably completes a real workflow",
+          "The work",
+        ],
+        [
+          "Prototype",
+          "Demonstrates the idea with sample or temporary inputs",
+          "Belief",
+        ],
+      ],
     },
+    strip: {
+      label: "Four questions before you climb",
+      items: [
+        "Is the workflow frequent or consequential enough to matter?",
+        "Is the process stable enough to encode?",
+        "Is there a named user, outcome, and owner?",
+        "What new risk appears when others depend on it?",
+      ],
+    },
+    media: { image: genS06ThreeObjects, speed: -0.15 },
   },
+
   {
-    id: "production-gate",
+    id: "grade-yours",
     theme: "light",
-    layout: "cards",
-    eyebrow: "The production gate",
-    title: "Before you invest further, ask four questions.",
-    accent: "four questions.",
-    cards: [
-      { title: "Is the workflow frequent or consequential enough to matter?" },
-      { title: "Is the process stable enough to encode?" },
-      { title: "Is there a named user, outcome, and owner?" },
-      { title: "What new risk appears when others depend on it?" },
-    ],
-    kicker:
-      "Most prototypes should die here. That is the system working, not a waste.",
-    media: { image: genS07Turnstile, speed: -0.15 },
+    layout: "exercise",
+    eyebrow: "Hands on · 90 seconds",
+    title: "Grade what you already built",
+    accent: "already built",
+    lede: "Which rung is it on today?",
+    exercise: { id: "grade", seconds: 90, mode: "timer" },
+    strip: { items: ["Prototype", "Tool", "System"] },
+    kicker: "Then the four questions. Yes or no.",
+    media: { image: genS14TheQuestion, speed: -0.12 },
   },
+
   {
-    id: "should-die",
-    railLabel: "Permission to stop",
+    id: "spec",
     theme: "dark",
-    layout: "claim",
-    title: "Most prototypes should die at the gate.",
-    accent: "die at the gate.",
-    kicker:
-      "Prototypes have clear value, keep building them. But, not every prototype needs to be a hardened system. Pressure test ideas to ensure they have value at scale.",
-    media: { image: genS08LightsOut, speed: -0.18 },
-  },
-  {
-    id: "the-loop",
-    theme: "dark",
-    layout: "loop",
-    eyebrow: "The 201 Loop",
-    title: "This is how you work.",
-    accent: "you",
-    loopSteps: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-    lede: "It replaces “prompt until something looks right.” Every step has an artifact you can show someone.",
-    kicker: "Worth building? → the gate comes before the loop",
-    media: {
-      video: "/media/workflow-loop.mp4",
-      poster: "/media/workflow-loop-poster.jpg",
-      speed: -0.1,
-    },
-  },
-  {
-    id: "spec-lines",
-    theme: "dark",
-    layout: "cards",
+    layout: "matrix",
     eyebrow: "Spec · step 1 of 6",
-    title: "What makes it a spec",
-    accent: "spec",
-    lede: "Not just a better prompt. A prompt has no downstream. A spec feeds the next step. It is an artifact. A file the next step reads, not a message that scrolls away. It is versioned. It changes on purpose, and you can see what changed. It is testable. Done is a check another person can run.",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Spec"],
+    },
+    title: "Write down the job, the user, and how you will check it",
+    accent: "how you will check it",
     cards: [
       {
         title: "Job",
@@ -399,402 +522,475 @@ export const sections: Section[] = [
         body: "A user can sign in, load current records, understand every flag, update the next action, refresh, and confirm the change persists.",
       },
     ],
-    kicker:
-      "Four constraints go underneath, not in the mnemonic: source data, access rules, failure behavior, non-goals.",
-    footnote:
-      "This is the premise of GitHub Spec Kit (106K+ stars, 200+ contributors): each phase produces an artifact that feeds the next, instead of ad-hoc prompts.",
-    media: { image: genS10PagePassed, speed: -0.12 },
-  },
-  {
-    id: "spec-testable",
-    theme: "light",
-    layout: "split",
-    eyebrow: "Spec · the key move",
-    title: "Say how you will check it",
-    accent: "check it",
-    split: [
-      {
-        label: "Vague",
-        title: "“Preserves updates”",
-        body: "Nobody can run this. Two people will read it differently and both will believe they are done.",
-        image: agentA,
-      },
-      {
-        label: "Testable",
-        title: "“Change an account's next action, refresh, confirm it persists.”",
-        body: "Anyone can follow those steps and get the same answer. That is what makes it checkable — by you, by the person who asked for it, and by the agent while it is building.",
-        image: recordRefreshB,
-      },
-    ],
+    matrix: {
+      head: ["Vague", "Testable"],
+      rows: [
+        [
+          "Preserves updates",
+          "Change an account's next action, refresh, confirm it persists.",
+        ],
+      ],
+    },
+    strip: {
+      label: "Also specify",
+      items: ["source data", "access rules", "failure behavior", "non-goals"],
+    },
     kicker:
       "If you cannot write the steps, you do not yet know what you are asking for.",
-    media: { image: genS11TwoSheets, speed: -0.15 },
-  },
-  {
-    id: "spec-exercise",
-    theme: "dark",
-    layout: "exercise",
-    exercise: {
-      id: "spec",
-      seconds: 120,
-      placeholder:
-        "Job — …\nUser — …\nDone — …\n\nAccess rule · failure state · non-goal",
+    deeper: {
+      claim: "GitHub Spec Kit.",
+      note: "Spec-driven development as a full toolchain: each phase produces an artifact the next phase reads.",
+      links: [
+        { label: "github/spec-kit", href: "https://github.com/github/spec-kit" },
+        { label: "docs", href: "https://github.github.com/spec-kit" },
+      ],
     },
-    eyebrow: "Hands on · timer on screen",
-    title: "Write your three-line spec. 120 seconds.",
-    accent: "120 seconds.",
-    cards: [
-      {
-        title: "Job",
-        body: "One narrow recurring GTM workflow. Start with a verb: identify, prepare, route, reconcile, summarize, approve.",
-      },
-      {
-        title: "User",
-        body: "Who performs it, and what are they allowed to change?",
-      },
-      {
-        title: "Done",
-        body: "A check another person could run. Not a feeling.",
-      },
-    ],
-    kicker:
-      "Then add one access rule, one failure state, one non-goal. Put it in the chat. I will read two aloud and tighten them live.",
-    media: { image: genS12Timer, speed: -0.18 },
+    media: { image: genS11TwoSheets, speed: -0.12 },
   },
+
   {
+    // `director-mode`, not `plan`: tests/helpers.ts locates the plan prompt by
+    // this anchor, and the prompt is the same object the deck has always called
+    // Director mode.
     id: "director-mode",
     theme: "light",
     layout: "prompt",
     eyebrow: "Plan · step 2 of 6",
-    title: "Approve the plan before any code changes.",
-    accent: "before any code changes.",
-    lede: "You are not pretending to be an engineer. You are directing AI as your engineer.",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Plan"],
+    },
+    title: "Approve a plan before anything changes",
+    accent: "before anything changes",
+    railLabel: "Plan",
     prompts: [
       {
         id: "plan-approval",
         label: "The plan prompt",
         text: "Inspect the current project. Propose the smallest coherent implementation for this specification. Identify the data model, permissions, environment variables, failure states, tests, and files involved. Do not change anything until I approve the plan.",
         caption:
-          "The last sentence is the whole prompt. Without it the agent writes code you then have to review; with it, the artifact you review is a plan, which is far cheaper to change.",
-      },
-    ],
-    links: [
-      {
-        label: "GitHub Spec Kit",
-        href: "https://github.com/github/spec-kit",
-        note: "Each phase produces an artifact that feeds the next.",
-      },
-      {
-        label: "Claude Code",
-        href: "https://code.claude.com/docs/en/overview",
-        install: "npm i -g @anthropic-ai/claude-code",
-      },
-      {
-        label: "Codex CLI",
-        href: "https://learn.chatgpt.com/docs/codex/cli",
-        install: "npm i -g @openai/codex",
-      },
-      {
-        label: "GitHub CLI",
-        href: "https://cli.github.com/",
-        install: "brew install gh",
-      },
-    ],
-    kicker:
-      "Director Mode moves expertise from typing syntax to defining, testing, and judging the work.",
-    media: { image: genS13HoveringPen, speed: -0.12 },
-  },
-  {
-    id: "plan-questions",
-    theme: "dark",
-    layout: "cards",
-    eyebrow: "Plan · your job during the demo",
-    title: "Five questions to ask of any plan.",
-    accent: "Five questions",
-    cards: [
-      { title: "Does it solve the stated job?" },
-      { title: "What assumptions did it invent?" },
-      { title: "What data and permissions does it require?" },
-      { title: "How will the core workflow be tested?" },
-      { title: "What is deliberately excluded?" },
-    ],
-    kicker: "Approve or revise. Then let it implement one bounded capability.",
-    media: { image: genS14TheQuestion, speed: -0.15 },
-  },
-  {
-    id: "build-stack",
-    theme: "light",
-    layout: "pipeline",
-    eyebrow: "Build · step 3 of 6",
-    title: "Recommended build stack and minimum standard",
-    accent: "minimum standard",
-    cards: [
-      {
-        title: "Lovable or Artifact",
-        brand: "lovable",
-        receipt: "This site skipped it — create-next-app, then a written spec.",
-      },
-      {
-        title: "GitHub",
-        brand: "github",
-        receipt: "skidubb/vibecoding-201, public, every commit readable.",
-      },
-      {
-        title: "Claude Code or Codex",
-        brand: "claude",
-        receipt: "Claude Code, working from an approved plan.",
-      },
-      {
-        title: "Supabase",
-        brand: "supabase",
-        receipt: "Six migrations. Row-level security on every table.",
-      },
-      {
-        title: "Vercel preview",
-        brand: "vercel",
-        receipt: "Every push builds one before production sees it.",
-      },
-      {
-        title: "Production",
-        brand: "vercel",
-        receipt: "The page you are reading.",
+          "The last sentence is why the whole prompt works: it makes the plan the thing you review, and a plan is cheap to change.",
       },
     ],
     strip: {
-      label: "Minimum standard before colleagues depend on it",
+      label: "Five questions to ask of any plan",
       items: [
-        "Persistent data",
-        "sign-in",
-        "enforced authorization",
-        "server-side secrets",
-        "a tested critical workflow",
-        "visible error states",
-        "logs",
-        "preview before production",
-        "a named owner",
+        "Does it solve the stated job?",
+        "What assumptions did it invent?",
+        "What data and permissions does it require?",
+        "How will the core workflow be tested?",
+        "What is deliberately excluded?",
       ],
     },
-    kicker: "You direct. The agent handles the syntax.",
-    media: { image: genS15Relay, speed: -0.18 },
+    deeper: {
+      claim: "Claude Code best practices.",
+      note: "Plan mode, context handling, and how to structure work an agent will pick up cold.",
+      links: [
+        {
+          label: "code.claude.com/docs",
+          href: "https://code.claude.com/docs/en/best-practices",
+        },
+      ],
+    },
+    media: { image: genS10PagePassed, speed: -0.15 },
   },
-  {
-    id: "layer-jobs",
-    theme: "dark",
-    layout: "cards",
-    eyebrow: "Build · what each layer is for",
-    title: "What GitHub, Supabase, and Vercel each do",
-    accent: "each do",
-    cards: [
-      {
-        title: "GitHub",
-        brand: "github",
-        body: "The system of record for the application and its changes.",
-        meta: "repository · branch · pull request · merge",
-      },
-      {
-        title: "Supabase",
-        body: "Persistence and permission.",
-        meta: "Postgres · auth · row-level security · server functions · scheduled work",
-      },
-      {
-        title: "Vercel",
-        body: "Where it becomes a URL.",
-        meta: "local · preview · production · logs · environment configuration",
-      },
-    ],
-    prompts: [
-      {
-        id: "branch-and-pr",
-        label: "The delegation prompt",
-        text: "Create a branch, make the approved change, run the tests, summarize the diff, and open a draft pull request. Do not merge it.",
-        caption:
-          "GitHub is the layer most GTM leaders have never touched. This prompt means you never have to — the agent drives it, and you review the diff.",
-      },
-    ],
-    media: { image: genS16ThreeDrawers, speed: -0.12 },
-  },
-  {
-    id: "demo-inspect",
-    theme: "light",
-    layout: "cards",
-    eyebrow: "Demonstration · window 1 of 3",
-    title: "The demo, in four steps",
-    accent: "four steps",
-    cards: [
-      { title: "The repository", body: "The Lovable project, already in GitHub." },
-      { title: "The inspection", body: "The agent reads the project before acting." },
-      { title: "The plan", body: "Proposed before any file changes. You approve it." },
-      { title: "One persistent action", body: "Written to Supabase, survives a refresh." },
-    ],
-    kicker:
-      "Narrate evidence, not keystrokes: what files changed, what it inferred, what I still have to inspect myself.",
-    media: { image: genS17OverShoulder, speed: -0.15 },
-  },
+
   {
     id: "harness",
     theme: "dark",
-    layout: "cards",
-    eyebrow: "Build · the harness",
+    layout: "matrix",
+    eyebrow: "Build · step 3 of 6",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
     title: "Six files to keep in the repository",
     accent: "Six files",
-    cards: [
-      { title: "PRODUCT.md", body: "What this is, who it serves, and what it deliberately does not do." },
-      { title: "ARCHITECTURE.md", body: "The decisions and why, so the next change does not quietly undo one." },
-      { title: "DATA_MODEL.md", body: "What is stored, and what each rule protects." },
-      { title: "SECURITY.md", body: "Who may read and change what, and how that is enforced." },
-      { title: "CLAUDE.md / AGENTS.md", body: "How your agent should work in this repository." },
-      { title: ".env.example", body: "The names of every credential. Never the values." },
-    ],
+    matrix: {
+      rows: [
+        [
+          "PRODUCT.md",
+          "What this is, who it serves, what it deliberately does not do",
+        ],
+        [
+          "ARCHITECTURE.md",
+          "The decisions and why, so the next change does not quietly undo one",
+        ],
+        ["DATA_MODEL.md", "What is stored, and what each rule protects"],
+        ["SECURITY.md", "Who may read and change what, and how that is enforced"],
+        ["CLAUDE.md / AGENTS.md", "How your agent should work in this repository"],
+        [".env.example", "The names of every credential. Never the values"],
+      ],
+    },
     kicker:
-      "The subscription rents intelligence. These files capture how your organization wants that intelligence to work. A billion people have the same assistant you do. The edge is what yours is grounded in.",
-    footnote: "This repository carries all six. Open it and count.",
-    media: { image: genS18SixBinders, speed: -0.18 },
+      "A billion people have the same assistant you do. The edge is what yours is grounded in.",
+    deeper: {
+      claim: "AGENTS.md is the open format for this file,",
+      note: "readable by most coding agents rather than one vendor's.",
+      links: [{ label: "agents.md", href: "https://agents.md" }],
+    },
+    media: { image: genS18SixBinders, speed: -0.12 },
   },
+
+  {
+    id: "assignment",
+    theme: "light",
+    layout: "exercise",
+    eyebrow: "Hands on · 15 minutes",
+    title: "Build your spec, get a plan, review it",
+    accent: "review it",
+    railLabel: "The assignment",
+    cards: [
+      {
+        title: "Write your spec",
+        body: "Job, User, Done. Submit it. Share it if you want it in the mix.",
+      },
+      {
+        title: "Get a plan",
+        body: "Open your 101 Claude Project. Copy the prompt, paste your three lines under it, fire it.",
+      },
+      {
+        title: "Count what it invented",
+        body: "A source system you never named. A field you never described. A permission rule you never gave it. Keep the number.",
+      },
+      {
+        title: "If you get there",
+        body: "Ask it to write PRODUCT.md and SECURITY.md from your spec and plan.",
+      },
+    ],
+    exercise: {
+      id: "spec",
+      seconds: 900,
+      placeholder:
+        "Job.\nUser.\nDone — written as steps someone else could follow to check it.",
+    },
+    footnote: "No plan came back? Take the pre-generated one from the kit",
+    footnoteHref: "/kit",
+    media: { image: genS12Timer, speed: -0.12 },
+  },
+
+  {
+    id: "room-specs",
+    theme: "dark",
+    layout: "surfaced",
+    eyebrow: "What the room wrote",
+    title: "Two specs from this room, tightened",
+    accent: "tightened",
+    surfaced: {
+      exerciseId: "spec",
+      empty:
+        "Nothing on screen yet. Specs shared with the room appear here when Scott puts one up.",
+    },
+    media: { image: genS36ThreeLines, speed: -0.15 },
+  },
+
+  {
+    id: "demo",
+    theme: "light",
+    layout: "cards",
+    eyebrow: "Demonstration",
+    title: "Watch the agent plan a change before it makes it",
+    accent: "before it makes it",
+    railLabel: "Live demo",
+    cards: [
+      { title: "The repository", body: "The project, already in GitHub." },
+      { title: "The inspection", body: "The agent reads before it acts." },
+      {
+        title: "The plan",
+        body: "Proposed before any file changes. You approve it.",
+      },
+      {
+        title: "One persistent action",
+        body: "Written to Supabase, survives a refresh.",
+      },
+    ],
+    kicker: "Your job: chat the assumptions it invented.",
+    media: { image: genS17OverShoulder, speed: -0.12 },
+  },
+
   {
     id: "poll-debugging",
     theme: "dark",
     layout: "poll",
     eyebrow: "Poll 1 · single choice",
-    title: "The first build works except for one repeatable error.",
-    accent: "one repeatable error.",
-    lede: "What is the highest-leverage next move?",
+    title: "The build works except for one error that keeps happening.",
+    accent: "one error that keeps happening.",
+    lede: "What now?",
     poll: {
       slug: "debugging",
       options: [
         { id: "debugging:a", label: "A", body: "Rewrite the original prompt" },
-        { id: "debugging:b", label: "B", body: "Regenerate it in another platform" },
+        {
+          id: "debugging:b",
+          label: "B",
+          body: "Regenerate it in another platform",
+        },
         {
           id: "debugging:c",
           label: "C",
-          body: "Provide the error, reproduction steps, and expected behavior; ask the agent to diagnose and test a fix",
+          body: "Provide the error, reproduction steps, and expected behavior, then ask the agent to diagnose and test a fix",
         },
         { id: "debugging:d", label: "D", body: "Read every line of code" },
       ],
     },
     media: { image: genS19HandsUp, speed: -0.12 },
   },
+
+  {
+    id: "breach-test",
+    theme: "dark",
+    layout: "claim",
+    eyebrow: "Hands on · 2 minutes",
+    title: "Ask my database for a record you have no right to",
+    accent: "no right to",
+    railLabel: "Run the security test",
+    strip: {
+      items: [
+        "Open the link. Sign in as a guest.",
+        "Button 1. Request a record from your organization.",
+        "Button 2. Request a record from Organization B.",
+      ],
+    },
+    footnote: "Live database. The policy is in the public repo",
+    footnoteHref:
+      "https://github.com/skidubb/vibecoding-201/blob/main/supabase/migrations/20260727000000_init.sql",
+    deeper: {
+      claim: "The fifteen policies you just hit,",
+      note: "and the test that runs against them.",
+      links: [
+        {
+          label: "authorization.sql",
+          href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
+        },
+      ],
+    },
+    media: { image: genS21WrongSide, speed: -0.15 },
+  },
+
   {
     id: "authorization",
     theme: "light",
-    layout: "split",
+    layout: "matrix",
     eyebrow: "Build · identity",
-    title: "Authentication vs Authorization.",
-    accent: "Authorization.",
-    split: [
-      {
-        label: "Authentication",
-        title: "Who is the user?",
-        body: "Sign-in. Sessions. Usually the first thing built.",
-        image: agentB,
-      },
-      {
-        label: "Authorization",
-        title: "What can that user read or change?",
-        body: "Enforced in the database, not in the interface. Usually the last thing checked.",
-        image: failureB,
-      },
-    ],
+    title: "Signing in and being allowed are two different things",
+    accent: "two different things",
+    matrix: {
+      head: ["Authentication", "Authorization"],
+      rows: [
+        ["Who is the user?", "What can that user read or change?"],
+        ["Sign-in. Sessions.", "Enforced in the database, not the interface."],
+        ["Usually the first thing built.", "Usually the last thing checked."],
+      ],
+    },
     strip: {
       label: "Jordan's rules",
       items: [
-        "Users see only their organization's accounts",
+        "users see only their organization's accounts",
         "account owners may update next actions",
         "administrators may manage integrations",
       ],
     },
     kicker: "Hiding records in the interface is not security.",
-    media: { image: genS20Badge, speed: -0.15 },
+    deeper: {
+      claim: "Broken access control is OWASP's number one risk.",
+      links: [
+        {
+          label: "OWASP A01:2025",
+          href: "https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control",
+        },
+        {
+          label: "Postgres row-level security",
+          href: "https://supabase.com/docs/guides/database/postgres/row-level-security",
+        },
+      ],
+    },
+    media: { image: genS20Badge, speed: -0.12 },
   },
-  {
-    id: "breach-test",
-    railLabel: "The breach test",
-    theme: "dark",
-    layout: "claim",
-    title: "Sign in as Organization A. Request a record from B. The request must fail.",
-    accent: "The request must fail.",
-    kicker:
-      "If it succeeds, you do not have an access-control bug. You have a data breach with a login screen in front of it.",
-    footnote: "This site runs that exact test against its own database — authorization.sql, in public",
-    footnoteHref:
-      "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
-    media: { image: genS21WrongSide, speed: -0.18 },
-  },
+
   {
     id: "secrets",
     theme: "light",
-    layout: "cards",
-    eyebrow: "Build · secrets",
-    title: "Credentials belong outside the code.",
-    accent: "outside the code.",
-    cards: [
-      { title: ".env.local", body: "The real values. Never leaves your machine." },
-      { title: ".env.example", body: "The names only. Safe to commit." },
-      { title: ".gitignore", body: "The file that keeps the first one out of GitHub." },
-    ],
-    kicker:
-      "The two rules: secrets never belong in GitHub or in browser code. An exposed secret is not a mistake to hide. It must be revoked and rotated.",
-    media: { image: genS22SealedEnvelope, speed: -0.12 },
+    layout: "matrix",
+    eyebrow: "Build · credentials",
+    title: "Keep your credentials out of your code",
+    accent: "out of your code",
+    matrix: {
+      rows: [
+        [".env.local", "The real values. Never leaves your machine."],
+        [".env.example", "The names only. Safe to commit."],
+        [".gitignore", "Keeps the first one out of GitHub."],
+      ],
+    },
+    strip: {
+      items: [
+        "Secrets never go in GitHub or in browser code.",
+        "An exposed secret gets revoked and rotated, never hidden.",
+      ],
+    },
+    deeper: {
+      claim: "OWASP secrets management cheat sheet.",
+      note: "Rotation, vaulting, and what to do the morning after a leak.",
+      links: [
+        {
+          label: "cheatsheetseries.owasp.org",
+          href: "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+        },
+      ],
+    },
+    media: { image: genS22SealedEnvelope, speed: -0.15 },
   },
+
   {
     id: "data-doors",
-    theme: "light",
-    layout: "cards",
-    eyebrow: "Build · the data door",
+    theme: "dark",
+    layout: "matrix",
+    eyebrow: "Build · connections",
     title: "Five ways to connect to data",
     accent: "Five ways",
-    cards: [
-      {
-        title: "Manual",
-        body: "Rare, ambiguous, or judgment-heavy work.",
-        meta: "Stale data and human effort",
-      },
-      {
-        title: "Computer use",
-        body: "A stable interface with no usable integration.",
-        meta: "Fragility and terms-of-service limits",
-      },
-      {
-        title: "API",
-        body: "The preferred runtime connection for app-to-app work.",
-        meta: "Auth, rate limits, engineering overhead",
-      },
-      {
-        title: "MCP",
-        brand: "mcp",
-        body: "Governed agent access to tools and context.",
-        meta: "Connector quality and permissions",
-      },
-      {
-        title: "CLI",
-        brand: "github",
-        body: "The agent's operating surface for GitHub, Vercel, Supabase, tests, logs.",
-        meta: "Powerful access needs strong guardrails",
-      },
-    ],
-    kicker:
-      "Choose on frequency · consequence · volume · expected lifetime · stability · retry safety",
-    media: { image: genS23FiveEntrances, speed: -0.15 },
-  },
-  {
-    id: "live-data",
-    theme: "dark",
-    layout: "cards",
-    eyebrow: "Build · live data",
-    title: "What a live data connection requires",
-    accent: "requires",
-    cards: [
-      { title: "Authenticate" },
-      { title: "Fetch" },
-      { title: "Store" },
-      { title: "Normalize" },
-      { title: "Record status" },
-      { title: "Expose freshness" },
-      { title: "Retry safely" },
-    ],
+    matrix: {
+      head: ["", "Use when", "Costs you"],
+      rows: [
+        [
+          "Manual",
+          "Rare, ambiguous, or judgment-heavy work",
+          "Stale data and human effort",
+        ],
+        [
+          "Computer use",
+          "Stable interface, no usable integration",
+          "Fragility and terms-of-service limits",
+        ],
+        [
+          "API",
+          "App-to-app work at runtime",
+          "Auth, rate limits, engineering overhead",
+        ],
+        [
+          "MCP",
+          "Governed agent access to tools and context",
+          "Connector quality and permissions",
+        ],
+        [
+          "CLI",
+          "The agent driving GitHub, Vercel, Supabase, tests, logs",
+          "Powerful access needs guardrails",
+        ],
+      ],
+    },
     strip: {
-      label: "What Jordan's tool must show on screen",
+      label: "Choose on",
       items: [
-        "Last successful sync",
+        "frequency",
+        "consequence",
+        "volume",
+        "expected lifetime",
+        "stability",
+        "retry safety",
+      ],
+    },
+    deeper: {
+      claim: "The MCP specification itself.",
+      note: "Worth reading if you are deciding what your company exposes to agents.",
+      links: [
+        {
+          label: "modelcontextprotocol.io",
+          href: "https://modelcontextprotocol.io/specification",
+        },
+      ],
+    },
+    media: { image: genS23FiveEntrances, speed: -0.12 },
+  },
+
+  {
+    id: "idempotency",
+    theme: "dark",
+    layout: "claim",
+    eyebrow: "Build · idempotency",
+    title: "What happens if this runs twice?",
+    accent: "runs twice?",
+    lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat.",
+    strip: { items: ["Update the existing record."] },
+    kicker: "The duplicate stays invisible until a customer finds it.",
+    deeper: {
+      claim: "Stripe's idempotency key design",
+      note: "is the reference implementation, and the reason your card never gets charged twice.",
+      links: [
+        {
+          label: "docs.stripe.com",
+          href: "https://docs.stripe.com/api/idempotent_requests",
+        },
+      ],
+    },
+    media: { image: genS25TwoParcels, speed: -0.15 },
+  },
+
+  {
+    id: "poll-door",
+    theme: "dark",
+    layout: "poll",
+    eyebrow: "Poll 2 · single choice",
+    title:
+      "A competitor publishes pricing with no API. Jordan needs a reviewed snapshot every Monday.",
+    accent: "every Monday.",
+    lede: "Most proportionate start?",
+    poll: {
+      slug: "proportionate-door",
+      options: [
+        {
+          id: "proportionate-door:a",
+          label: "A",
+          body: "Hire someone to copy it every week",
+        },
+        {
+          id: "proportionate-door:b",
+          label: "B",
+          body: "Browser automation with validation and an exception path",
+        },
+        { id: "proportionate-door:c", label: "C", body: "Build a custom API" },
+        {
+          id: "proportionate-door:d",
+          label: "D",
+          body: "Assume an MCP connector exists",
+        },
+      ],
+    },
+    media: { image: genS27HandsUp2, speed: -0.12 },
+  },
+
+  {
+    id: "insight-rule",
+    theme: "light",
+    layout: "matrix",
+    eyebrow: "Build · where the model belongs",
+    title: "Code calculates, the model explains",
+    accent: "the model explains",
+    matrix: {
+      head: ["Deterministic code", "The model"],
+      rows: [
+        ["Calculates the metrics", "Explains, prioritizes, recommends"],
+        [
+          "The churn score. The thresholds. The ranking.",
+          "Why this account is flagged. What to do about it.",
+        ],
+        ["Reproducible, auditable, testable", "Language Jordan can act on"],
+      ],
+    },
+    lede: "The model does not invent the churn score from raw CRM data.",
+    kicker: "This is Thursday, repaired.",
+    media: { image: genS26LedgerAndNote, speed: -0.15 },
+  },
+
+  {
+    id: "stale-data",
+    theme: "dark",
+    layout: "claim",
+    eyebrow: "Build · stale data",
+    title: "Show people when the data is stale",
+    accent: "is stale",
+    strip: {
+      label: "What has to be on screen",
+      items: [
+        "last successful sync",
         "current or stale",
         "records processed",
         "records rejected",
@@ -803,104 +999,37 @@ export const sections: Section[] = [
         "retry state",
       ],
     },
-    kicker: "This is what makes “failed refreshes look successful” impossible.",
-    media: { image: genS24StatusBoard, speed: -0.18 },
+    kicker: "A tool that fails loudly is safer than one that fails quietly.",
+    media: { image: genS24StatusBoard, speed: -0.12 },
   },
+
   {
-    id: "idempotency",
-    theme: "dark",
-    layout: "claim",
-    eyebrow: "Build · idempotency",
-    title: "One question to ask of anything automated.",
-    accent: "anything automated.",
-    kicker: "What happens if this runs twice?",
-    lede: "Imports, webhooks, CRM writes, and scheduled jobs repeat. The system should update an existing record, never create a duplicate. The duplicate stays invisible until a customer finds it.",
-    media: { image: genS25TwoParcels, speed: -0.12 },
-  },
-  {
-    id: "insight-rule",
+    id: "test-and-ship",
     theme: "light",
-    layout: "split",
-    eyebrow: "Build · the AI insight rule",
-    title: "What code does, what the model does",
-    accent: "the model",
-    split: [
-      {
-        label: "Deterministic code",
-        title: "Calculates the metrics",
-        body: "The churn score. The thresholds. The ranking. Reproducible, auditable, testable.",
-        image: agentB,
-      },
-      {
-        label: "The model",
-        title: "Explains, prioritizes, recommends",
-        body: "Why this account is flagged. What to do about it. Written in language Jordan can act on.",
-        image: agentA,
-      },
-    ],
-    kicker: "The model does not invent the churn score from raw CRM data.",
-    footnote: "This is Thursday, repaired.",
-    media: { image: genS26LedgerAndNote, speed: -0.15 },
-  },
-  {
-    id: "poll-door",
-    theme: "dark",
-    layout: "poll",
-    eyebrow: "Poll 2 · single choice",
-    title: "A competitor publishes pricing on a public site with no API.",
-    accent: "no API.",
-    lede: "Jordan needs a reviewed snapshot every Monday. Most proportionate starting approach?",
-    poll: {
-      slug: "proportionate-door",
-      options: [
-        { id: "proportionate-door:a", label: "A", body: "Hire someone to copy it every week" },
-        { id: "proportionate-door:b", label: "B", body: "Browser automation with validation and an exception path" },
-        { id: "proportionate-door:c", label: "C", body: "Build a custom API" },
-        { id: "proportionate-door:d", label: "D", body: "Assume an MCP connector exists" },
+    layout: "matrix",
+    eyebrow: "Test and ship · steps 4 and 5 of 6",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Test", "Ship"],
+    },
+    title: "The agent writes the tests. You decide when it ships.",
+    accent: "You decide when it ships.",
+    matrix: {
+      rows: [
+        ["1. Define the behavior", "You"],
+        ["2. Write the test", "Agent"],
+        ["3. Confirm it fails", "Agent"],
+        ["4. Implement", "Agent"],
+        ["5. Run until green", "Agent"],
+        ["6. Verify as a user", "You"],
       ],
     },
-    media: { image: genS27HandsUp2, speed: -0.18 },
-  },
-  {
-    id: "verification",
-    theme: "dark",
-    layout: "claim",
-    eyebrow: "Test · step 4 of 6",
-    title: "A model reporting “all tests pass” is not verification.",
-    accent: "not verification.",
-    kicker:
-      "A passing build loop reduces uncertainty. It does not eliminate judgment. Self-certification is a status report; verification is you watching it work.",
-    strip: {
-      label: "You still",
-      items: [
-        "Run the critical workflow",
-        "inspect the output",
-        "trigger a failure",
-        "confirm access controls",
-        "confirm stale-data disclosure",
-      ],
-    },
-    media: { image: genS28GreenLights, speed: -0.12 },
-  },
-  {
-    id: "build-loop",
-    theme: "light",
-    layout: "cards",
-    eyebrow: "Test · the build loop",
-    title: "Who does what in the build loop",
-    accent: "build loop",
-    cards: [
-      { title: "Define the behavior", meta: "You" },
-      { title: "Write the test", meta: "Agent" },
-      { title: "Confirm it fails", meta: "Agent" },
-      { title: "Implement", meta: "Agent" },
-      { title: "Run until green", meta: "Agent" },
-      { title: "Verify as a user", meta: "You" },
-    ],
+    lede:
+      "Local → where you break things. Preview → where you prove it. Production → where people depend on it.",
     strip: {
       label: "Minimum test pack",
       items: [
-        "Happy path",
+        "happy path",
         "unauthorized access",
         "malformed input",
         "duplicate submission",
@@ -908,266 +1037,225 @@ export const sections: Section[] = [
         "persistence after refresh",
       ],
     },
-    kicker: "Six tests, no engineering vocabulary required.",
-    media: { image: genS29RelayHands, speed: -0.15 },
-  },
-  {
-    id: "demo-fail",
-    theme: "dark",
-    layout: "cards",
-    eyebrow: "Demonstration · window 2 of 3",
-    title: "Prove it fails the way you said it would.",
-    accent: "fails",
-    cards: [
-      {
-        title: "The authorization test",
-        body: "Signed in as Org A, a request for an Org B record is denied.",
-      },
-      {
-        title: "The forced failure",
-        body: "The integration is broken on purpose; the error state is visible to the user and to the operator.",
-      },
-    ],
-    kicker: "A tool that fails loudly is safer than a tool that fails quietly.",
-    media: { image: genS30Unplugging, speed: -0.18 },
-  },
-  {
-    id: "ship",
-    theme: "light",
-    layout: "cards",
-    eyebrow: "Ship · step 5 of 6",
-    title: "Preview before production.",
-    accent: "Preview",
-    cards: [
-      {
-        title: "Local",
-        body: "Where you break things. Nobody sees it. Nothing is at stake.",
-      },
-      {
-        title: "Preview",
-        body: "Where you prove it. A real URL on real infrastructure, visible to nobody but you and your reviewer.",
-      },
-      {
-        title: "Production",
-        body: "Where people depend on it. Promoted deliberately, never by accident.",
-      },
-    ],
-    kicker: "Promotion is a decision someone makes, not a side effect of saving a file.",
-    media: { image: genS31ThreeDoors, speed: -0.12 },
-  },
-  {
-    id: "open-the-link",
-    railLabel: "Open the link",
-    theme: "dark",
-    layout: "claim",
-    title: "Open the link in the chat. All of you.",
-    accent: "All of you.",
     kicker:
-      "Real deployment. Real storage. Fictional accounts. Anyone with the link can use it right now.",
-    footnote: "The link is this site — cast a vote at /vote",
-    footnoteHref: "/vote",
-    media: { image: genS32ManyPhones, speed: -0.15 },
+      "Promotion is a decision someone makes, never a side effect of saving a file.",
+    deeper: {
+      claim: "Promoting a preview to production",
+      note: "as an explicit step.",
+      links: [
+        {
+          label: "vercel.com/docs",
+          href: "https://vercel.com/docs/deployments/promote-preview-to-production",
+        },
+      ],
+    },
+    media: { image: genS28GreenLights, speed: -0.15 },
   },
+
   {
+    // Keep this id. `CardsLayout` renders this site's own live event feed on it —
+    // the slide argues for logging and then shows its own log, which is the
+    // difference between teaching analytics and having them.
     id: "run",
     theme: "light",
     layout: "cards",
     eyebrow: "Run · step 6 of 6",
-    title: "Analytics, logs, and alerts",
-    accent: "alerts",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Run"],
+    },
+    title: "Watch it, log it, and name who fixes it",
+    accent: "name who fixes it",
     cards: [
-      {
-        title: "Analytics",
-        body: "Is it creating value? What users do, how often, and whether the workflow actually completes.",
-      },
-      {
-        title: "Logs",
-        body: "What happened in this run? The record of a specific execution, including the ones that failed.",
-      },
+      { title: "Analytics", body: "Is it creating value?" },
+      { title: "Logs", body: "What happened in this run?" },
       {
         title: "Alerts",
         body: "Who needs to intervene? A named human. A log entry is not an alert.",
       },
     ],
     strip: {
+      label: "Ownership",
       items: [
-        "retention_review_opened",
-        "sync_completed",
-        "next_action_updated",
-        "workflow_failed",
+        "a named owner",
+        "a backup owner",
+        "a rollback path",
+        "known limitations",
+        "a review date",
+        "a shutdown path",
       ],
     },
-    kicker: "Usage feeds the next spec. Run is where value compounds.",
-    media: { image: genS33WallDisplay, speed: -0.18 },
-  },
-  {
-    id: "ownership",
-    theme: "dark",
-    layout: "cards",
-    eyebrow: "Run · ownership",
-    title: "Ownership means the tool survives the person who built it",
-    accent: "survives the person who built it",
-    cards: [
-      { title: "A named owner" },
-      { title: "A backup owner" },
-      { title: "A rollback path" },
-      { title: "Known limitations" },
-      { title: "A review date" },
-      { title: "A shutdown path" },
-    ],
     kicker:
       "Planning how a tool ends costs an afternoon. Skipping it is how a working tool becomes somebody's unpaid second job.",
-    footnote: "This repository has an OWNERSHIP.md. Two of its six items are still marked undecided, in public.",
-    media: { image: genS34Nameplate, speed: -0.12 },
-  },
-  {
-    id: "decision-rule",
-    theme: "light",
-    layout: "cards",
-    eyebrow: "The decision rule",
-    title: "The decision, and the loop that follows",
-    accent: "the loop that follows",
-    lede: "Worth building? → Spec → Plan → Build → Test → Ship → Run",
-    cards: [
-      { title: "Build", body: "A narrow internal tool." },
-      { title: "Buy", body: "When something mature already solves 80%." },
-      { title: "Delegate", body: "The build or the productionization." },
-      { title: "Stop", body: "When the prototype proved it is not worth operating." },
-    ],
-    kicker:
-      "The agent generates the implementation. You own the architecture, the evidence, the release decision, and the consequences.",
-    media: { image: genS35RingWithGate, speed: -0.15 },
-  },
-  {
-    id: "homework",
-    theme: "dark",
-    layout: "cards",
-    eyebrow: "Homework",
-    title: "Ship one narrow internal tool. Real user, real URL.",
-    accent: "Real user, real URL.",
-    cards: [
-      { title: "Your three-line specification", body: "Job, User, and a Done someone else could check." },
-      { title: "The live link", body: "Or a recorded walkthrough of the workflow." },
-      { title: "One known limitation", body: "The item that proves you actually verified it." },
-    ],
-    kicker:
-      "You don't cross this by becoming an engineer. You cross it by knowing which work you are not doing, and directing it.",
-    footnote: "The kit — checklist, prompt pack, agent instructions, ownership card, CLI reference — is at /kit. No email required.",
-    footnoteHref: "/kit",
-    media: { image: genS36ThreeLines, speed: -0.18 },
-  },
-  {
-    id: "poll-priya",
-    theme: "dark",
-    layout: "poll",
-    eyebrow: "Q&A opener · single choice",
-    title: "What is the right call?",
-    accent: "right call?",
-    footnote:
-      "Priya, Head of Partnerships, built a partner deal-registration app in Lovable on Sunday. Sample data, no sign-in, looks fantastic. She wants to send the link to 40 partners on Monday.",
-    poll: {
-      slug: "priya",
-      options: [
-        { id: "priya:a", label: "A", body: "Ship it; it is only 40 partners" },
-        { id: "priya:b", label: "B", body: "Polish the interface first" },
-        { id: "priya:c", label: "C", body: "Hold. It needs real storage, controlled access, and a review before anything external-facing ships" },
-        { id: "priya:d", label: "D", body: "Rebuild it from scratch in the terminal" },
+    footnote: "This is Friday, repaired.",
+    deeper: {
+      claim: "This project's OWNERSHIP.md,",
+      note: "including the two items still marked undecided.",
+      links: [
+        {
+          label: "OWNERSHIP.md",
+          href: "https://github.com/skidubb/vibecoding-201/blob/main/OWNERSHIP.md",
+        },
       ],
     },
-    media: { image: genS38AboutToSend, speed: -0.12 },
+    media: { image: genS33WallDisplay, speed: -0.12 },
   },
+
   {
     id: "the-bar",
-    theme: "light",
-    layout: "cards",
-    eyebrow: "The bar",
-    title: "A production standard.",
-    accent: "production standard.",
-    lede: "If a tool misses one of these, it is not ready for people to depend on it. This site is scored against all nine, and every link goes to the thing itself in a public repository — including the one it does not meet.",
+    theme: "dark",
+    layout: "exercise",
+    eyebrow: "Hands on · 90 seconds",
+    title: "Score the thing you graded at the start",
+    accent: "at the start",
+    railLabel: "Nine things to check",
     cards: [
       {
         title: "Persistent data",
-        body: "Postgres, with the schema in version control rather than clicked into a dashboard.",
-        href: "https://github.com/skidubb/vibecoding-201/tree/main/supabase/migrations",
+        body: "Records survive a refresh, in Postgres.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/migrations/20260727000000_init.sql",
       },
       {
         title: "Sign-in",
-        body: "Google, plus anonymous sessions so a vote never waits on an inbox.",
+        body: "Anonymous and Google, on the deck itself.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/src/app/signin/page.tsx",
       },
       {
         title: "Enforced authorization",
-        body: "Fifteen row-level policies, and the deck's own cross-tenant test run against them.",
+        body: "Row-level security, not hidden interface elements.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
       },
       {
         title: "Server-side secrets",
-        body: "Names committed, values never. No service-role key exists anywhere in this app.",
-        href: "https://github.com/skidubb/vibecoding-201/blob/main/.env.example",
+        body: "1Password references on disk, never values.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/.env.op",
       },
       {
         title: "A tested critical workflow",
-        body: "Sixteen browser specs and seventeen live assertions against the real database.",
-        href: "https://github.com/skidubb/vibecoding-201/tree/main/tests",
+        body: "Playwright against a production build, on every pull request.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/.github/workflows/ci.yml",
       },
       {
         title: "Visible error states",
-        body: "Every failure path is a test: no backend, no clipboard, a refused vote.",
+        body: "Every failure says what happened in words.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/tests/upstream-failure.spec.ts",
       },
       {
         title: "Logs and analytics",
-        body: "An events table the site writes to, readable without exposing who did what.",
+        body: "Events, and a console that reads them back.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/src/lib/events.ts",
       },
       {
         title: "Preview before production",
-        body: "Both gates run on every pull request, and every branch gets its own URL.",
-        href: "https://github.com/skidubb/vibecoding-201/actions",
+        body: "Promotion is an explicit step.",
+        href: "https://github.com/skidubb/vibecoding-201/blob/main/ARCHITECTURE.md",
       },
       {
         title: "A named owner",
-        body: "Named, with a rollback path. Backup owner, review date and shutdown path are still undecided — and say so in public rather than sitting blank.",
+        body: "Named, with a rollback path. Backup owner, review date and shutdown path are still undecided — in public, because writing undecided beats leaving it blank.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/OWNERSHIP.md",
         met: false,
       },
     ],
-    kicker:
-      "Eight and a half. The half is deliberate: a standard you always score full marks against is a standard you are not really applying.",
+    exercise: { id: "score", seconds: 90, mode: "timer" },
+    kicker: "Check what it has. Leave the rest blank. The blanks are your homework.",
+    deeper: {
+      claim: "This site scored against all nine,",
+      note: "with every link going to the thing itself, including the one it fails.",
+      links: [
+        {
+          label: "github.com/skidubb/vibecoding-201",
+          href: "https://github.com/skidubb/vibecoding-201",
+        },
+      ],
+    },
     media: { image: genS39NineItems, speed: -0.15 },
   },
+
+  {
+    id: "homework",
+    theme: "dark",
+    layout: "cards",
+    eyebrow: "Before the next session",
+    title: "Ship one narrow internal tool",
+    accent: "one narrow internal tool",
+    cards: [
+      {
+        title: "Your three-line spec",
+        body: "Job, User, and a Done someone else could check.",
+      },
+      {
+        title: "The live link",
+        body: "Or a recorded walkthrough of the workflow.",
+      },
+      {
+        title: "One known limitation",
+        body: "The item that proves you verified it.",
+      },
+    ],
+    lede: "You cross this by knowing which work you are not doing, and directing it.",
+    kicker: "Ship something small. Make sure it gets used.",
+    footnote: "The kit is at /kit. No email required",
+    footnoteHref: "/kit",
+    deeper: {
+      claim:
+        "Checklist, prompt pack, agent instructions, ownership card, CLI reference.",
+      note: "All five, no email.",
+      links: [{ label: "/kit", href: "/kit" }],
+    },
+    media: { image: genS38AboutToSend, speed: -0.12 },
+  },
+
   {
     id: "qa",
     theme: "dark",
-    layout: "cards",
+    layout: "poll",
     eyebrow: "30 minutes",
-    title: "Questions.",
-    accent: "Questions.",
-    cards: [
-      { title: "Should this cross?", body: "Rung, frequency, consequence, owner." },
-      { title: "How do I specify it?", body: "Job, user, checkable Done, non-goals." },
-      { title: "How should it connect?", body: "The proportionate data door." },
-      { title: "How is it verified?", body: "Workflow run, failure states, review gate." },
-    ],
-    footnote: "Scott Ewalt · Cardinal Element · scott@cardinalelement.com",
-    footnoteHref: "mailto:scott@cardinalelement.com",
-    media: { image: genS40Council, speed: -0.18 },
-  },
-  {
-    id: "close",
-    railLabel: "The close",
-    theme: "dark",
-    layout: "cta",
-    title: "Ship something small. Make sure it gets used.",
-    accent: "Make sure it gets used.",
-    lede: "Pick one workflow. Give it a job, a memory, and a way in. Ship it before the next session.",
-    kicker: "Scott Ewalt · Cardinal Element",
+    title: "Questions",
+    railLabel: "Q&A",
+    footnote:
+      "Priya, Head of Partnerships, built a partner deal-registration app in Lovable on Sunday. Sample data, no sign-in, looks great. She wants to send the link to 40 partners on Monday. What is the right call?",
+    poll: {
+      slug: "priya",
+      options: [
+        {
+          id: "priya:a",
+          label: "A",
+          body: "Ship it, it is only 40 partners",
+        },
+        { id: "priya:b", label: "B", body: "Polish the interface first" },
+        {
+          id: "priya:c",
+          label: "C",
+          body: "Hold. It needs real storage, controlled access, and a review before anything external-facing ships",
+        },
+        {
+          id: "priya:d",
+          label: "D",
+          body: "Rebuild it from scratch in the terminal",
+        },
+      ],
+    },
+    strip: {
+      label: "Four buckets",
+      items: [
+        "Should this cross? Rung, frequency, consequence, owner",
+        "How do I specify it? Job, user, checkable Done, non-goals",
+        "How should it connect? The proportionate door",
+        "How is it verified? Workflow run, failure states, review gate",
+      ],
+    },
+    // No GO DEEPER here, deliberately. The deck's own tally leaves the Q&A blank
+    // along with the polls, the timers and the demo — a pointer on a slide the
+    // room is talking through is filler, and filler in that slot trains people to
+    // stop reading it. The contact line is a link, not a citation.
     links: [
-      { label: "scott@cardinalelement.com", href: "mailto:scott@cardinalelement.com" },
-      { label: "linkedin.com/in/scottewalt", href: "https://www.linkedin.com/in/scottewalt" },
+      {
+        label: "Scott Ewalt · Cardinal Element",
+        href: "mailto:scott@cardinalelement.com",
+        note: "Anything unanswered goes to #ai-gtm in writing within 48 hours.",
+      },
     ],
-    footnote: "Take the kit: /kit",
-    footnoteHref: "/kit",
-    media: { image: genS37OneObject, speed: -0.12 },
+    media: { image: genS40Council, speed: -0.15 },
   },
 ];

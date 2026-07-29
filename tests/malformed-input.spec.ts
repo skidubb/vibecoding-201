@@ -1,21 +1,39 @@
 import { test, expect } from "@playwright/test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { ready, scrollY, settle } from "./helpers";
 
 /**
- * The third item in the deck's own minimum test pack (slide 29).
+ * "Malformed input", from the deck's own minimum test pack.
  *
- * The spec exercise is the one place on the site where an attendee types free
- * text that a presenter may read aloud to a hundred people, so what it refuses
- * matters as much as what it stores. These run backend-off, which is the state
- * the whole suite runs in: every refusal here happens before a network call,
- * and that is deliberate — validation that only exists in Postgres cannot tell
- * the writer what is wrong while they still have 90 seconds to fix it.
+ * The assignment is the one place on the site where an attendee types free text
+ * that a presenter may read aloud to a hundred people, so what it refuses matters
+ * as much as what it stores. These run backend-off, which is the state the whole
+ * suite runs in: every refusal here happens before a network call, and that is
+ * deliberate — validation that only exists in Postgres cannot tell the writer
+ * what is wrong while they still have time to fix it.
  */
 
-const EXERCISE = "#spec-exercise";
+const EXERCISE = "#assignment";
+
+/**
+ * The clock, read from the registry rather than pinned here.
+ *
+ * It was pinned as the literal "2:00" and the deck was re-cut to a fifteen-minute
+ * assignment, which failed this file for a reason that had nothing to do with the
+ * behaviour under test. A test that has to be edited every time the copy moves is
+ * a test people learn to edit without reading.
+ */
+const CLOCK = (() => {
+  const src = readFileSync(join(__dirname, "..", "src", "content", "sections.ts"), "utf8");
+  const block = src.split('id: "assignment"')[1] ?? "";
+  const seconds = Number(block.match(/seconds: (\d+)/)?.[1]);
+  if (!Number.isFinite(seconds)) throw new Error("no assignment exercise in the registry");
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+})();
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/#spec-exercise");
+  await page.goto("/#assignment");
   await ready(page);
   await settle(page);
 });
@@ -54,13 +72,13 @@ test("the timer counts down, and resets", async ({ page }) => {
   const section = page.locator(EXERCISE);
   const timer = section.locator("[data-timer]");
 
-  await expect(timer).toHaveText("2:00");
+  await expect(timer).toHaveText(CLOCK);
 
   await section.locator("[data-timer-toggle]").click();
-  await expect(timer).not.toHaveText("2:00", { timeout: 4000 });
+  await expect(timer).not.toHaveText(CLOCK, { timeout: 4000 });
 
   await section.getByRole("button", { name: "Reset" }).click();
-  await expect(timer).toHaveText("2:00");
+  await expect(timer).toHaveText(CLOCK);
 });
 
 test("typing a spec does not drive the deck", async ({ page }) => {
