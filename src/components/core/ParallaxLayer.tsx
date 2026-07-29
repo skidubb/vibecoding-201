@@ -112,12 +112,23 @@ export function VideoBackdrop({
   poster,
   speed = -0.15,
   opacity = 0.3,
+  scrim = "dark",
 }: {
   src: string;
   poster?: string;
   speed?: number;
   opacity?: number;
+  /**
+   * Which way the scrim tints, matching `ImageBackdrop`.
+   *
+   * This was a hardcoded navy gradient, so a clip on a light section darkened the
+   * page ground while the type stayed dark. On the Run slide that left the
+   * eyebrow, the step strip, the footnote and the event feed unreadable, and no
+   * test caught it because every clip until then sat on a dark section.
+   */
+  scrim?: "dark" | "light";
 }) {
+  const base = scrim === "dark" ? "18,22,42" : "233,230,245";
   const ref = useRef<HTMLVideoElement>(null);
   const [reduced, setReduced] = useState(false);
 
@@ -159,8 +170,7 @@ export function VideoBackdrop({
         aria-hidden
         className="absolute inset-0"
         style={{
-          background:
-            "radial-gradient(130% 95% at 50% 45%, rgba(18,22,42,0.45) 0%, rgba(18,22,42,0.86) 62%, var(--surface) 100%)",
+          background: `radial-gradient(130% 95% at 50% 45%, rgba(${base},0.45) 0%, rgba(${base},0.86) 62%, var(--surface) 100%)`,
         }}
       />
     </>

@@ -15,9 +15,7 @@ import failureB from "@/assets/failure-b.webp";
  */
 import genS01Doorway from "@/assets/generated/s01-doorway.webp";
 import genS02TwoLaptops from "@/assets/generated/s02-two-laptops.webp";
-import genS03UnderTheDesk from "@/assets/generated/s03-under-the-desk.webp";
 import genS04Monday from "@/assets/generated/s04-monday.webp";
-import genS06ThreeObjects from "@/assets/generated/s06-three-objects.webp";
 import genS10PagePassed from "@/assets/generated/s10-page-passed.webp";
 import genS11TwoSheets from "@/assets/generated/s11-two-sheets.webp";
 import genS12Timer from "@/assets/generated/s12-timer.webp";
@@ -34,7 +32,6 @@ import genS25TwoParcels from "@/assets/generated/s25-two-parcels.webp";
 import genS26LedgerAndNote from "@/assets/generated/s26-ledger-and-note.webp";
 import genS27HandsUp2 from "@/assets/generated/s27-hands-up-2.webp";
 import genS28GreenLights from "@/assets/generated/s28-green-lights.webp";
-import genS33WallDisplay from "@/assets/generated/s33-wall-display.webp";
 import genS36ThreeLines from "@/assets/generated/s36-three-lines.webp";
 import genS38AboutToSend from "@/assets/generated/s38-about-to-send.webp";
 import genS39NineItems from "@/assets/generated/s39-nine-items.webp";
@@ -344,7 +341,14 @@ export const sections: Section[] = [
         },
       ],
     },
-    media: { image: genS03UnderTheDesk, speed: -0.15 },
+    // Two office floors separated by an open stairwell void, the near one small
+    // and finished, the far one larger and busier. The slide makes the same point
+    // about the distance between a prototype and a system people depend on.
+    media: {
+      video: "/media/gap-platforms.mp4",
+      poster: "/media/gap-platforms-poster.jpg",
+      speed: -0.15,
+    },
   },
 
   {
@@ -465,7 +469,14 @@ export const sections: Section[] = [
         "What new risk appears when others depend on it?",
       ],
     },
-    media: { image: genS06ThreeObjects, speed: -0.15 },
+    // A lateral drift past one person alone, then a pair, then a full room in
+    // session. That is this table's three rows in order, despite the filename:
+    // the clip is about who depends on the thing, not about deploy environments.
+    media: {
+      video: "/media/three-environments.mp4",
+      poster: "/media/three-environments-poster.jpg",
+      speed: -0.12,
+    },
   },
 
   {
@@ -1094,7 +1105,14 @@ export const sections: Section[] = [
         },
       ],
     },
-    media: { image: genS33WallDisplay, speed: -0.12 },
+    // A slow orbit of six working stations that returns to where it started. Run
+    // is the sixth step and the one that feeds the next spec, so the closed
+    // circuit belongs here rather than on any single earlier step.
+    media: {
+      video: "/media/workflow-loop.mp4",
+      poster: "/media/workflow-loop-poster.jpg",
+      speed: -0.12,
+    },
   },
 
   {

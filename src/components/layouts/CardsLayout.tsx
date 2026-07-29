@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Glow, ImageBackdrop } from "@/components/core/ParallaxLayer";
+import { Glow } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, SectionHeader, SectionTail, type LayoutProps } from "./shared";
+import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 import { EventFeed } from "@/components/interactive/EventFeed";
 import { Logo } from "@/components/layouts/Logo";
 import { PromptBlock } from "@/components/interactive/PromptBlock";
@@ -30,15 +30,14 @@ export function CardsLayout({ section }: LayoutProps) {
 
   return (
     <>
-      {/* Backdrop and glows are siblings of the container so they go full-bleed. */}
-      {section.media?.image && (
-        <ImageBackdrop
-          src={section.media.image}
-          speed={section.media.speed}
-          opacity={section.theme === "dark" ? 0.3 : 0.24}
-          scrim={section.theme}
-        />
-      )}
+      {/* Backdrop and glows are siblings of the container so they go full-bleed.
+
+          Routed through `SectionBackdrop` rather than calling `ImageBackdrop`
+          directly, because the direct call handled `media.image` only. Giving a
+          cards section `media.video` put the file in the bundle and nothing on the
+          screen, which is the same defect already recorded for `strip`,
+          `footnoteHref`, `brand` and `media`. */}
+      <SectionBackdrop section={section} />
       <Glow className="right-[-18vw] top-[-10vh]" tone="magenta" size={52} />
 
       <div className={CONTAINER}>

@@ -37,8 +37,16 @@ export function SectionBackdrop({
   if (!media) return null;
 
   if (media.video) {
+    // Same theme handling as the image branch below. Without it a clip on a light
+    // section renders a dark scrim under dark type.
     return (
-      <VideoBackdrop src={media.video} poster={media.poster} speed={media.speed} />
+      <VideoBackdrop
+        src={media.video}
+        poster={media.poster}
+        speed={media.speed}
+        opacity={opacity ?? (section.theme === "dark" ? 0.3 : 0.2)}
+        scrim={section.theme}
+      />
     );
   }
   if (!media.image) return null;
