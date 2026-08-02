@@ -305,7 +305,7 @@ export function PollWidget({
             (pollState === "revealed"
               ? "Revealed."
               : presenterPreview
-                ? `Presenter preview — ${total} ${total === 1 ? "vote" : "votes"} so far. The room sees these bars only after the reveal.`
+                ? `Presenter preview: ${total} ${total === 1 ? "vote" : "votes"} so far. The room sees these bars only after the reveal.`
                 : showResults
                   ? `${total} ${total === 1 ? "vote" : "votes"} so far. One vote per signed-in account, enforced by a primary key in Postgres.`
                   : pollState === "open"

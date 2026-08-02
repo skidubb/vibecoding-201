@@ -28,7 +28,7 @@ export default function AuthErrorPage() {
         </p>
 
         <p className="mt-4 text-[0.95rem]" style={{ color: "var(--text-dim)" }}>
-          Nothing is lost. You do not need an account to vote — the polls sign you
+          Nothing is lost. You do not need an account to vote. The polls sign you
           in anonymously on the first tap, and everything on the deck reads
           without signing in at all.
         </p>

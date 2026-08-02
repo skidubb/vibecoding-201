@@ -82,7 +82,7 @@ export default function SignInPage() {
           Sign in
         </h1>
         <p className="mt-3 text-[0.95rem]" style={{ color: "var(--text-dim)" }}>
-          You do not need an account to vote — the polls sign you in anonymously.
+          You do not need an account to vote. The polls sign you in anonymously.
           An account saves your spec submission and lets Scott send you the kit.
         </p>
 
@@ -103,7 +103,7 @@ export default function SignInPage() {
                 onChange={(e) => setWantsKit(e.target.checked)}
                 className="mt-1"
               />
-              <span>Email me the kit — the checklist, the prompt pack, and the repo starter.</span>
+              <span>Email me the kit: the checklist, the prompt pack, and the repo starter.</span>
             </label>
 
             <div className="mt-6">
@@ -117,7 +117,7 @@ export default function SignInPage() {
                 className="block text-[11px] uppercase tracking-[0.18em]"
                 style={{ color: "var(--text-faint)" }}
               >
-                Or by email — best after the session
+                Or by email, best after the session
               </label>
               <div className="mt-3 flex gap-3">
                 <input

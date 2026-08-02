@@ -95,7 +95,7 @@ export default function VotePage() {
             </h1>
             <p className="mt-3" style={{ color: "var(--text-dim)" }}>
               Leave this page open. It will show the question the moment Scott
-              opens it — you do not need to refresh.
+              opens it. You do not need to refresh.
             </p>
           </NeuPanel>
         ) : (

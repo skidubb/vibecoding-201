@@ -123,7 +123,7 @@ export function ExerciseWidget({
       } catch {
         if (!cancelled) {
           setStatus("error");
-          setMessage("Saving is unavailable. Write it anyway — keep your copy.");
+          setMessage("Saving is unavailable. Write it anyway and keep your copy.");
         }
       }
     })();
@@ -161,7 +161,7 @@ export function ExerciseWidget({
     // put this refusal out of reach of the test that covers it.
     const client = supabase();
     if (!client) {
-      setMessage("Submissions are offline. Nothing was sent — keep your copy.");
+      setMessage("Submissions are offline. Nothing was sent. Keep your copy.");
       return;
     }
 
@@ -199,7 +199,7 @@ export function ExerciseWidget({
     } catch {
       if (!mounted.current) return;
       setStatus("error");
-      setMessage("That did not save. Nothing was stored — keep your copy.");
+      setMessage("That did not save. Nothing was stored. Keep your copy.");
     }
   }
 
@@ -370,7 +370,7 @@ export function ExerciseWidget({
               ? "This is on the screen now. Take it down to edit it."
               : (message ??
                 (offline
-                  ? "Submissions are offline. The timer still runs — write it in your own notes."
+                  ? "Submissions are offline. The timer still runs, so write it in your own notes."
                   : status === "loading"
                     ? "…"
                     : "Nobody sees this until you share it. Sharing is a separate press."))}

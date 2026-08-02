@@ -104,7 +104,7 @@ export function CardsLayout({ section }: LayoutProps) {
                       className="mt-auto inline-flex items-baseline gap-2 pt-5 font-sans text-[11px] uppercase tracking-[0.14em] underline-offset-4 hover:underline"
                       style={{ color: card.met === false ? "var(--text-faint)" : "var(--accent)" }}
                     >
-                      {card.met === false ? "Not yet — see why" : "Evidence"}
+                      {card.met === false ? "Not yet: see why" : "Evidence"}
                       <span aria-hidden>↗</span>
                     </a>
                   )}

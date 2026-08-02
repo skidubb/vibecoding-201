@@ -75,7 +75,7 @@ export function EventFeed({ limit = 8 }: { limit?: number }) {
           <li>reading…</li>
         ) : rows.length === 0 ? (
           <li>
-            nothing yet — copy a prompt or vote in a poll and it appears here
+            nothing yet; copy a prompt or vote in a poll and it appears here
           </li>
         ) : (
           rows.map((row, i) => (

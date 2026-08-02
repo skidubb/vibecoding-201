@@ -20,7 +20,7 @@ const inter = Inter({
 
 const TITLE = "Vibecoding 201 · Building Production GTM Tools";
 const DESCRIPTION =
-  "Taking one GTM prototype from a chat window to a tool your team depends on. Pavilion AI in GTM School — Scott Ewalt, Cardinal Element.";
+  "Taking one GTM prototype from a chat window to a tool your team depends on. Pavilion AI in GTM School. Scott Ewalt, Cardinal Element.";
 
 export const metadata: Metadata = {
   // Every relative URL below resolves against this, including the card that
