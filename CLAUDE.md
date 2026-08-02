@@ -10,7 +10,7 @@ operational rules that don't belong in it.
   2026-07-29 Scott listed five phrases to remove: "Four questions before you climb", "Grade
   what you already built", "Which rung is it on today?", "Then the four questions. Yes or
   no.", and "Score the thing you graded at the start". Each was quoted accurately from
-  `../deck-content-v7.md`, so the verbatim rule is what kept them in. Two separate problems
+  `../deck-content-v7.md` (now superseded by v8), so the verbatim rule is what kept them in. Two separate problems
   were involved:
   - **Terms that only make sense inside this deck**: rungs, climbing, doors, harnesses,
     crossing. Write what the thing actually is.
@@ -28,13 +28,14 @@ operational rules that don't belong in it.
   yourself writing a title, stop —
   you are decorating, and it reads as hiding the point. Every eyebrow, headline, body
   line, table cell and kicker in `src/content/sections.ts` is quoted from
-  `../deck-content-v7.md` (26 sections; the earlier 40-section cut came from
-  `../Vibecoding-201-Production-GTM-Tools-v6.pptx`). The deck's slide numbering and
-  speaker notes are noise and are deliberately not mirrored anywhere on the site.
-- **The registry follows v7's three rules**, which is why it reads sparser than the talk:
-  anything said out loud is not printed, no sentence restates the one before it, and every
-  headline has to make sense with the rest of the slide covered. Adding a spoken line to a
-  slide is a regression that no test will catch.
+  `../deck-content-v8.md` (26 sections; v7 and the earlier 40-section
+  `../Vibecoding-201-Production-GTM-Tools-v6.pptx` cut are superseded). The deck's slide
+  numbering and speaker notes are noise and are deliberately not mirrored anywhere on the site.
+- **The registry follows the deck's four rules**, which is why it reads sparser than the talk:
+  anything said out loud is not printed, no sentence restates the one before it, every
+  headline has to make sense with the rest of the slide covered, and (new in v8) every slide
+  stands on its own: no line may depend on another slide's content, and a line that needs it
+  repeats it. Adding a spoken line to a slide is a regression that no test will catch.
 - **The GO DEEPER strip is on 14 of the 26 sections.** The other 12 are the polls, the
   timers and the demo, where the room is talking rather than reading. Do not add strips to
   complete the set.
