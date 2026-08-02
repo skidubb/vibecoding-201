@@ -407,26 +407,26 @@ export const sections: Section[] = [
         day: "Tuesday",
         title: "The team asks for logins and real accounts",
         tone: "bad",
-        repaired: "0:44",
+        repaired: "by sign-in and access rules",
       },
       {
         day: "Wednesday",
         title: "The data disappears after a refresh",
         tone: "bad",
-        repaired: "0:20",
+        repaired: "by a real database",
         image: recordRefreshB,
       },
       {
         day: "Thursday",
         title: "Nobody can explain the risk score",
         tone: "bad",
-        repaired: "0:55",
+        repaired: "when code calculates and the model explains",
       },
       {
         day: "Friday",
         title: "The spreadsheet returns",
         tone: "bad",
-        repaired: "1:03",
+        repaired: "by a named owner",
         image: failureB,
       },
     ],
@@ -629,7 +629,7 @@ export const sections: Section[] = [
       ],
     },
     kicker:
-      "A billion people have the same assistant you do. The edge is what yours is grounded in.",
+      "The assistant you rent is the same one your competitors rent. The edge is what yours is grounded in.",
     deeper: {
       claim: "AGENTS.md is the open format for this file,",
       note: "readable by most coding agents rather than one vendor's.",
@@ -915,7 +915,11 @@ export const sections: Section[] = [
     title: "What happens if this runs twice?",
     accent: "runs twice?",
     lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat.",
-    strip: { items: ["Update the existing record."] },
+    strip: {
+      items: [
+        "The safe answer is an update to the existing record, never a second copy.",
+      ],
+    },
     kicker: "The duplicate stays invisible until a customer finds it.",
     deeper: {
       claim: "Stripe's idempotency key design",
@@ -967,43 +971,55 @@ export const sections: Section[] = [
     id: "insight-rule",
     theme: "light",
     layout: "matrix",
-    eyebrow: "Build · where the model belongs",
+    eyebrow: "Build · Jordan's churn-risk dashboard",
     title: "Code calculates, the model explains",
     accent: "the model explains",
     matrix: {
       head: ["Deterministic code", "The model"],
       rows: [
-        ["Calculates the metrics", "Explains, prioritizes, recommends"],
         [
-          "The churn score. The thresholds. The ranking.",
-          "Why this account is flagged. What to do about it.",
+          "Calculates the churn score, the thresholds, and the ranking",
+          "Explains why an account was flagged and recommends the next action",
         ],
-        ["Reproducible, auditable, testable", "Language Jordan can act on"],
+        [
+          "The same inputs produce the same number every run",
+          "Grounded in numbers the code already produced, never inventing them",
+        ],
+        [
+          "Can be audited and tested",
+          "Turns the numbers into language an account owner can act on",
+        ],
       ],
     },
     lede: "The model does not invent the churn score from raw CRM data.",
-    kicker:
-      "This fixes Thursday, when nobody could explain the risk score.",
+    kicker: "A risk score the model invented has nothing behind it to audit.",
     media: { image: genS26LedgerAndNote, speed: -0.15 },
   },
 
   {
+    // Matrix rather than claim since v8: the old strip named seven states
+    // ("retry state", "partial failure") without saying anything about them,
+    // which failed the stand-alone rule. Three rows each answer a question.
     id: "stale-data",
     theme: "dark",
-    layout: "claim",
+    layout: "matrix",
     eyebrow: "Build · stale data",
     title: "Show people when the data is stale",
     accent: "is stale",
-    strip: {
-      label: "What has to be on screen",
-      items: [
-        "last successful sync",
-        "current or stale",
-        "records processed",
-        "records rejected",
-        "connection expired",
-        "partial failure",
-        "retry state",
+    matrix: {
+      rows: [
+        [
+          "Freshness",
+          "When the last sync succeeded, and whether what is on screen is current.",
+        ],
+        [
+          "Completeness",
+          "How many records came through, and how many were rejected.",
+        ],
+        [
+          "Failure",
+          "What broke, whether a connection expired, and when the retry will run.",
+        ],
       ],
     },
     kicker: "A tool that fails loudly is safer than one that fails quietly.",
@@ -1032,16 +1048,16 @@ export const sections: Section[] = [
       ],
     },
     lede:
-      "Local → where you break things. Preview → where you prove it. Production → where people depend on it.",
+      "Break things in a local copy and prove the fix on a preview link. Production is the version other people depend on.",
     strip: {
-      label: "Minimum test pack",
+      label: "Six tests before anyone depends on it",
       items: [
-        "happy path",
-        "unauthorized access",
-        "malformed input",
-        "duplicate submission",
-        "upstream failure",
-        "persistence after refresh",
+        "the workflow completes",
+        "a user without permission is refused",
+        "malformed input is rejected",
+        "a double submission stays one record",
+        "a dead data source is handled",
+        "a saved change survives a refresh",
       ],
     },
     kicker:
@@ -1074,27 +1090,30 @@ export const sections: Section[] = [
     title: "Watch it, log it, and name who fixes it",
     accent: "name who fixes it",
     cards: [
-      { title: "Analytics", body: "Is it creating value?" },
-      { title: "Logs", body: "What happened in this run?" },
+      { title: "Analytics", body: "Is it being used, and is it creating value?" },
+      {
+        title: "Logs",
+        body: "A record of what happened on every run, for the day something looks wrong.",
+      },
       {
         title: "Alerts",
-        body: "Who needs to intervene? A named human. A log entry is not an alert.",
+        body: "When it fails, a named human finds out. A log entry nobody reads is not an alert.",
       },
     ],
     strip: {
-      label: "Ownership",
+      label: "Ownership, written down",
       items: [
-        "a named owner",
-        "a backup owner",
-        "a rollback path",
+        "a named owner and a backup",
+        "a way to roll back a bad change",
         "known limitations",
         "a review date",
-        "a shutdown path",
+        "a way to shut it down on purpose",
       ],
     },
     kicker:
       "Planning how a tool ends costs an afternoon. Skipping it is how a working tool becomes somebody's unpaid second job.",
-    footnote: "This fixes Friday, when the spreadsheet came back.",
+    footnote:
+      "A tool nobody owns dies the first time it breaks, and the old spreadsheet comes back.",
     deeper: {
       claim: "This project's OWNERSHIP.md,",
       note: "including the two items still marked undecided.",
@@ -1120,33 +1139,33 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "exercise",
     eyebrow: "Hands on · 90 seconds",
-    title: "Score the same tool against these nine",
-    accent: "these nine",
-    railLabel: "Nine things to check",
+    title: "Nine checks decide whether a tool is ready",
+    accent: "Nine checks",
+    railLabel: "Nine checks",
     cards: [
       {
         title: "Persistent data",
-        body: "Records survive a refresh, in Postgres.",
+        body: "Records survive a refresh because they live in a real database.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/migrations/20260727000000_init.sql",
       },
       {
         title: "Sign-in",
-        body: "Anonymous and Google, on the deck itself.",
+        body: "The tool knows who each user is. Here: anonymous and Google.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/src/app/signin/page.tsx",
       },
       {
         title: "Enforced authorization",
-        body: "Row-level security, not hidden interface elements.",
+        body: "The database decides what each user may see. Hiding records in the interface is not security.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
       },
       {
         title: "Server-side secrets",
-        body: "1Password references on disk, never values.",
+        body: "Credentials never appear in code. The repository holds references to a vault, never values.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/.env.op",
       },
       {
         title: "A tested critical workflow",
-        body: "Playwright against a production build, on every pull request.",
+        body: "The main workflow runs under an automated test on every change.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/.github/workflows/ci.yml",
       },
       {
@@ -1156,23 +1175,24 @@ export const sections: Section[] = [
       },
       {
         title: "Logs and analytics",
-        body: "Events, and a console that reads them back.",
+        body: "Every run leaves a record someone can read back.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/src/lib/events.ts",
       },
       {
         title: "Preview before production",
-        body: "Promotion is an explicit step.",
+        body: "A person promotes each change. Saving a file is not shipping.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/ARCHITECTURE.md",
       },
       {
         title: "A named owner",
-        body: "Named, with a rollback path. Backup owner, review date and shutdown path are still undecided — in public, because writing undecided beats leaving it blank.",
+        body: "Someone answers when it breaks, and can roll it back. The backup owner and shutdown path here still say undecided, in public, because writing undecided beats leaving it blank.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/OWNERSHIP.md",
         met: false,
       },
     ],
     exercise: { id: "score", seconds: 90, mode: "timer" },
-    kicker: "Check what it has. Leave the rest blank. The blanks are your homework.",
+    kicker:
+      "Score a tool you have built. Check what it passes, leave the rest blank. The blanks are your homework.",
     deeper: {
       claim: "This site scored against all nine,",
       note: "with every link going to the thing itself, including the one it fails.",
