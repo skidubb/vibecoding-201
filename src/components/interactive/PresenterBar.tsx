@@ -248,7 +248,7 @@ export function PresenterBar() {
           {shared.length === 0 ? (
             <p className="mt-3 text-[0.9rem]" style={{ color: "var(--text-dim)" }}>
               Nothing yet. Submissions appear here only once their author shares
-              them — what the room has written but kept private is not readable
+              them. What the room has written but kept private is not readable
               from this account.
             </p>
           ) : (

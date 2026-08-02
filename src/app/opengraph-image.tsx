@@ -22,7 +22,7 @@ import { join } from "node:path";
  */
 
 export const alt =
-  "Vibecoding 201 — Building Production GTM Tools. Pavilion AI in GTM School, Scott Ewalt.";
+  "Vibecoding 201: Building Production GTM Tools. Pavilion AI in GTM School, Scott Ewalt.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

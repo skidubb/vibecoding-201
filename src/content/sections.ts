@@ -668,7 +668,7 @@ export const sections: Section[] = [
       id: "spec",
       seconds: 900,
       placeholder:
-        "Job.\nUser.\nDone — written as steps someone else could follow to check it.",
+        "Job.\nUser.\nDone, written as steps someone else could follow to check it.",
     },
     footnote: "No plan came back? Take the pre-generated one from the kit",
     footnoteHref: "/kit",

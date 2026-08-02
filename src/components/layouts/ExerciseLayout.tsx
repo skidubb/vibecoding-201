@@ -73,7 +73,7 @@ export function ExerciseLayout({ section }: LayoutProps) {
                         color: card.met === false ? "var(--text-faint)" : "var(--accent)",
                       }}
                     >
-                      {card.met === false ? "Not yet — see why" : "Evidence"}{" "}
+                      {card.met === false ? "Not yet: see why" : "Evidence"}{" "}
                       <span aria-hidden>↗</span>
                     </a>
                   )}

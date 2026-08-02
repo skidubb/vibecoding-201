@@ -43,7 +43,7 @@ export function GapChasmChart({ progress }: { progress: MotionValue<number> }) {
       viewBox={`0 0 ${W} ${H}`}
       className="h-auto w-full"
       role="img"
-      aria-label="Two curves — what gets built, and who will depend on it — separated by a gap containing the invisible production work."
+      aria-label="Two curves, what gets built and who will depend on it, separated by a gap containing the invisible production work."
     >
       <defs>
         <linearGradient id="chasm-fill" x1="0" y1="0" x2="0" y2="1">

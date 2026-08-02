@@ -299,7 +299,7 @@ export function AdminConsole() {
           {shared.length === 0 ? (
             <p className="mt-3 text-[0.9rem]" style={{ color: "var(--text-dim)" }}>
               Nothing yet. Submissions appear here only once their author shares
-              them — what the room has written but kept private is not readable
+              them. What the room has written but kept private is not readable
               from this account.
             </p>
           ) : (
@@ -355,7 +355,7 @@ export function AdminConsole() {
             className="mt-4 font-sans text-[12px] uppercase tracking-[0.14em]"
             style={{ color: "var(--text-faint)" }}
           >
-            Kit requests: {kitCount ?? "…"} — emails are in the export, not on this page
+            Kit requests: {kitCount ?? "…"}. Emails are in the export, not on this page
           </p>
           <a
             href={VERCEL_ANALYTICS_URL}
@@ -379,7 +379,7 @@ export function AdminConsole() {
             style={{ color: "var(--text-dim)" }}
           >
             {log.length === 0 ? (
-              <li>nothing yet — the room has not touched anything</li>
+              <li>nothing yet; the room has not touched anything</li>
             ) : (
               log.map((row, i) => (
                 <li key={`${row.created_at}-${i}`} className="truncate py-[3px]">

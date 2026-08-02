@@ -83,7 +83,7 @@ export default function ReportPage() {
         </h1>
         <p className="mt-4 leading-relaxed" style={{ color: "var(--text-dim)" }}>
           Counts only, and only for polls the presenter has revealed. Nobody&rsquo;s
-          vote is readable here, including by us — these are aggregates the
+          vote is readable here, including by us. These are aggregates the
           database publishes, not rows anyone can browse. The specs written
           during the exercise are not on this page at all: those were shared
           with a room, which is not the same as published.
@@ -111,7 +111,7 @@ export default function ReportPage() {
               Nothing has been revealed yet.
             </h2>
             <p className="mt-3" style={{ color: "var(--text-dim)" }}>
-              During the session this page stays empty on purpose — reading the
+              During the session this page stays empty on purpose: reading the
               answers here while the room is still voting would spoil every one
               of them. Come back afterwards.
             </p>
