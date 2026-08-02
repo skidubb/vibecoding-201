@@ -23,11 +23,9 @@ import genS14TheQuestion from "@/assets/generated/s14-the-question.webp";
 import genS17OverShoulder from "@/assets/generated/s17-over-shoulder.webp";
 import genS18SixBinders from "@/assets/generated/s18-six-binders.webp";
 import genS19HandsUp from "@/assets/generated/s19-hands-up.webp";
-import genS20Badge from "@/assets/generated/s20-badge.webp";
 import genS21WrongSide from "@/assets/generated/s21-wrong-side.webp";
 import genS22SealedEnvelope from "@/assets/generated/s22-sealed-envelope.webp";
 import genS23FiveEntrances from "@/assets/generated/s23-five-entrances.webp";
-import genS24StatusBoard from "@/assets/generated/s24-status-board.webp";
 import genS25TwoParcels from "@/assets/generated/s25-two-parcels.webp";
 import genS26LedgerAndNote from "@/assets/generated/s26-ledger-and-note.webp";
 import genS27HandsUp2 from "@/assets/generated/s27-hands-up-2.webp";
@@ -36,6 +34,11 @@ import genS36ThreeLines from "@/assets/generated/s36-three-lines.webp";
 import genS38AboutToSend from "@/assets/generated/s38-about-to-send.webp";
 import genS39NineItems from "@/assets/generated/s39-nine-items.webp";
 import genS40Council from "@/assets/generated/s40-council.webp";
+import genS20bOneKey from "@/assets/generated/s20b-one-key.webp";
+import genS13HoveringPen from "@/assets/generated/s13-hovering-pen.webp";
+import genS32ManyPhones from "@/assets/generated/s32-many-phones.webp";
+import genS30Unplugging from "@/assets/generated/s30-unplugging.webp";
+import genS09Ring from "@/assets/generated/s09-ring.webp";
 
 export type LayoutKind =
   | "hero"
@@ -405,15 +408,18 @@ export const sections: Section[] = [
       },
       {
         day: "Tuesday",
-        title: "The team asks for logins and real accounts",
+        title:
+          "A partner changes one number in the URL and sees another team's accounts",
         tone: "bad",
-        repaired: "by sign-in and access rules",
+        repaired: "by rules enforced in the database",
+        image: genS20bOneKey,
       },
       {
         day: "Wednesday",
-        title: "The data disappears after a refresh",
+        title:
+          "The screen looks healthy while the sync has been dead for nine days",
         tone: "bad",
-        repaired: "by a real database",
+        repaired: "by logs and alerts a named human reads",
         image: recordRefreshB,
       },
       {
@@ -421,6 +427,7 @@ export const sections: Section[] = [
         title: "Nobody can explain the risk score",
         tone: "bad",
         repaired: "when code calculates and the model explains",
+        image: genS13HoveringPen,
       },
       {
         day: "Friday",
@@ -504,10 +511,46 @@ export const sections: Section[] = [
   },
 
   {
+    // Added in v9: four step slides referenced a six-step loop the deck never
+    // introduced. This slide introduces it by name before the Spec step.
+    id: "loop-overview",
+    theme: "dark",
+    layout: "pipeline",
+    eyebrow: "How the next forty minutes are organized",
+    title: "Six steps take a prototype to production",
+    accent: "Six steps",
+    railLabel: "The development process",
+    cards: [
+      {
+        title: "Spec",
+        body: "Write the job, the user, and how you will check it.",
+      },
+      {
+        title: "Plan",
+        body: "The agent proposes; you approve before anything changes.",
+      },
+      {
+        title: "Build",
+        body: "The agent writes the code inside the rules you set.",
+      },
+      {
+        title: "Test",
+        body: "The agent proves the workflow behaves; you watch it work.",
+      },
+      {
+        title: "Ship",
+        body: "A person promotes it to where people depend on it.",
+      },
+      { title: "Run", body: "Watch it, log it, and name who fixes it." },
+    ],
+    media: { image: genS09Ring, speed: -0.12 },
+  },
+
+  {
     id: "spec",
     theme: "dark",
     layout: "matrix",
-    eyebrow: "Spec · step 1 of 6",
+    eyebrow: "Step 1 · Spec",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Spec"],
@@ -561,7 +604,7 @@ export const sections: Section[] = [
     id: "director-mode",
     theme: "light",
     layout: "prompt",
-    eyebrow: "Plan · step 2 of 6",
+    eyebrow: "Step 2 · Plan",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Plan"],
@@ -605,13 +648,13 @@ export const sections: Section[] = [
     id: "harness",
     theme: "dark",
     layout: "matrix",
-    eyebrow: "Build · step 3 of 6",
+    eyebrow: "Step 3 · Build",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Build"],
     },
-    title: "Six files to keep in the repository",
-    accent: "Six files",
+    title: "Files to add to your folder / repo",
+    accent: "your folder / repo",
     matrix: {
       rows: [
         [
@@ -648,20 +691,20 @@ export const sections: Section[] = [
     railLabel: "The assignment",
     cards: [
       {
-        title: "Write your spec",
-        body: "Job, User, Done. Submit it. Share it if you want it in the mix.",
+        title: "Write your three-line spec: Job, User, Done",
+        body: "Submit it. Share it if you want it in the mix.",
       },
       {
-        title: "Get a plan",
-        body: "Open your 101 Claude Project. Copy the prompt, paste your three lines under it, fire it.",
+        title: "Paste the plan prompt above your spec and fire it",
+        body: "Use your 101 Claude Project.",
       },
       {
-        title: "Count what it invented",
+        title: "Count the assumptions the plan invented",
         body: "A source system you never named. A field you never described. A permission rule you never gave it. Keep the number.",
       },
       {
-        title: "If you get there",
-        body: "Ask it to write PRODUCT.md and SECURITY.md from your spec and plan.",
+        title: "If you get there: ask it to write PRODUCT.md and SECURITY.md",
+        body: "Generated from your spec and plan.",
       },
     ],
     exercise: {
@@ -680,8 +723,9 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "surfaced",
     eyebrow: "What the room wrote",
-    title: "Two specs from this room, tightened",
-    accent: "tightened",
+    title: "Two specs from this room, rewritten live on this screen",
+    accent: "rewritten live",
+    lede: "Submissions appear here as their authors share them.",
     surfaced: {
       exerciseId: "spec",
       empty:
@@ -699,15 +743,12 @@ export const sections: Section[] = [
     accent: "before it makes it",
     railLabel: "Live demo",
     cards: [
-      { title: "The repository", body: "The project, already in GitHub." },
-      { title: "The inspection", body: "The agent reads before it acts." },
+      { title: "The project is already in GitHub" },
+      { title: "The agent reads the project before acting" },
+      { title: "It proposes a plan. I approve it before any file changes" },
       {
-        title: "The plan",
-        body: "Proposed before any file changes. You approve it.",
-      },
-      {
-        title: "One persistent action",
-        body: "Written to Supabase, survives a refresh.",
+        title:
+          "It makes one change that survives a refresh, written to the database",
       },
     ],
     kicker: "Your job: chat the assumptions it invented.",
@@ -719,9 +760,9 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "poll",
     eyebrow: "Poll 1 · single choice",
-    title: "The build works except for one error that keeps happening.",
-    accent: "one error that keeps happening.",
-    lede: "What now?",
+    title: "What do you do when one error keeps coming back?",
+    accent: "one error keeps coming back?",
+    lede: "The build works except for one error that keeps happening.",
     poll: {
       slug: "debugging",
       options: [
@@ -762,57 +803,24 @@ export const sections: Section[] = [
       "https://github.com/skidubb/vibecoding-201/blob/main/supabase/migrations/20260727000000_init.sql",
     deeper: {
       claim: "The fifteen policies you just hit,",
-      note: "and the test that runs against them.",
+      note: "and the breach class they prevent: 170+ apps on the platform Jordan used shipped without them.",
       links: [
         {
           label: "authorization.sql",
           href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
+        },
+        {
+          label: "CVE-2025-48757",
+          href: "https://mattpalmer.io/posts/2025/05/CVE-2025-48757",
         },
       ],
     },
     media: { image: genS21WrongSide, speed: -0.15 },
   },
 
-  {
-    id: "authorization",
-    theme: "light",
-    layout: "matrix",
-    eyebrow: "Build · identity",
-    title: "Signing in and being allowed are two different things",
-    accent: "two different things",
-    matrix: {
-      head: ["Authentication", "Authorization"],
-      rows: [
-        ["Who is the user?", "What can that user read or change?"],
-        ["Sign-in. Sessions.", "Enforced in the database, not the interface."],
-        ["Usually the first thing built.", "Usually the last thing checked."],
-      ],
-    },
-    strip: {
-      label: "Jordan's rules",
-      items: [
-        "users see only their organization's accounts",
-        "account owners may update next actions",
-        "administrators may manage integrations",
-      ],
-    },
-    kicker: "Hiding records in the interface is not security.",
-    deeper: {
-      claim: "Broken access control is OWASP's number one risk.",
-      links: [
-        {
-          label: "OWASP A01:2025",
-          href: "https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control",
-        },
-        {
-          label: "Postgres row-level security",
-          href: "https://supabase.com/docs/guides/database/postgres/row-level-security",
-        },
-      ],
-    },
-    media: { image: genS20Badge, speed: -0.12 },
-  },
-
+  // v9 removed the "Signing in and being allowed" section per Scott's comment
+  // ("too in the weeds"); its lesson is one spoken line in the security-test
+  // notes now.
   {
     id: "secrets",
     theme: "light",
@@ -914,13 +922,12 @@ export const sections: Section[] = [
     eyebrow: "Build · idempotency",
     title: "What happens if this runs twice?",
     accent: "runs twice?",
-    lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat.",
+    lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat, and the duplicate they create stays invisible until a customer finds it.",
     strip: {
       items: [
         "The safe answer is an update to the existing record, never a second copy.",
       ],
     },
-    kicker: "The duplicate stays invisible until a customer finds it.",
     deeper: {
       claim: "Stripe's idempotency key design",
       note: "is the reference implementation, and the reason your card never gets charged twice.",
@@ -975,7 +982,7 @@ export const sections: Section[] = [
     title: "Code calculates, the model explains",
     accent: "the model explains",
     matrix: {
-      head: ["Deterministic code", "The model"],
+      head: ["What the code does", "What the model does"],
       rows: [
         [
           "Calculates the churn score, the thresholds, and the ranking",
@@ -996,41 +1003,14 @@ export const sections: Section[] = [
     media: { image: genS26LedgerAndNote, speed: -0.15 },
   },
 
-  {
-    // Matrix rather than claim since v8: the old strip named seven states
-    // ("retry state", "partial failure") without saying anything about them,
-    // which failed the stand-alone rule. Three rows each answer a question.
-    id: "stale-data",
-    theme: "dark",
-    layout: "matrix",
-    eyebrow: "Build · stale data",
-    title: "Show people when the data is stale",
-    accent: "is stale",
-    matrix: {
-      rows: [
-        [
-          "Freshness",
-          "When the last sync succeeded, and whether what is on screen is current.",
-        ],
-        [
-          "Completeness",
-          "How many records came through, and how many were rejected.",
-        ],
-        [
-          "Failure",
-          "What broke, whether a connection expired, and when the retry will run.",
-        ],
-      ],
-    },
-    kicker: "A tool that fails loudly is safer than one that fails quietly.",
-    media: { image: genS24StatusBoard, speed: -0.12 },
-  },
-
+  // v9 removed the "Show people when the data is stale" section per Scott's
+  // comment; the Run section carries the observability lesson, and Jordan's
+  // Wednesday repair points there.
   {
     id: "test-and-ship",
     theme: "light",
     layout: "matrix",
-    eyebrow: "Test and ship · steps 4 and 5 of 6",
+    eyebrow: "Steps 4 and 5 · Test and ship",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Test", "Ship"],
@@ -1039,12 +1019,11 @@ export const sections: Section[] = [
     accent: "You decide when it ships.",
     matrix: {
       rows: [
-        ["1. Define the behavior", "You"],
-        ["2. Write the test", "Agent"],
-        ["3. Confirm it fails", "Agent"],
-        ["4. Implement", "Agent"],
-        ["5. Run until green", "Agent"],
-        ["6. Verify as a user", "You"],
+        ["You", "Define the behavior, then verify the finished work as a user"],
+        [
+          "The agent",
+          "Writes the test, watches it fail, implements, and runs it until green",
+        ],
       ],
     },
     lede:
@@ -1063,12 +1042,16 @@ export const sections: Section[] = [
     kicker:
       "Promotion is a decision someone makes, never a side effect of saving a file.",
     deeper: {
-      claim: "Promoting a preview to production",
-      note: "as an explicit step.",
+      claim: "Agents now run these tests themselves:",
+      note: "promoting a preview as an explicit step, and an agent that tests apps in a real browser.",
       links: [
         {
           label: "vercel.com/docs",
           href: "https://vercel.com/docs/deployments/promote-preview-to-production",
+        },
+        {
+          label: "replit.com/blog",
+          href: "https://replit.com/blog/introducing-agent-3-our-most-autonomous-agent-yet",
         },
       ],
     },
@@ -1082,7 +1065,7 @@ export const sections: Section[] = [
     id: "run",
     theme: "light",
     layout: "cards",
-    eyebrow: "Run · step 6 of 6",
+    eyebrow: "Step 6 · Run",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Run"],
@@ -1139,9 +1122,9 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "exercise",
     eyebrow: "Hands on · 90 seconds",
-    title: "Nine checks decide whether a tool is ready",
-    accent: "Nine checks",
-    railLabel: "Nine checks",
+    title: "What a tool must have before people depend on it",
+    accent: "before people depend on it",
+    railLabel: "The production standard",
     cards: [
       {
         title: "Persistent data",
@@ -1207,6 +1190,93 @@ export const sections: Section[] = [
   },
 
   {
+    // Added in v9: the class demonstrates one route to production; this slide
+    // says the route is interchangeable and names the other three.
+    id: "routes",
+    theme: "dark",
+    layout: "matrix",
+    eyebrow: "The wider map · new for August 2026",
+    title: "This class taught one of four routes to production",
+    accent: "four routes",
+    railLabel: "Four routes",
+    matrix: {
+      head: ["", "Solves", "Still yours"],
+      rows: [
+        [
+          "Stay in the platform you prototyped in",
+          "The assembly problem: hosting, sign-in, a database, and scanning come built in",
+          "The authorization rules, the final verification, the owner",
+        ],
+        [
+          "Assemble the stack, as this class did",
+          "The control problem: every layer visible, testable, swappable",
+          "The assembly itself, and every check until you delegate it",
+        ],
+        [
+          "Build on the platform your company already runs",
+          "The governance problem: identity, permissions, and compliance already exist",
+          "Patience, and an engineering partner",
+        ],
+        [
+          "Buy it",
+          "The ownership problem: uptime and maintenance are the vendor's payroll",
+          "The acceptance test, and an owner for the contract",
+        ],
+      ],
+    },
+    kicker:
+      "On every route, the authorization rules, the final verification, and the named owner stay with the builder.",
+    deeper: {
+      claim: "The full route map:",
+      note: "the nine checks covered per route, and five questions that pick one. Verified August 2026.",
+      links: [{ label: "/kit", href: "/kit" }],
+    },
+    media: { image: genS32ManyPhones, speed: -0.12 },
+  },
+
+  {
+    // Added in v9: the durable claim behind the hour. Input written for a model
+    // depreciates on a release schedule; checks on its output appreciate.
+    id: "evolution",
+    theme: "light",
+    layout: "matrix",
+    eyebrow: "The evolution",
+    title:
+      "What you write for the model depreciates. What checks its output appreciates.",
+    accent: "What checks its output appreciates.",
+    railLabel: "The evolution",
+    matrix: {
+      rows: [
+        [
+          "Last year's models",
+          "You wrote the plan, reviewed it before code, and reviewed every line that came out",
+        ],
+        [
+          "Today's models",
+          "You keep the checkable Done; the model drafts its own plan and catches its own errors",
+        ],
+        [
+          "Frontier agents",
+          "You design the run: the goal, the guardrails, and a verifier the agent executes without you",
+        ],
+      ],
+    },
+    kicker:
+      "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
+    deeper: {
+      claim: "Anthropic's engineering org already runs this way,",
+      note: "and verification is the one practice its builders never walked back.",
+      links: [
+        {
+          label: "claude.com/blog",
+          href: "https://claude.com/blog/running-an-ai-native-engineering-org",
+        },
+      ],
+    },
+    media: { image: genS30Unplugging, speed: -0.15 },
+  },
+
+  {
     id: "homework",
     theme: "dark",
     layout: "cards",
@@ -1234,8 +1304,8 @@ export const sections: Section[] = [
     footnoteHref: "/kit",
     deeper: {
       claim:
-        "Checklist, prompt pack, agent instructions, ownership card, CLI reference.",
-      note: "All five, no email.",
+        "Checklist, prompt pack, agent instructions, ownership card, CLI reference, route map.",
+      note: "All six, no email.",
       links: [{ label: "/kit", href: "/kit" }],
     },
     media: { image: genS38AboutToSend, speed: -0.12 },

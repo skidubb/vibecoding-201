@@ -17,7 +17,7 @@ import { NeuBadge, NeuPanel } from "@/components/neu/Neu";
 export const metadata: Metadata = {
   title: "Participant kit · Vibecoding 201",
   description:
-    "The six artifacts from Building Production GTM Tools: readiness checklist, prompt pack, agent instructions, ownership card, CLI reference.",
+    "The seven artifacts from Building Production GTM Tools: readiness checklist, prompt pack, agent instructions, ownership card, CLI reference, route map.",
 };
 
 const FILES = [
@@ -47,9 +47,14 @@ const FILES = [
     use: "You need to install the tools, or you have forgotten what a command does.",
   },
   {
+    file: "four-ways-to-cross-the-gap.md",
+    title: "Four ways to cross the Gap",
+    use: "You are picking a route to production, or explaining why you chose this one.",
+  },
+  {
     file: "README.md",
     title: "Read me first",
-    use: "You want the order to use the other five in.",
+    use: "You want the order to use the other six in.",
   },
 ];
 

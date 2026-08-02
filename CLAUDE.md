@@ -28,7 +28,7 @@ operational rules that don't belong in it.
   yourself writing a title, stop —
   you are decorating, and it reads as hiding the point. Every eyebrow, headline, body
   line, table cell and kicker in `src/content/sections.ts` is quoted from
-  `../deck-content-v8.md` (26 sections; v7 and the earlier 40-section
+  `../deck-content-v9.md` (27 sections; v7, v8, and the earlier 40-section
   `../Vibecoding-201-Production-GTM-Tools-v6.pptx` cut are superseded). The deck's slide
   numbering and speaker notes are noise and are deliberately not mirrored anywhere on the site.
 - **The registry follows the deck's four rules**, which is why it reads sparser than the talk:
@@ -36,7 +36,7 @@ operational rules that don't belong in it.
   headline has to make sense with the rest of the slide covered, and (new in v8) every slide
   stands on its own: no line may depend on another slide's content, and a line that needs it
   repeats it. Adding a spoken line to a slide is a regression that no test will catch.
-- **The GO DEEPER strip is on 14 of the 26 sections.** The other 12 are the polls, the
+- **The GO DEEPER strip is on 15 of the 27 sections.** The other 12 are the polls, the
   timers and the demo, where the room is talking rather than reading. Do not add strips to
   complete the set.
 - **`SectionTail` renders `strip`, `kicker`, `footnote` and `deeper`** so each layout has one
