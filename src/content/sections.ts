@@ -300,7 +300,7 @@ export type Section = {
 /**
  * The deck, in order.
  *
- * Twenty-eight sections, quoted from `deck-content-v11.md`. Three rules from
+ * Twenty-eight sections, quoted from `deck-content-v13.md`. Three rules from
  * that file apply to every entry:
  *
  *   1. The deck teaches on its own. Anything the audience must learn is printed
