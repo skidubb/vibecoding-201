@@ -355,6 +355,30 @@ test("the loop slide does not also carry a step strip", () => {
   expect(offenders, "a section carries both loopSteps and steps").toEqual([]);
 });
 
+test("a section that declares a chart renders its figure", async ({ page }) => {
+  // The chart key is a bare string the content check cannot see, and the
+  // chart layout renders its diagram through a switch — a key with no branch
+  // renders an empty diagram column with nothing failing anywhere.
+  await page.goto("/");
+
+  const missing: string[] = [];
+  let checked = 0;
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    const chart = block.match(/\n {4}chart: "([^"]+)"/)?.[1];
+    if (!id || !chart) continue;
+    checked++;
+
+    if ((await page.locator(`#${id} svg[role="img"]`).count()) === 0) {
+      missing.push(`${id} declares chart "${chart}" and renders no figure`);
+    }
+  }
+
+  expect(checked, "no section declares a chart").toBeGreaterThan(0);
+  expect(missing, missing.join("\n")).toEqual([]);
+});
+
 test("every section given a backdrop actually renders one", async ({ page }) => {
   // Media was the fourth registry field to be silently dropped by a layout that
   // did not know about it — after `strip`, `footnoteHref` and `brand`. Eight of

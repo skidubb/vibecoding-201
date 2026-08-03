@@ -1,12 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useScroll, useTransform } from "motion/react";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
 import { Glow, VideoBackdrop } from "@/components/core/ParallaxLayer";
 import { AccentTitle, NeuBadge, Reveal } from "@/components/neu/Neu";
 import { SCurveChart } from "@/components/charts/SCurveChart";
 import { GapChasmChart } from "@/components/charts/GapChasmChart";
 import { LadderDiagram } from "@/components/charts/LadderDiagram";
+import { DivergenceChart } from "@/components/charts/DivergenceChart";
 import { CONTAINER, Deeper, type LayoutProps } from "./shared";
 
 /**
@@ -59,11 +66,31 @@ export function ChartLayout({ section }: LayoutProps) {
   }, []);
 
   const { scrollY } = useScroll();
-  const scrollYProgress = useTransform(scrollY, (y) => {
+  const measuredProgress = useTransform(scrollY, (y) => {
     const { start, travel } = range.current;
     return Math.min(1, Math.max(0, (y - start) / travel));
   });
-  const wide = section.chart === "ladder";
+
+  // Under prefers-reduced-motion the section still gets its stops but nothing
+  // should draw stroke by stroke, so the charts receive a constant 1 and every
+  // beat, including the gated kicker below, is fully present at every stop.
+  const reduceMotion = useReducedMotion();
+  const fullProgress = useMotionValue(1);
+  const scrollYProgress = reduceMotion ? fullProgress : measuredProgress;
+
+  // The ladder's rungs and the divergence figure's two-sentence headline both
+  // need the full container width; the 34% copy column wraps them illegibly at
+  // projector size.
+  const wide = section.chart === "ladder" || section.chart === "divergence";
+
+  // On the divergence slide the kicker is the figure's final beat rather than
+  // part of the entrance. It renders once, below the figure, as an
+  // opacity-gated div: a `p` at low opacity trips the ghost check in
+  // tests/happy-path.spec.ts, and `display: none` would drop the copy from
+  // innerText, which the content check in tests/registry-integrity.spec.ts
+  // reads.
+  const gatedKicker = section.chart === "divergence";
+  const kickerOpacity = useTransform(scrollYProgress, [0.78, 0.92], [0, 1]);
 
   return (
     <div ref={ref} className="relative h-[260vh] w-full">
@@ -111,7 +138,7 @@ export function ChartLayout({ section }: LayoutProps) {
                   </p>
                 </Reveal>
               )}
-              {section.kicker && (
+              {section.kicker && !gatedKicker && (
                 <Reveal delay={0.22}>
                   <p
                     className="mt-7 border-l-2 pl-5 font-display text-[1rem] font-medium leading-snug"
@@ -129,7 +156,7 @@ export function ChartLayout({ section }: LayoutProps) {
                   {section.footnote}
                 </p>
               )}
-              {section.deeper && (
+              {section.deeper && !gatedKicker && (
                 <Deeper deeper={section.deeper} sectionId={section.id} />
               )}
             </div>
@@ -139,7 +166,30 @@ export function ChartLayout({ section }: LayoutProps) {
               {section.chart === "scurve" && <SCurveChart progress={scrollYProgress} />}
               {section.chart === "gap" && <GapChasmChart progress={scrollYProgress} />}
               {section.chart === "ladder" && <LadderDiagram progress={scrollYProgress} />}
+              {section.chart === "divergence" && (
+                <DivergenceChart progress={scrollYProgress} />
+              )}
             </div>
+
+            {gatedKicker && (
+              <div className="w-full">
+                {section.kicker && (
+                  <motion.div
+                    className="border-l-2 pl-5 font-display text-[1.05rem] font-medium leading-snug"
+                    style={{
+                      borderColor: "var(--accent)",
+                      color: "var(--text)",
+                      opacity: kickerOpacity,
+                    }}
+                  >
+                    {section.kicker}
+                  </motion.div>
+                )}
+                {section.deeper && (
+                  <Deeper deeper={section.deeper} sectionId={section.id} />
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

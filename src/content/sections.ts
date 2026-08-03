@@ -37,7 +37,6 @@ import genS40Council from "@/assets/generated/s40-council.webp";
 import genS20bOneKey from "@/assets/generated/s20b-one-key.webp";
 import genS13HoveringPen from "@/assets/generated/s13-hovering-pen.webp";
 import genS32ManyPhones from "@/assets/generated/s32-many-phones.webp";
-import genS30Unplugging from "@/assets/generated/s30-unplugging.webp";
 import genS09Ring from "@/assets/generated/s09-ring.webp";
 import genS31ThreeDoors from "@/assets/generated/s31-three-doors.webp";
 
@@ -282,7 +281,7 @@ export type Section = {
   media?: Media;
   cards?: Card[];
   timeline?: TimelineStop[];
-  chart?: "ladder" | "scurve" | "gap";
+  chart?: "ladder" | "scurve" | "gap" | "divergence";
   matrix?: Matrix;
   /**
    * Brand marks per matrix row, linked to each platform's offering. Indexed to
@@ -476,33 +475,20 @@ export const sections: Section[] = [
   {
     // Added in v9 as the closing slide; moved forward in v11. The premise that
     // explains why the hour teaches checks instead of prompts belongs before
-    // the method it frames. Rows are organized by capability rather than
-    // calendar so the slide does not age.
+    // the method it frames. Rebuilt in v13: the capability table and the photo
+    // are gone, and one figure draws the two movements a presenter stop at a
+    // time, with the warning as the final beat. No media on purpose — the
+    // chart layout renders no image backdrop, and a media block here would
+    // fail the backdrop check in tests/registry-integrity.spec.ts.
     id: "evolution",
     theme: "light",
-    layout: "matrix",
+    layout: "chart",
+    chart: "divergence",
     eyebrow: "Why this class teaches checks, not prompts",
-    title: "Model capability changes. Your acceptance tests survive.",
-    accent: "Your acceptance tests survive.",
+    title:
+      "Models require less instruction over time. Reliable systems require more explicit verification.",
+    accent: "more explicit verification.",
     railLabel: "The premise",
-    lede: "The people who build the coding agents remove more of the instructions every release. The checks on the output are the part they never remove.",
-    matrix: {
-      head: ["When the agent can", "Your work becomes"],
-      rows: [
-        [
-          "Execute the steps you spell out",
-          "Writing steps and reviewing the code that comes back",
-        ],
-        [
-          "Plan and correct its own work",
-          "Defining outcomes, constraints, and acceptance tests",
-        ],
-        [
-          "Run for hours or days",
-          "Designing guardrails, verifiers, and release gates",
-        ],
-      ],
-    },
     kicker:
       "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
     deeper: {
@@ -520,7 +506,6 @@ export const sections: Section[] = [
         },
       ],
     },
-    media: { image: genS30Unplugging, speed: -0.15 },
   },
 
   {
