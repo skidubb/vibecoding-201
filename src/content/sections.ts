@@ -169,6 +169,12 @@ export type Matrix = {
   rows: string[][];
   /** Per column, defaulting to left. Only the slide with a time column sets it. */
   align?: ("left" | "right")[];
+  /**
+   * Index into `rows` of the row the section teaches. A number rather than a
+   * per-row flag because the content check in tests/registry-integrity.spec.ts
+   * treats every quoted string inside `matrix` as a cell that must render.
+   */
+  highlight?: number;
 };
 
 /**
@@ -435,6 +441,7 @@ export const sections: Section[] = [
         ],
         ["Buy it", "A vendor's product, with uptime on their payroll"],
       ],
+      highlight: 1,
     },
     rowBrands: [
       [

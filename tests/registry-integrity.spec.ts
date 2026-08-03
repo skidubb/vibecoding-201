@@ -302,6 +302,46 @@ test("every matrix renders as many rows and columns as it declares", async ({ pa
   expect(problems, problems.join("\n")).toEqual([]);
 });
 
+test("a matrix that declares a highlighted row renders it, and only it", async ({
+  page,
+}) => {
+  // `matrix.highlight` is a plain number, so the content check cannot see it
+  // and the row-count check cannot tell an emphasized row from the rest. A
+  // layout that ignores the field would drop the emphasis with nothing
+  // failing anywhere.
+  await page.goto("/");
+
+  const problems: string[] = [];
+  let checked = 0;
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    const matrix = block.match(/matrix: \{([\s\S]*?)\n {4}\}/)?.[1];
+    const highlight = matrix?.match(/highlight: (\d+)/)?.[1];
+    if (!id || highlight === undefined) continue;
+    checked++;
+
+    const marked = await page
+      .locator(`#${id} tbody tr[data-highlight="true"]`)
+      .count();
+    if (marked !== 1) {
+      problems.push(`${id}: ${marked} highlighted rows on the page, expected 1`);
+      continue;
+    }
+
+    const attr = await page
+      .locator(`#${id} tbody tr`)
+      .nth(Number(highlight))
+      .getAttribute("data-highlight");
+    if (attr !== "true") {
+      problems.push(`${id}: highlight declares row ${highlight}, another row is marked`);
+    }
+  }
+
+  expect(checked, "no matrix declares a highlight").toBeGreaterThan(0);
+  expect(problems, problems.join("\n")).toEqual([]);
+});
+
 test("the loop slide does not also carry a step strip", () => {
   // `loopSteps` and `steps` hold the same six strings and render completely
   // differently: one is a row of panels that occupies the slide, the other an 11px
