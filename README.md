@@ -86,7 +86,7 @@ the deck, verbatim; if you find yourself writing one, stop.
   id: "the-bar",
   theme: "dark",          // flips every neumorphic surface beneath it
   layout: "cards",        // hero | split | claim | cards | timeline | chart | loop
-                          // | cta | prompt | poll | exercise | pipeline | matrix | surfaced
+                          // | cta | prompt | poll | exercise | matrix | surfaced
   eyebrow: "The bar",
   title: "A production standard.",
   accent: "production standard.",   // rendered in magenta

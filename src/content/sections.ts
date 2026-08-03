@@ -52,7 +52,6 @@ export type LayoutKind =
   | "prompt"
   | "poll"
   | "exercise"
-  | "pipeline"
   | "matrix"
   | "surfaced";
 
@@ -81,14 +80,6 @@ export type Card = {
   met?: boolean;
   /** A brand mark for the card, where the deck names a product. */
   brand?: BrandKey;
-  /**
-   * What this site actually did at this step.
-   *
-   * Used only by the pipeline layout. The stack slide recommends six tools, and
-   * the receipt under each one records what this site actually did at that step,
-   * including the step it skipped.
-   */
-  receipt?: string;
 };
 
 export type TimelineStop = {
@@ -184,6 +175,20 @@ export type Matrix = {
  * readable and allows two highlighted steps that are not adjacent.
  */
 export type Steps = { all: string[]; current: string[] };
+
+/**
+ * One stage of the development process on the loop slide.
+ *
+ * The stage names stay in sync by value with the `steps` strips on the five
+ * step slides; a rename has to land in both places.
+ */
+export type LoopStage = {
+  name: string;
+  /** The artifact the stage leaves behind, printed under PRODUCES. */
+  produces: string;
+  /** What lets the work leave the stage, printed under ADVANCES WHEN. */
+  advances: string;
+};
 
 /**
  * A read-only view of the submissions the presenter has put on screen.
@@ -294,7 +299,7 @@ export type Section = {
    */
   rowBrands?: { brand: BrandKey; href: string }[][];
   split?: { label: string; title: string; body: string; image: StaticImageData }[];
-  loopSteps?: string[];
+  loopStages?: LoopStage[];
   prompts?: Prompt[];
   links?: LinkRef[];
   poll?: Poll;
@@ -634,40 +639,47 @@ export const sections: Section[] = [
   {
     // Added in v9: four step slides referenced a six-step loop the deck never
     // introduced. This slide introduces it by name before the Spec step.
+    // v13: the six card definitions became one pathway. Each stage prints
+    // what it produces and what lets the work advance, and the return band
+    // carries evidence from use back to Spec.
     id: "loop-overview",
     theme: "dark",
-    layout: "pipeline",
+    layout: "loop",
     eyebrow: "How the next forty minutes are organized",
     title:
       "How a prototype becomes production: Spec, Plan, Build, Test, Ship, Run",
     accent: "Spec, Plan, Build, Test, Ship, Run",
     railLabel: "The development process",
-    // v11: each line defines the stage and its artifact instead of describing
-    // the choreography around it. The division of labor moved to the kicker.
-    cards: [
+    loopStages: [
       {
-        title: "Spec",
-        body: "Defines the job, the user, and the observable conditions for done.",
+        name: "Spec",
+        produces: "The job, the user, and a checkable Done",
+        advances: "You can write the steps you will check",
       },
       {
-        title: "Plan",
-        body: "The agent's reviewable proposal for meeting the spec, approved before anything changes.",
+        name: "Plan",
+        produces: "A reviewable proposal: data, permissions, tests, and files",
+        advances: "You approve it before anything changes",
       },
       {
-        title: "Build",
-        body: "The smallest working implementation, written inside the rules you set.",
+        name: "Build",
+        produces: "The smallest working implementation",
+        advances: "It stays inside the rules you set",
       },
       {
-        title: "Test",
-        body: "Repeatable evidence that the workflow and its failure cases behave.",
+        name: "Test",
+        produces: "Repeatable evidence the workflow and its failure cases behave",
+        advances: "Every check passes and you verify as a user",
       },
       {
-        title: "Ship",
-        body: "A person promotes the approved version to where people depend on it.",
+        name: "Ship",
+        produces: "The approved version, live where people depend on it",
+        advances: "A person promotes it, never a saved file",
       },
       {
-        title: "Run",
-        body: "Monitoring, alerts, a named owner, and a way to roll back or retire it.",
+        name: "Run",
+        produces: "Monitoring, alerts, a named owner, a rollback path",
+        advances: "Evidence from use feeds the next spec",
       },
     ],
     kicker:

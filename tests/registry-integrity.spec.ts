@@ -143,6 +143,15 @@ test("no layout silently drops content it was handed", async ({ page }) => {
       for (const m of matrix.matchAll(/"((?:[^"\\]|\\.)*)"/g)) push(m[1]);
     }
 
+    // The loop slide's stage rows. The stage names are under the floor and are
+    // counted by their own test below.
+    const loop = block.match(/loopStages: \[([\s\S]*?)\n {4}\]/)?.[1];
+    if (loop) {
+      for (const m of loop.matchAll(/(?:produces|advances): "((?:[^"\\]|\\.)*)"/g)) {
+        push(m[1]);
+      }
+    }
+
     for (const text of expected) {
       if (!rendered.includes(text)) missing.push(`${id}: "${text}"`);
     }
@@ -343,16 +352,52 @@ test("a matrix that declares a highlighted row renders it, and only it", async (
 });
 
 test("the loop slide does not also carry a step strip", () => {
-  // `loopSteps` and `steps` hold the same six strings and render completely
-  // differently: one is a row of panels that occupies the slide, the other an 11px
+  // `loopStages` and `steps` hold the same six names and render completely
+  // differently: one is a run of panels that occupies the slide, the other an 11px
   // indicator above the headline. A section with both would print the six words
   // twice.
   const offenders = sectionBlocks()
-    .filter((block) => /\n\s{4}loopSteps:/.test(block))
+    .filter((block) => /\n\s{4}loopStages:/.test(block))
     .filter((block) => /\n\s{4}steps:/.test(block))
     .map((block) => block.match(/id: "([^"]+)"/)?.[1] ?? "unknown");
 
-  expect(offenders, "a section carries both loopSteps and steps").toEqual([]);
+  expect(offenders, "a section carries both loopStages and steps").toEqual([]);
+});
+
+test("the loop slide renders every stage with both of its labels", async ({ page }) => {
+  // Counts nodes rather than matching text: the six stage names are eight
+  // characters or shorter, which the content check discards, so a layout that
+  // dropped half the stages would pass it. The produces/advances strings are
+  // covered by the content check; the counts below catch a stage rendered
+  // with one of its two rows missing.
+  await page.goto("/");
+
+  const problems: string[] = [];
+  let checked = 0;
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    const loop = block.match(/loopStages: \[([\s\S]*?)\n {4}\]/)?.[1];
+    if (!id || !loop) continue;
+    checked++;
+
+    const declared = [...loop.matchAll(/name: "/g)].length;
+    const stages = await page.locator(`#${id} [data-loop-stage]`).count();
+    const produces = await page.locator(`#${id} [data-produces]`).count();
+    const advances = await page.locator(`#${id} [data-advances]`).count();
+
+    if (stages !== declared) {
+      problems.push(`${id}: ${declared} stages in the registry, ${stages} on the page`);
+    }
+    if (produces !== declared || advances !== declared) {
+      problems.push(
+        `${id}: ${produces} produces and ${advances} advances rows for ${declared} stages`,
+      );
+    }
+  }
+
+  expect(checked, "no section declares loopStages").toBeGreaterThan(0);
+  expect(problems, problems.join("\n")).toEqual([]);
 });
 
 test("a section that declares a chart renders its figure", async ({ page }) => {
