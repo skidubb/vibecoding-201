@@ -468,7 +468,7 @@ export const sections: Section[] = [
       ],
     },
     strip: {
-      label: "Four questions",
+      label: "Ask before you build",
       items: [
         "Is the workflow frequent or consequential enough to matter?",
         "Is the process stable enough to encode?",
@@ -517,8 +517,9 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "pipeline",
     eyebrow: "How the next forty minutes are organized",
-    title: "Six steps take a prototype to production",
-    accent: "Six steps",
+    title:
+      "How a prototype becomes production: Spec, Plan, Build, Test, Ship, Run",
+    accent: "Spec, Plan, Build, Test, Ship, Run",
     railLabel: "The development process",
     cards: [
       {
@@ -622,7 +623,7 @@ export const sections: Section[] = [
       },
     ],
     strip: {
-      label: "Five questions to ask of any plan",
+      label: "Questions to ask of any plan",
       items: [
         "Does it solve the stated job?",
         "What assumptions did it invent?",
@@ -722,14 +723,14 @@ export const sections: Section[] = [
     id: "room-specs",
     theme: "dark",
     layout: "surfaced",
-    eyebrow: "What the room wrote",
-    title: "Two specs from this room, rewritten live on this screen",
+    eyebrow: "What you wrote",
+    title: "Specs you just wrote, rewritten live on this screen",
     accent: "rewritten live",
     lede: "Submissions appear here as their authors share them.",
     surfaced: {
       exerciseId: "spec",
       empty:
-        "Nothing on screen yet. Specs shared with the room appear here when Scott puts one up.",
+        "Nothing on screen yet. Shared specs appear here when Scott puts one up.",
     },
     media: { image: genS36ThreeLines, speed: -0.15 },
   },
@@ -859,8 +860,8 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "matrix",
     eyebrow: "Build · connections",
-    title: "Five ways to connect to data",
-    accent: "Five ways",
+    title: "Choose how your tool connects to its data",
+    accent: "connects to its data",
     matrix: {
       head: ["", "Use when", "Costs you"],
       rows: [
@@ -1029,7 +1030,7 @@ export const sections: Section[] = [
     lede:
       "Break things in a local copy and prove the fix on a preview link. Production is the version other people depend on.",
     strip: {
-      label: "Six tests before anyone depends on it",
+      label: "Tests to pass before anyone depends on it",
       items: [
         "the workflow completes",
         "a user without permission is refused",
@@ -1203,17 +1204,17 @@ export const sections: Section[] = [
       head: ["", "Solves", "Still yours"],
       rows: [
         [
-          "Stay in the platform you prototyped in",
+          "Stay in the platform you prototyped in: Replit or Lovable",
           "The assembly problem: hosting, sign-in, a database, and scanning come built in",
           "The authorization rules, the final verification, the owner",
         ],
         [
-          "Assemble the stack, as this class did",
+          "Assemble the stack, as this class did: agent, GitHub, Vercel, Supabase",
           "The control problem: every layer visible, testable, swappable",
           "The assembly itself, and every check until you delegate it",
         ],
         [
-          "Build on the platform your company already runs",
+          "Build on the platform your company already runs: Microsoft, Google, or AWS",
           "The governance problem: identity, permissions, and compliance already exist",
           "Patience, and an engineering partner",
         ],
@@ -1245,6 +1246,7 @@ export const sections: Section[] = [
       "What you write for the model depreciates. What checks its output appreciates.",
     accent: "What checks its output appreciates.",
     railLabel: "The evolution",
+    lede: "The people who build the coding agents keep deleting what goes into the model and keep adding what checks what comes out.",
     matrix: {
       rows: [
         [
@@ -1264,9 +1266,13 @@ export const sections: Section[] = [
     kicker:
       "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
     deeper: {
-      claim: "Anthropic's engineering org already runs this way,",
-      note: "and verification is the one practice its builders never walked back.",
+      claim: "Boris Cherny, who built Claude Code, never walked back verification",
+      note: "while deleting instructions, plan mode, and prompts release by release.",
       links: [
+        {
+          label: "ycrootaccess.com",
+          href: "https://www.ycrootaccess.com/p/boris-cherny-building-claude-code",
+        },
         {
           label: "claude.com/blog",
           href: "https://claude.com/blog/running-an-ai-native-engineering-org",
