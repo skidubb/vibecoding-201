@@ -123,6 +123,14 @@ export type Poll = {
   options: PollOption[];
   /** `two-up` shows each option as a screen. Default is a stacked list. */
   variant?: "list" | "two-up";
+  /**
+   * The option whose underlying system is drawn at the reveal, on the same
+   * polls.state flip that shows the result bars. Rendering, not content: the
+   * node names live in SystemUnderScreen the way the dashboard scenery lives
+   * in ScreenMock, and nothing here says more than the option's own body
+   * already prints.
+   */
+  systemOptionId?: string;
 };
 
 /**
@@ -396,6 +404,9 @@ export const sections: Section[] = [
     poll: {
       slug: "cold-open",
       variant: "two-up",
+      // v13: at the reveal, the system under screen B appears beneath its
+      // pixel-identical mock. Keyed to the reveal so the vote stays untainted.
+      systemOptionId: "cold-open:b",
       options: [
         {
           id: "cold-open:a",

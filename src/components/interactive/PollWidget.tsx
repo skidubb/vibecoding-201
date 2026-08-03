@@ -8,6 +8,7 @@ import { logEvent } from "@/lib/events";
 import { useIsAdmin } from "@/lib/use-is-admin";
 import { NeuPanel } from "@/components/neu/Neu";
 import { ScreenMock } from "@/components/interactive/ScreenMock";
+import { SystemUnderScreen } from "@/components/interactive/SystemUnderScreen";
 
 type Tally = Record<string, number>;
 type Status = "loading" | "ready" | "voting" | "voted" | "offline" | "error";
@@ -33,11 +34,13 @@ export function PollWidget({
   options,
   sectionId,
   variant = "list",
+  systemOptionId,
 }: {
   slug: string;
   options: PollOption[];
   sectionId: string;
   variant?: NonNullable<Poll["variant"]>;
+  systemOptionId?: string;
 }) {
   const isAdmin = useIsAdmin();
   const [status, setStatus] = useState<Status>(
@@ -244,6 +247,16 @@ export function PollWidget({
                         />
                       ) : (
                         <ScreenMock />
+                      )}
+                      {/* Outside the mock's role="img" root: the
+                          identical-screens test measures everything inside
+                          it, and the band belongs to the card, not the
+                          screen. Keyed to the revealed state, not to
+                          showResults — showResults is also true for early
+                          voters and the signed-in presenter preview, either
+                          of which would spring this before the room votes. */}
+                      {systemOptionId === option.id && (
+                        <SystemUnderScreen revealed={pollState === "revealed"} />
                       )}
                     </span>
                   )}

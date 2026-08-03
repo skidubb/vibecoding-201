@@ -424,6 +424,30 @@ test("a section that declares a chart renders its figure", async ({ page }) => {
   expect(missing, missing.join("\n")).toEqual([]);
 });
 
+test("a poll's system reveal points at one of its own options", () => {
+  // `systemOptionId` is compared against option ids at render time, so a typo
+  // means the band never mounts and the reveal shows two bare screens, with
+  // nothing failing anywhere.
+  const problems: string[] = [];
+  let checked = 0;
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    const poll = block.match(/poll: \{([\s\S]*?)\n {4}\}/)?.[1];
+    const target = poll?.match(/systemOptionId: "([^"]+)"/)?.[1];
+    if (!id || !poll || !target) continue;
+    checked++;
+
+    const optionIds = [...poll.matchAll(/\bid: "([^"]+)"/g)].map((m) => m[1]);
+    if (!optionIds.includes(target)) {
+      problems.push(`${id}: systemOptionId "${target}" matches no option`);
+    }
+  }
+
+  expect(checked, "no poll declares a systemOptionId").toBeGreaterThan(0);
+  expect(problems, problems.join("\n")).toEqual([]);
+});
+
 test("every section given a backdrop actually renders one", async ({ page }) => {
   // Media was the fourth registry field to be silently dropped by a layout that
   // did not know about it — after `strip`, `footnoteHref` and `brand`. Eight of

@@ -141,3 +141,22 @@ test("the cold open shows two screens that are identical", async ({ page }) => {
 
   expect(shape[0]).toBe(shape[1]);
 });
+
+test("the system under screen B exists and stays hidden before the reveal", async ({
+  page,
+}) => {
+  // Backend-off is the pre-reveal state: polls read as closed, which is
+  // exactly what an attendee sees before Shift-R. The seven nodes have to be
+  // in the DOM (the reveal only animates them, it does not fetch them) while
+  // contributing nothing visible and no height — the identical-screens test
+  // above is what breaks if they ever take up room.
+  await page.goto("/#cold-open");
+  await ready(page);
+  await settle(page);
+
+  const nodes = page.locator("#cold-open [data-system-node]");
+  await expect(nodes).toHaveCount(7);
+  for (const node of await nodes.all()) {
+    await expect(node).not.toBeVisible();
+  }
+});
