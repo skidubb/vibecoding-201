@@ -5,6 +5,8 @@ import anthropicMono from "@/assets/logos/anthropic-mono.svg";
 import aws from "@/assets/logos/aws.svg";
 import awsMono from "@/assets/logos/aws-mono.svg";
 import claude from "@/assets/logos/claude.svg";
+import cursor from "@/assets/logos/cursor.svg";
+import cursorMono from "@/assets/logos/cursor-mono.svg";
 import github from "@/assets/logos/github.svg";
 import githubMono from "@/assets/logos/github-mono.svg";
 import google from "@/assets/logos/google.svg";
@@ -50,6 +52,7 @@ const MARKS = {
   anthropic: { color: anthropic, mono: anthropicMono, name: "Anthropic" },
   aws: { color: aws, mono: awsMono, name: "AWS" },
   claude: { color: claude, mono: claude, name: "Claude" },
+  cursor: { color: cursor, mono: cursorMono, name: "Cursor" },
   github: { color: github, mono: githubMono, name: "GitHub" },
   google: { color: google, mono: googleMono, name: "Google" },
   lovable: { color: lovable, mono: lovableMono, name: "Lovable" },

@@ -408,7 +408,9 @@ export const sections: Section[] = [
     // Added in v11, moved from the close: the class teaches one route of four,
     // and saying so at minute five is the contract the rest of the hour is
     // read against. The detailed solves/still-yours table stays late, as
-    // `routes`.
+    // `routes`. v12 opens the lede with the four jobs a production tool does
+    // and names the builders on row 2 — "An agent" on the face left the why
+    // of the stack and the tools that build it unstated.
     id: "contract",
     theme: "dark",
     layout: "matrix",
@@ -416,7 +418,7 @@ export const sections: Section[] = [
     title: "There are four routes to production. This class teaches one.",
     accent: "This class teaches one.",
     railLabel: "The contract",
-    lede: "Today teaches the assembled route because nothing on it is hidden. Learn to name the checks here and you can find them on any route.",
+    lede: "A production tool stores real records, controls access, refreshes itself, and logs failures. Each route below is a different answer to who does those four jobs. Today teaches the assembled route because nothing on it is hidden. Learn to name the checks here and you can find them on any route.",
     matrix: {
       rows: [
         [
@@ -425,7 +427,7 @@ export const sections: Section[] = [
         ],
         [
           "Assemble the stack · today's route",
-          "An agent plus GitHub, Vercel, and Supabase, every layer visible",
+          "Claude Code, Codex, or Cursor builds the tool on GitHub, Vercel, and Supabase, every layer visible",
         ],
         [
           "Build on the cloud your company already runs",
@@ -440,6 +442,9 @@ export const sections: Section[] = [
         { brand: "lovable", href: "https://lovable.dev" },
       ],
       [
+        { brand: "claude", href: "https://claude.com/claude-code" },
+        { brand: "openai", href: "https://developers.openai.com/codex" },
+        { brand: "cursor", href: "https://cursor.com" },
         { brand: "github", href: "https://github.com" },
         { brand: "vercel", href: "https://vercel.com" },
         { brand: "supabase", href: "https://supabase.com" },
