@@ -27,6 +27,13 @@ export function MatrixLayout({ section }: LayoutProps) {
   const head = matrix?.head;
   const rows = matrix?.rows ?? [];
 
+  // The emphasized row keeps full text strength on a raised surface with an
+  // accent bar in its label cell; every other row's label steps from --text to
+  // --text-dim. Both tokens hold the 4.5:1 floor tests/contrast.spec.ts
+  // enforces, and opacity is never used for the dimming — the ghost check in
+  // happy-path.spec.ts treats low-opacity text as missing content.
+  const chosen = matrix?.highlight;
+
   const cellAlign = (col: number) =>
     matrix?.align?.[col] === "right" ? "text-right tabular-nums" : "text-left";
 
@@ -95,8 +102,12 @@ export function MatrixLayout({ section }: LayoutProps) {
                   {rows.map((cells, r) => (
                     <tr
                       key={`r-${r}`}
+                      data-highlight={r === chosen ? "true" : undefined}
                       className="block border-b py-3 last:border-b-0 md:table-row md:py-0"
-                      style={{ borderColor: "var(--edge)" }}
+                      style={{
+                        borderColor: "var(--edge)",
+                        background: r === chosen ? "var(--surface-raised)" : undefined,
+                      }}
                     >
                       {cells.map((cell, c) =>
                         c === 0 ? (
@@ -104,7 +115,16 @@ export function MatrixLayout({ section }: LayoutProps) {
                             key={`c-${c}`}
                             scope="row"
                             className={`block px-3 py-1 font-display text-[0.98rem] font-semibold leading-snug md:table-cell md:py-4 ${cellAlign(c)}`}
-                            style={{ color: "var(--text)" }}
+                            style={{
+                              color:
+                                chosen !== undefined && r !== chosen
+                                  ? "var(--text-dim)"
+                                  : "var(--text)",
+                              boxShadow:
+                                r === chosen
+                                  ? "inset 3px 0 0 var(--accent)"
+                                  : undefined,
+                            }}
                           >
                             {cell}
                             {/* Platform marks for the row, each linked to its
@@ -119,7 +139,9 @@ export function MatrixLayout({ section }: LayoutProps) {
                                     target="_blank"
                                     rel="noreferrer noopener"
                                     data-deck-keys="off"
-                                    className="opacity-75 transition-opacity hover:opacity-100"
+                                    className={`${
+                                      r === chosen ? "opacity-100" : "opacity-75"
+                                    } transition-opacity hover:opacity-100`}
                                   >
                                     <Logo brand={mark.brand} height={15} />
                                   </a>
@@ -131,7 +153,9 @@ export function MatrixLayout({ section }: LayoutProps) {
                           <td
                             key={`c-${c}`}
                             className={`block px-3 py-1 text-[0.94rem] leading-relaxed md:table-cell md:py-4 ${cellAlign(c)}`}
-                            style={{ color: "var(--text-dim)" }}
+                            style={{
+                              color: r === chosen ? "var(--text)" : "var(--text-dim)",
+                            }}
                           >
                             {head?.[c] && (
                               <span

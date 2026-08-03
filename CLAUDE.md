@@ -28,7 +28,7 @@ operational rules that don't belong in it.
   yourself writing a title, stop —
   you are decorating, and it reads as hiding the point. Every eyebrow, headline, body
   line, table cell and kicker in `src/content/sections.ts` is quoted from
-  `../deck-content-v11.md` (28 sections; v7 through v10 and the earlier 40-section
+  `../deck-content-v13.md` (28 sections; v7 through v12 and the earlier 40-section
   `../Vibecoding-201-Production-GTM-Tools-v6.pptx` cut are superseded). The deck's slide
   numbering and speaker notes are noise and are deliberately not mirrored anywhere on the site.
 - **The registry follows the deck's four rules:** the deck teaches on its own, so anything

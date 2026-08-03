@@ -37,7 +37,6 @@ import genS40Council from "@/assets/generated/s40-council.webp";
 import genS20bOneKey from "@/assets/generated/s20b-one-key.webp";
 import genS13HoveringPen from "@/assets/generated/s13-hovering-pen.webp";
 import genS32ManyPhones from "@/assets/generated/s32-many-phones.webp";
-import genS30Unplugging from "@/assets/generated/s30-unplugging.webp";
 import genS09Ring from "@/assets/generated/s09-ring.webp";
 import genS31ThreeDoors from "@/assets/generated/s31-three-doors.webp";
 
@@ -53,7 +52,6 @@ export type LayoutKind =
   | "prompt"
   | "poll"
   | "exercise"
-  | "pipeline"
   | "matrix"
   | "surfaced";
 
@@ -82,14 +80,6 @@ export type Card = {
   met?: boolean;
   /** A brand mark for the card, where the deck names a product. */
   brand?: BrandKey;
-  /**
-   * What this site actually did at this step.
-   *
-   * Used only by the pipeline layout. The stack slide recommends six tools, and
-   * the receipt under each one records what this site actually did at that step,
-   * including the step it skipped.
-   */
-  receipt?: string;
 };
 
 export type TimelineStop = {
@@ -133,6 +123,14 @@ export type Poll = {
   options: PollOption[];
   /** `two-up` shows each option as a screen. Default is a stacked list. */
   variant?: "list" | "two-up";
+  /**
+   * The option whose underlying system is drawn at the reveal, on the same
+   * polls.state flip that shows the result bars. Rendering, not content: the
+   * node names live in SystemUnderScreen the way the dashboard scenery lives
+   * in ScreenMock, and nothing here says more than the option's own body
+   * already prints.
+   */
+  systemOptionId?: string;
 };
 
 /**
@@ -169,6 +167,12 @@ export type Matrix = {
   rows: string[][];
   /** Per column, defaulting to left. Only the slide with a time column sets it. */
   align?: ("left" | "right")[];
+  /**
+   * Index into `rows` of the row the section teaches. A number rather than a
+   * per-row flag because the content check in tests/registry-integrity.spec.ts
+   * treats every quoted string inside `matrix` as a cell that must render.
+   */
+  highlight?: number;
 };
 
 /**
@@ -179,6 +183,20 @@ export type Matrix = {
  * readable and allows two highlighted steps that are not adjacent.
  */
 export type Steps = { all: string[]; current: string[] };
+
+/**
+ * One stage of the development process on the loop slide.
+ *
+ * The stage names stay in sync by value with the `steps` strips on the five
+ * step slides; a rename has to land in both places.
+ */
+export type LoopStage = {
+  name: string;
+  /** The artifact the stage leaves behind, printed under PRODUCES. */
+  produces: string;
+  /** What lets the work leave the stage, printed under ADVANCES WHEN. */
+  advances: string;
+};
 
 /**
  * A read-only view of the submissions the presenter has put on screen.
@@ -276,7 +294,7 @@ export type Section = {
   media?: Media;
   cards?: Card[];
   timeline?: TimelineStop[];
-  chart?: "ladder" | "scurve" | "gap";
+  chart?: "ladder" | "scurve" | "gap" | "divergence";
   matrix?: Matrix;
   /**
    * Brand marks per matrix row, linked to each platform's offering. Indexed to
@@ -289,7 +307,7 @@ export type Section = {
    */
   rowBrands?: { brand: BrandKey; href: string }[][];
   split?: { label: string; title: string; body: string; image: StaticImageData }[];
-  loopSteps?: string[];
+  loopStages?: LoopStage[];
   prompts?: Prompt[];
   links?: LinkRef[];
   poll?: Poll;
@@ -300,7 +318,7 @@ export type Section = {
 /**
  * The deck, in order.
  *
- * Twenty-eight sections, quoted from `deck-content-v11.md`. Three rules from
+ * Twenty-eight sections, quoted from `deck-content-v13.md`. Three rules from
  * that file apply to every entry:
  *
  *   1. The deck teaches on its own. Anything the audience must learn is printed
@@ -386,6 +404,9 @@ export const sections: Section[] = [
     poll: {
       slug: "cold-open",
       variant: "two-up",
+      // v13: at the reveal, the system under screen B appears beneath its
+      // pixel-identical mock. Keyed to the reveal so the vote stays untainted.
+      systemOptionId: "cold-open:b",
       options: [
         {
           id: "cold-open:a",
@@ -408,7 +429,9 @@ export const sections: Section[] = [
     // Added in v11, moved from the close: the class teaches one route of four,
     // and saying so at minute five is the contract the rest of the hour is
     // read against. The detailed solves/still-yours table stays late, as
-    // `routes`.
+    // `routes`. v12 opens the lede with the four jobs a production tool does
+    // and names the builders on row 2 — "An agent" on the face left the why
+    // of the stack and the tools that build it unstated.
     id: "contract",
     theme: "dark",
     layout: "matrix",
@@ -416,7 +439,7 @@ export const sections: Section[] = [
     title: "There are four routes to production. This class teaches one.",
     accent: "This class teaches one.",
     railLabel: "The contract",
-    lede: "Today teaches the assembled route because nothing on it is hidden. Learn to name the checks here and you can find them on any route.",
+    lede: "A production tool stores real records, controls access, refreshes itself, and logs failures. Each route below is a different answer to who does those four jobs. Today teaches the assembled route because nothing on it is hidden. Learn to name the checks here and you can find them on any route.",
     matrix: {
       rows: [
         [
@@ -425,7 +448,7 @@ export const sections: Section[] = [
         ],
         [
           "Assemble the stack · today's route",
-          "An agent plus GitHub, Vercel, and Supabase, every layer visible",
+          "Claude Code, Codex, or Cursor builds the tool on GitHub, Vercel, and Supabase, every layer visible",
         ],
         [
           "Build on the cloud your company already runs",
@@ -433,6 +456,7 @@ export const sections: Section[] = [
         ],
         ["Buy it", "A vendor's product, with uptime on their payroll"],
       ],
+      highlight: 1,
     },
     rowBrands: [
       [
@@ -440,6 +464,9 @@ export const sections: Section[] = [
         { brand: "lovable", href: "https://lovable.dev" },
       ],
       [
+        { brand: "claude", href: "https://claude.com/claude-code" },
+        { brand: "openai", href: "https://developers.openai.com/codex" },
+        { brand: "cursor", href: "https://cursor.com" },
         { brand: "github", href: "https://github.com" },
         { brand: "vercel", href: "https://vercel.com" },
         { brand: "supabase", href: "https://supabase.com" },
@@ -464,33 +491,20 @@ export const sections: Section[] = [
   {
     // Added in v9 as the closing slide; moved forward in v11. The premise that
     // explains why the hour teaches checks instead of prompts belongs before
-    // the method it frames. Rows are organized by capability rather than
-    // calendar so the slide does not age.
+    // the method it frames. Rebuilt in v13: the capability table and the photo
+    // are gone, and one figure draws the two movements a presenter stop at a
+    // time, with the warning as the final beat. No media on purpose — the
+    // chart layout renders no image backdrop, and a media block here would
+    // fail the backdrop check in tests/registry-integrity.spec.ts.
     id: "evolution",
     theme: "light",
-    layout: "matrix",
+    layout: "chart",
+    chart: "divergence",
     eyebrow: "Why this class teaches checks, not prompts",
-    title: "Model capability changes. Your acceptance tests survive.",
-    accent: "Your acceptance tests survive.",
+    title:
+      "Models require less instruction over time. Reliable systems require more explicit verification.",
+    accent: "more explicit verification.",
     railLabel: "The premise",
-    lede: "The people who build the coding agents remove more of the instructions every release. The checks on the output are the part they never remove.",
-    matrix: {
-      head: ["When the agent can", "Your work becomes"],
-      rows: [
-        [
-          "Execute the steps you spell out",
-          "Writing steps and reviewing the code that comes back",
-        ],
-        [
-          "Plan and correct its own work",
-          "Defining outcomes, constraints, and acceptance tests",
-        ],
-        [
-          "Run for hours or days",
-          "Designing guardrails, verifiers, and release gates",
-        ],
-      ],
-    },
     kicker:
       "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
     deeper: {
@@ -508,7 +522,6 @@ export const sections: Section[] = [
         },
       ],
     },
-    media: { image: genS30Unplugging, speed: -0.15 },
   },
 
   {
@@ -637,40 +650,47 @@ export const sections: Section[] = [
   {
     // Added in v9: four step slides referenced a six-step loop the deck never
     // introduced. This slide introduces it by name before the Spec step.
+    // v13: the six card definitions became one pathway. Each stage prints
+    // what it produces and what lets the work advance, and the return band
+    // carries evidence from use back to Spec.
     id: "loop-overview",
     theme: "dark",
-    layout: "pipeline",
+    layout: "loop",
     eyebrow: "How the next forty minutes are organized",
     title:
       "How a prototype becomes production: Spec, Plan, Build, Test, Ship, Run",
     accent: "Spec, Plan, Build, Test, Ship, Run",
     railLabel: "The development process",
-    // v11: each line defines the stage and its artifact instead of describing
-    // the choreography around it. The division of labor moved to the kicker.
-    cards: [
+    loopStages: [
       {
-        title: "Spec",
-        body: "Defines the job, the user, and the observable conditions for done.",
+        name: "Spec",
+        produces: "The job, the user, and a checkable Done",
+        advances: "You can write the steps you will check",
       },
       {
-        title: "Plan",
-        body: "The agent's reviewable proposal for meeting the spec, approved before anything changes.",
+        name: "Plan",
+        produces: "A reviewable proposal: data, permissions, tests, and files",
+        advances: "You approve it before anything changes",
       },
       {
-        title: "Build",
-        body: "The smallest working implementation, written inside the rules you set.",
+        name: "Build",
+        produces: "The smallest working implementation",
+        advances: "It stays inside the rules you set",
       },
       {
-        title: "Test",
-        body: "Repeatable evidence that the workflow and its failure cases behave.",
+        name: "Test",
+        produces: "Repeatable evidence the workflow and its failure cases behave",
+        advances: "Every check passes and you verify as a user",
       },
       {
-        title: "Ship",
-        body: "A person promotes the approved version to where people depend on it.",
+        name: "Ship",
+        produces: "The approved version, live where people depend on it",
+        advances: "A person promotes it, never a saved file",
       },
       {
-        title: "Run",
-        body: "Monitoring, alerts, a named owner, and a way to roll back or retire it.",
+        name: "Run",
+        produces: "Monitoring, alerts, a named owner, a rollback path",
+        advances: "Evidence from use feeds the next spec",
       },
     ],
     kicker:

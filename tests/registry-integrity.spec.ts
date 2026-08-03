@@ -143,6 +143,15 @@ test("no layout silently drops content it was handed", async ({ page }) => {
       for (const m of matrix.matchAll(/"((?:[^"\\]|\\.)*)"/g)) push(m[1]);
     }
 
+    // The loop slide's stage rows. The stage names are under the floor and are
+    // counted by their own test below.
+    const loop = block.match(/loopStages: \[([\s\S]*?)\n {4}\]/)?.[1];
+    if (loop) {
+      for (const m of loop.matchAll(/(?:produces|advances): "((?:[^"\\]|\\.)*)"/g)) {
+        push(m[1]);
+      }
+    }
+
     for (const text of expected) {
       if (!rendered.includes(text)) missing.push(`${id}: "${text}"`);
     }
@@ -302,17 +311,154 @@ test("every matrix renders as many rows and columns as it declares", async ({ pa
   expect(problems, problems.join("\n")).toEqual([]);
 });
 
+test("a matrix that declares a highlighted row renders it, and only it", async ({
+  page,
+}) => {
+  // `matrix.highlight` is a plain number, so the content check cannot see it
+  // and the row-count check cannot tell an emphasized row from the rest. A
+  // layout that ignores the field would drop the emphasis with nothing
+  // failing anywhere.
+  await page.goto("/");
+
+  const problems: string[] = [];
+  let checked = 0;
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    const matrix = block.match(/matrix: \{([\s\S]*?)\n {4}\}/)?.[1];
+    const highlight = matrix?.match(/highlight: (\d+)/)?.[1];
+    if (!id || highlight === undefined) continue;
+    checked++;
+
+    const marked = await page
+      .locator(`#${id} tbody tr[data-highlight="true"]`)
+      .count();
+    if (marked !== 1) {
+      problems.push(`${id}: ${marked} highlighted rows on the page, expected 1`);
+      continue;
+    }
+
+    const attr = await page
+      .locator(`#${id} tbody tr`)
+      .nth(Number(highlight))
+      .getAttribute("data-highlight");
+    if (attr !== "true") {
+      problems.push(`${id}: highlight declares row ${highlight}, another row is marked`);
+    }
+  }
+
+  expect(checked, "no matrix declares a highlight").toBeGreaterThan(0);
+  expect(problems, problems.join("\n")).toEqual([]);
+});
+
 test("the loop slide does not also carry a step strip", () => {
-  // `loopSteps` and `steps` hold the same six strings and render completely
-  // differently: one is a row of panels that occupies the slide, the other an 11px
+  // `loopStages` and `steps` hold the same six names and render completely
+  // differently: one is a run of panels that occupies the slide, the other an 11px
   // indicator above the headline. A section with both would print the six words
   // twice.
   const offenders = sectionBlocks()
-    .filter((block) => /\n\s{4}loopSteps:/.test(block))
+    .filter((block) => /\n\s{4}loopStages:/.test(block))
     .filter((block) => /\n\s{4}steps:/.test(block))
     .map((block) => block.match(/id: "([^"]+)"/)?.[1] ?? "unknown");
 
-  expect(offenders, "a section carries both loopSteps and steps").toEqual([]);
+  expect(offenders, "a section carries both loopStages and steps").toEqual([]);
+});
+
+test("the loop slide renders every stage with both of its labels", async ({ page }) => {
+  // Counts nodes rather than matching text: the six stage names are eight
+  // characters or shorter, which the content check discards, so a layout that
+  // dropped half the stages would pass it. The produces/advances strings are
+  // covered by the content check; the counts below catch a stage rendered
+  // with one of its two rows missing.
+  await page.goto("/");
+
+  const problems: string[] = [];
+  let checked = 0;
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    const loop = block.match(/loopStages: \[([\s\S]*?)\n {4}\]/)?.[1];
+    if (!id || !loop) continue;
+    checked++;
+
+    const declared = [...loop.matchAll(/name: "/g)].length;
+    const stages = await page.locator(`#${id} [data-loop-stage]`).count();
+    const produces = await page.locator(`#${id} [data-produces]`).count();
+    const advances = await page.locator(`#${id} [data-advances]`).count();
+
+    if (stages !== declared) {
+      problems.push(`${id}: ${declared} stages in the registry, ${stages} on the page`);
+    }
+    if (produces !== declared || advances !== declared) {
+      problems.push(
+        `${id}: ${produces} produces and ${advances} advances rows for ${declared} stages`,
+      );
+    }
+  }
+
+  expect(checked, "no section declares loopStages").toBeGreaterThan(0);
+  expect(problems, problems.join("\n")).toEqual([]);
+});
+
+test("a section that declares a chart renders its figure", async ({ page }) => {
+  // The chart key is a bare string the content check cannot see, and the
+  // chart layout renders its diagram through a switch — a key with no branch
+  // renders an empty diagram column with nothing failing anywhere.
+  await page.goto("/");
+
+  const missing: string[] = [];
+  let checked = 0;
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    const chart = block.match(/\n {4}chart: "([^"]+)"/)?.[1];
+    if (!id || !chart) continue;
+    checked++;
+
+    if ((await page.locator(`#${id} svg[role="img"]`).count()) === 0) {
+      missing.push(`${id} declares chart "${chart}" and renders no figure`);
+    }
+  }
+
+  expect(checked, "no section declares a chart").toBeGreaterThan(0);
+  expect(missing, missing.join("\n")).toEqual([]);
+});
+
+test("the opening section draws the thesis figure", async ({ page }) => {
+  // The figure is component scenery rather than registry copy, so no content
+  // check covers it. Counting its tagged parts is the render guard for the
+  // title face: a prototype, one narrow route, and a production system with
+  // its five connected foundations.
+  await page.goto("/");
+
+  await expect(page.locator("#title [data-thesis='prototype']")).toHaveCount(1);
+  await expect(page.locator("#title [data-thesis='bridge']")).toHaveCount(1);
+  await expect(page.locator("#title [data-thesis='production']")).toHaveCount(1);
+  await expect(page.locator("#title [data-thesis-node]")).toHaveCount(5);
+});
+
+test("a poll's system reveal points at one of its own options", () => {
+  // `systemOptionId` is compared against option ids at render time, so a typo
+  // means the band never mounts and the reveal shows two bare screens, with
+  // nothing failing anywhere.
+  const problems: string[] = [];
+  let checked = 0;
+
+  for (const block of sectionBlocks()) {
+    const id = block.match(/id: "([^"]+)"/)?.[1];
+    const poll = block.match(/poll: \{([\s\S]*?)\n {4}\}/)?.[1];
+    const target = poll?.match(/systemOptionId: "([^"]+)"/)?.[1];
+    if (!id || !poll || !target) continue;
+    checked++;
+
+    const optionIds = [...poll.matchAll(/\bid: "([^"]+)"/g)].map((m) => m[1]);
+    if (!optionIds.includes(target)) {
+      problems.push(`${id}: systemOptionId "${target}" matches no option`);
+    }
+  }
+
+  expect(checked, "no poll declares a systemOptionId").toBeGreaterThan(0);
+  expect(problems, problems.join("\n")).toEqual([]);
 });
 
 test("every section given a backdrop actually renders one", async ({ page }) => {

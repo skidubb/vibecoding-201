@@ -38,6 +38,7 @@ export function PollLayout({ section }: LayoutProps) {
         options={poll.options}
         sectionId={section.id}
         variant={poll.variant}
+        systemOptionId={poll.systemOptionId}
       />
 
       {/* Used by the Q&A slide for its four categories. A poll section may not

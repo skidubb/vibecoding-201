@@ -17,7 +17,6 @@ import { CtaLayout } from "@/components/layouts/CtaLayout";
 import { PromptLayout } from "@/components/layouts/PromptLayout";
 import { PollLayout } from "@/components/layouts/PollLayout";
 import { ExerciseLayout } from "@/components/layouts/ExerciseLayout";
-import { PipelineLayout } from "@/components/layouts/PipelineLayout";
 import { MatrixLayout } from "@/components/layouts/MatrixLayout";
 import { SurfacedLayout } from "@/components/layouts/SurfacedLayout";
 
@@ -36,7 +35,6 @@ const LAYOUTS: Record<LayoutKind, LayoutComponent> = {
   prompt: PromptLayout,
   poll: PollLayout,
   exercise: ExerciseLayout,
-  pipeline: PipelineLayout,
   matrix: MatrixLayout,
   surfaced: SurfacedLayout,
 };
