@@ -424,6 +424,19 @@ test("a section that declares a chart renders its figure", async ({ page }) => {
   expect(missing, missing.join("\n")).toEqual([]);
 });
 
+test("the opening section draws the thesis figure", async ({ page }) => {
+  // The figure is component scenery rather than registry copy, so no content
+  // check covers it. Counting its tagged parts is the render guard for the
+  // title face: a prototype, one narrow route, and a production system with
+  // its five connected foundations.
+  await page.goto("/");
+
+  await expect(page.locator("#title [data-thesis='prototype']")).toHaveCount(1);
+  await expect(page.locator("#title [data-thesis='bridge']")).toHaveCount(1);
+  await expect(page.locator("#title [data-thesis='production']")).toHaveCount(1);
+  await expect(page.locator("#title [data-thesis-node]")).toHaveCount(5);
+});
+
 test("a poll's system reveal points at one of its own options", () => {
   // `systemOptionId` is compared against option ids at render time, so a typo
   // means the band never mounts and the reveal shows two bare screens, with

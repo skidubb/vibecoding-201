@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ImageBackdrop, Glow } from "@/components/core/ParallaxLayer";
 import { NeuBadge, AccentTitle } from "@/components/neu/Neu";
+import { HeroThesis } from "@/components/charts/HeroThesis";
 import { CONTAINER, Deeper, type LayoutProps } from "./shared";
 
 export function HeroLayout({ section }: LayoutProps) {
@@ -24,12 +25,13 @@ export function HeroLayout({ section }: LayoutProps) {
         <ImageBackdrop
           src={section.media.image}
           speed={section.media.speed}
-          // 0.34, not 0.5. The tuning here was set for `threshold`, whose
-          // subject sat clear of the type; the doorway render puts a frame and
-          // a hand directly behind the headline and at half opacity the two
-          // compete. The scrim protects the left column, the opacity settles
-          // what the scrim does not reach.
-          opacity={0.34}
+          // 0.20, stepped down twice. 0.5 was set for `threshold`, whose
+          // subject sat clear of the type; 0.34 settled the doorway render
+          // against the headline; v13 adds the thesis figure in the right
+          // column, and at 0.34 the photo competes with its line work. At
+          // 0.20 the photo reads as atmosphere behind the figure without
+          // flattening the hero against the deck's photographic openers.
+          opacity={0.2}
           focal="72% 35%"
           sideScrim="left"
           preload
@@ -37,6 +39,18 @@ export function HeroLayout({ section }: LayoutProps) {
       )}
       <Glow className="-left-[12vw] top-[8vh]" tone="lavender" size={62} />
       <Glow className="-right-[16vw] bottom-[2vh]" tone="magenta" size={54} />
+
+      {/* The thesis figure, in the right column the headline leaves clear.
+          Same leave-behind values as the content column so it recedes with
+          the type, and hidden below lg, where its labels drop under ~9px.
+          z-[5] keeps it beneath the z-10 content container, so a long
+          headline overlaps the figure and not the reverse. */}
+      <motion.div
+        style={{ y, opacity }}
+        className="pointer-events-none absolute inset-y-0 right-0 z-[5] hidden w-[48vw] max-w-[720px] items-center pr-[3vw] lg:flex"
+      >
+        <HeroThesis />
+      </motion.div>
 
       <motion.div style={{ y, opacity }} className={CONTAINER}>
         <motion.div
@@ -51,7 +65,9 @@ export function HeroLayout({ section }: LayoutProps) {
           initial={{ opacity: 0, y: 34 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-8 font-display text-[clamp(3.2rem,9vw,8.5rem)] font-semibold leading-[0.94] tracking-[-0.04em]"
+          // max-w-[12ch] sets the three-word title as three lines in the left
+          // column, which is what leaves the right half clear for the figure.
+          className="mt-8 max-w-[12ch] font-display text-[clamp(3.2rem,9vw,8.5rem)] font-semibold leading-[0.94] tracking-[-0.04em]"
           style={{ color: "var(--text)" }}
         >
           {/* Reads the registry. It used to hardcode the title of a deck this
