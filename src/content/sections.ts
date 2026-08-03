@@ -39,6 +39,7 @@ import genS13HoveringPen from "@/assets/generated/s13-hovering-pen.webp";
 import genS32ManyPhones from "@/assets/generated/s32-many-phones.webp";
 import genS30Unplugging from "@/assets/generated/s30-unplugging.webp";
 import genS09Ring from "@/assets/generated/s09-ring.webp";
+import genS31ThreeDoors from "@/assets/generated/s31-three-doors.webp";
 
 export type LayoutKind =
   | "hero"
@@ -212,8 +213,8 @@ export type LinkRef = {
   install?: string;
 };
 
-/** One outbound reference on a GO DEEPER strip. */
-export type DeeperLink = { label: string; href: string };
+/** One outbound reference on a GO DEEPER strip. `brand` draws its mark before the label. */
+export type DeeperLink = { label: string; href: string; brand?: BrandKey };
 
 /**
  * The small strip at the bottom of a slide: one claim, and where to read more.
@@ -226,8 +227,9 @@ export type DeeperLink = { label: string; href: string };
  * `tests/registry-integrity.spec.ts` exists to catch. The type lists only what is
  * drawn.
  *
- * Fourteen sections have one and twelve do not. The twelve are the polls, the
- * timers and the demo, where the room is talking rather than reading.
+ * Sixteen sections have one and twelve do not. The twelve are the polls, the
+ * timers, the exercises and the demo, where the room is talking rather than
+ * reading.
  */
 export type Deeper = {
   /** Defaults to "Go deeper". */
@@ -276,6 +278,16 @@ export type Section = {
   timeline?: TimelineStop[];
   chart?: "ladder" | "scurve" | "gap";
   matrix?: Matrix;
+  /**
+   * Brand marks per matrix row, linked to each platform's offering. Indexed to
+   * `matrix.rows`; an empty array is a row that names no platform.
+   *
+   * Section-level rather than inside `matrix`: the content check in
+   * tests/registry-integrity.spec.ts treats every quoted string inside a
+   * `matrix` block as a cell that must render as page text, and a brand key or
+   * an href renders as an image and a link, not text.
+   */
+  rowBrands?: { brand: BrandKey; href: string }[][];
   split?: { label: string; title: string; body: string; image: StaticImageData }[];
   loopSteps?: string[];
   prompts?: Prompt[];
@@ -288,11 +300,13 @@ export type Section = {
 /**
  * The deck, in order.
  *
- * Twenty-six sections, quoted from `deck-content-v7.md`. Three rules from that
- * file apply to every entry:
+ * Twenty-eight sections, quoted from `deck-content-v11.md`. Three rules from
+ * that file apply to every entry:
  *
- *   1. Anything said out loud is not printed. The spoken lines stay in the deck's
- *      speaker notes, so this file reads sparser than the talk.
+ *   1. The deck teaches on its own. Anything the audience must learn is printed
+ *      here or in a GO DEEPER strip; narration adds color and never carries
+ *      content. (Inverted in v11 — earlier versions kept spoken lines off the
+ *      slide, which left definitions nowhere a reader could find them.)
  *   2. No sentence restates the one before it.
  *   3. Every headline has to make sense with the rest of the slide covered.
  *
@@ -318,6 +332,7 @@ export const sections: Section[] = [
         {
           label: "github.com/skidubb/vibecoding-201",
           href: "https://github.com/skidubb/vibecoding-201",
+          brand: "github",
         },
       ],
     },
@@ -333,7 +348,8 @@ export const sections: Section[] = [
     accent: "depend on.",
     railLabel: "What changed since 101",
     kicker:
-      "Everything you can see is cheap to build now. Everything underneath is where tools die.",
+      "Production means someone depends on it: records that persist, access that is controlled, failures that are handled, behavior that is verified, and an owner with a name.",
+    lede: "Everything you can see is cheap to build now. Everything underneath is where tools die.",
     deeper: {
       claim:
         "Google's New SDLC whitepaper draws the same line between vibe coding and agentic engineering.",
@@ -341,6 +357,7 @@ export const sections: Section[] = [
         {
           label: "The New SDLC With Vibe Coding",
           href: "https://www.kaggle.com/whitepaper-the-new-SDLC-with-vibe-coding",
+          brand: "google",
         },
       ],
     },
@@ -385,6 +402,113 @@ export const sections: Section[] = [
       ],
     },
     media: { image: genS02TwoLaptops, speed: -0.12 },
+  },
+
+  {
+    // Added in v11, moved from the close: the class teaches one route of four,
+    // and saying so at minute five is the contract the rest of the hour is
+    // read against. The detailed solves/still-yours table stays late, as
+    // `routes`.
+    id: "contract",
+    theme: "dark",
+    layout: "matrix",
+    eyebrow: "The map · before the method",
+    title: "There are four routes to production. This class teaches one.",
+    accent: "This class teaches one.",
+    railLabel: "The contract",
+    lede: "Today teaches the assembled route because nothing on it is hidden. Learn to name the checks here and you can find them on any route.",
+    matrix: {
+      rows: [
+        [
+          "Stay in the platform you prototyped in",
+          "Replit or Lovable carry the prototype through hosting, sign-in, and a database",
+        ],
+        [
+          "Assemble the stack · today's route",
+          "An agent plus GitHub, Vercel, and Supabase, every layer visible",
+        ],
+        [
+          "Build on the cloud your company already runs",
+          "Microsoft, Google, or AWS, alongside your engineering team",
+        ],
+        ["Buy it", "A vendor's product, with uptime on their payroll"],
+      ],
+    },
+    rowBrands: [
+      [
+        { brand: "replit", href: "https://replit.com" },
+        { brand: "lovable", href: "https://lovable.dev" },
+      ],
+      [
+        { brand: "github", href: "https://github.com" },
+        { brand: "vercel", href: "https://vercel.com" },
+        { brand: "supabase", href: "https://supabase.com" },
+      ],
+      [
+        { brand: "microsoft", href: "https://azure.microsoft.com" },
+        { brand: "google", href: "https://cloud.google.com" },
+        { brand: "aws", href: "https://aws.amazon.com" },
+      ],
+      [],
+    ],
+    kicker:
+      "On every route, the authorization rules, the final verification, and the named owner stay with your organization.",
+    deeper: {
+      claim: "The full route map:",
+      note: "the nine checks covered per route, and five questions that pick one. Verified August 2026.",
+      links: [{ label: "/kit", href: "/kit" }],
+    },
+    media: { image: genS31ThreeDoors, speed: -0.12 },
+  },
+
+  {
+    // Added in v9 as the closing slide; moved forward in v11. The premise that
+    // explains why the hour teaches checks instead of prompts belongs before
+    // the method it frames. Rows are organized by capability rather than
+    // calendar so the slide does not age.
+    id: "evolution",
+    theme: "light",
+    layout: "matrix",
+    eyebrow: "Why this class teaches checks, not prompts",
+    title: "Model capability changes. Your acceptance tests survive.",
+    accent: "Your acceptance tests survive.",
+    railLabel: "The premise",
+    lede: "The people who build the coding agents remove more of the instructions every release. The checks on the output are the part they never remove.",
+    matrix: {
+      head: ["When the agent can", "Your work becomes"],
+      rows: [
+        [
+          "Execute the steps you spell out",
+          "Writing steps and reviewing the code that comes back",
+        ],
+        [
+          "Plan and correct its own work",
+          "Defining outcomes, constraints, and acceptance tests",
+        ],
+        [
+          "Run for hours or days",
+          "Designing guardrails, verifiers, and release gates",
+        ],
+      ],
+    },
+    kicker:
+      "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
+    deeper: {
+      claim: "Boris Cherny, who built Claude Code,",
+      note: "deleted instructions, plan mode, and prompts release by release and never walked back verification.",
+      links: [
+        {
+          label: "ycrootaccess.com",
+          href: "https://www.ycrootaccess.com/p/boris-cherny-building-claude-code",
+        },
+        {
+          label: "claude.com/blog",
+          href: "https://claude.com/blog/running-an-ai-native-engineering-org",
+          brand: "claude",
+        },
+      ],
+    },
+    media: { image: genS30Unplugging, speed: -0.15 },
   },
 
   {
@@ -521,29 +645,36 @@ export const sections: Section[] = [
       "How a prototype becomes production: Spec, Plan, Build, Test, Ship, Run",
     accent: "Spec, Plan, Build, Test, Ship, Run",
     railLabel: "The development process",
+    // v11: each line defines the stage and its artifact instead of describing
+    // the choreography around it. The division of labor moved to the kicker.
     cards: [
       {
         title: "Spec",
-        body: "Write the job, the user, and how you will check it.",
+        body: "Defines the job, the user, and the observable conditions for done.",
       },
       {
         title: "Plan",
-        body: "The agent proposes; you approve before anything changes.",
+        body: "The agent's reviewable proposal for meeting the spec, approved before anything changes.",
       },
       {
         title: "Build",
-        body: "The agent writes the code inside the rules you set.",
+        body: "The smallest working implementation, written inside the rules you set.",
       },
       {
         title: "Test",
-        body: "The agent proves the workflow behaves; you watch it work.",
+        body: "Repeatable evidence that the workflow and its failure cases behave.",
       },
       {
         title: "Ship",
-        body: "A person promotes it to where people depend on it.",
+        body: "A person promotes the approved version to where people depend on it.",
       },
-      { title: "Run", body: "Watch it, log it, and name who fixes it." },
+      {
+        title: "Run",
+        body: "Monitoring, alerts, a named owner, and a way to roll back or retire it.",
+      },
     ],
+    kicker:
+      "The agent can propose, implement, and test. A person stays accountable for scope, access, promotion, and operation.",
     media: { image: genS09Ring, speed: -0.12 },
   },
 
@@ -591,7 +722,11 @@ export const sections: Section[] = [
       claim: "GitHub Spec Kit.",
       note: "Spec-driven development as a full toolchain: each phase produces an artifact the next phase reads.",
       links: [
-        { label: "github/spec-kit", href: "https://github.com/github/spec-kit" },
+        {
+          label: "github/spec-kit",
+          href: "https://github.com/github/spec-kit",
+          brand: "github",
+        },
         { label: "docs", href: "https://github.github.com/spec-kit" },
       ],
     },
@@ -613,6 +748,7 @@ export const sections: Section[] = [
     title: "Approve a plan before anything changes",
     accent: "before anything changes",
     railLabel: "Plan",
+    lede: "A plan is a proposal you can read and question: how the agent intends to satisfy the spec.",
     prompts: [
       {
         id: "plan-approval",
@@ -639,6 +775,7 @@ export const sections: Section[] = [
         {
           label: "code.claude.com/docs",
           href: "https://code.claude.com/docs/en/best-practices",
+          brand: "claude",
         },
       ],
     },
@@ -656,6 +793,7 @@ export const sections: Section[] = [
     },
     title: "Files to add to your folder / repo",
     accent: "your folder / repo",
+    lede: "Create only the files this tool warrants. A one-screen tool does not need all six.",
     matrix: {
       rows: [
         [
@@ -743,6 +881,7 @@ export const sections: Section[] = [
     title: "Watch the agent plan a change before it makes it",
     accent: "before it makes it",
     railLabel: "Live demo",
+    lede: "What this demo proves: a reviewed plan catches wrong assumptions before they become code.",
     cards: [
       { title: "The project is already in GitHub" },
       { title: "The agent reads the project before acting" },
@@ -792,6 +931,11 @@ export const sections: Section[] = [
     title: "Ask my database for a record you have no right to",
     accent: "no right to",
     railLabel: "Run the security test",
+    // v11: the identity-versus-permission distinction is printed now. It was a
+    // spoken line after v9 cut its standalone slide, which left it nowhere a
+    // reader could find it.
+    kicker:
+      "Signing in says who you are. The database decides what you may read. Hiding records in the interface is neither.",
     strip: {
       items: [
         "Open the link. Sign in as a guest.",
@@ -809,6 +953,7 @@ export const sections: Section[] = [
         {
           label: "authorization.sql",
           href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
+          brand: "github",
         },
         {
           label: "CVE-2025-48757",
@@ -849,6 +994,7 @@ export const sections: Section[] = [
         {
           label: "cheatsheetseries.owasp.org",
           href: "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+          brand: "owasp",
         },
       ],
     },
@@ -903,6 +1049,10 @@ export const sections: Section[] = [
         "retry safety",
       ],
     },
+    // v11: the two unfamiliar rows are defined in print; the note used to be
+    // spoken.
+    kicker:
+      "MCP is the agent's native protocol for live connections. CLI is the agent driving another platform's own tools, and your agent already speaks every CLI.",
     deeper: {
       claim: "The MCP specification itself.",
       note: "Worth reading if you are deciding what your company exposes to agents.",
@@ -910,6 +1060,7 @@ export const sections: Section[] = [
         {
           label: "modelcontextprotocol.io",
           href: "https://modelcontextprotocol.io/specification",
+          brand: "mcp",
         },
       ],
     },
@@ -926,6 +1077,7 @@ export const sections: Section[] = [
     lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat, and the duplicate they create stays invisible until a customer finds it.",
     strip: {
       items: [
+        "An operation is idempotent when running it twice has the same effect as running it once.",
         "The safe answer is an update to the existing record, never a second copy.",
       ],
     },
@@ -936,6 +1088,7 @@ export const sections: Section[] = [
         {
           label: "docs.stripe.com",
           href: "https://docs.stripe.com/api/idempotent_requests",
+          brand: "stripe",
         },
       ],
     },
@@ -1049,10 +1202,12 @@ export const sections: Section[] = [
         {
           label: "vercel.com/docs",
           href: "https://vercel.com/docs/deployments/promote-preview-to-production",
+          brand: "vercel",
         },
         {
           label: "replit.com/blog",
           href: "https://replit.com/blog/introducing-agent-3-our-most-autonomous-agent-yet",
+          brand: "replit",
         },
       ],
     },
@@ -1105,6 +1260,7 @@ export const sections: Section[] = [
         {
           label: "OWNERSHIP.md",
           href: "https://github.com/skidubb/vibecoding-201/blob/main/OWNERSHIP.md",
+          brand: "github",
         },
       ],
     },
@@ -1184,6 +1340,7 @@ export const sections: Section[] = [
         {
           label: "github.com/skidubb/vibecoding-201",
           href: "https://github.com/skidubb/vibecoding-201",
+          brand: "github",
         },
       ],
     },
@@ -1191,15 +1348,16 @@ export const sections: Section[] = [
   },
 
   {
-    // Added in v9: the class demonstrates one route to production; this slide
-    // says the route is interchangeable and names the other three.
+    // Added in v9 as the reveal that the class taught one route of four; the
+    // reveal moved to `contract` at minute five in v11, and this table stays
+    // late as the decision aid, read as confirmation of the hour.
     id: "routes",
     theme: "dark",
     layout: "matrix",
-    eyebrow: "The wider map · new for August 2026",
-    title: "This class taught one of four routes to production",
-    accent: "four routes",
-    railLabel: "Four routes",
+    eyebrow: "The wider map · verified August 2026",
+    title: "What each route solves, and what stays yours",
+    accent: "what stays yours",
+    railLabel: "The route map",
     matrix: {
       head: ["", "Solves", "Still yours"],
       rows: [
@@ -1216,7 +1374,7 @@ export const sections: Section[] = [
         [
           "Build on the platform your company already runs: Microsoft, Google, or AWS",
           "The governance problem: identity, permissions, and compliance already exist",
-          "Patience, and an engineering partner",
+          "Integration lead time, and an engineering partner",
         ],
         [
           "Buy it",
@@ -1225,61 +1383,31 @@ export const sections: Section[] = [
         ],
       ],
     },
+    rowBrands: [
+      [
+        { brand: "replit", href: "https://replit.com" },
+        { brand: "lovable", href: "https://lovable.dev" },
+      ],
+      [
+        { brand: "github", href: "https://github.com" },
+        { brand: "vercel", href: "https://vercel.com" },
+        { brand: "supabase", href: "https://supabase.com" },
+      ],
+      [
+        { brand: "microsoft", href: "https://azure.microsoft.com" },
+        { brand: "google", href: "https://cloud.google.com" },
+        { brand: "aws", href: "https://aws.amazon.com" },
+      ],
+      [],
+    ],
     kicker:
-      "On every route, the authorization rules, the final verification, and the named owner stay with the builder.",
+      "On every route, the authorization rules, the final verification, and the named owner stay with your organization.",
     deeper: {
       claim: "The full route map:",
       note: "the nine checks covered per route, and five questions that pick one. Verified August 2026.",
       links: [{ label: "/kit", href: "/kit" }],
     },
     media: { image: genS32ManyPhones, speed: -0.12 },
-  },
-
-  {
-    // Added in v9: the durable claim behind the hour. Input written for a model
-    // depreciates on a release schedule; checks on its output appreciate.
-    id: "evolution",
-    theme: "light",
-    layout: "matrix",
-    eyebrow: "The evolution",
-    title:
-      "What you write for the model depreciates. What checks its output appreciates.",
-    accent: "What checks its output appreciates.",
-    railLabel: "The evolution",
-    lede: "The people who build the coding agents keep deleting what goes into the model and keep adding what checks what comes out.",
-    matrix: {
-      rows: [
-        [
-          "Last year's models",
-          "You wrote the plan, reviewed it before code, and reviewed every line that came out",
-        ],
-        [
-          "Today's models",
-          "You keep the checkable Done; the model drafts its own plan and catches its own errors",
-        ],
-        [
-          "Frontier agents",
-          "You design the run: the goal, the guardrails, and a verifier the agent executes without you",
-        ],
-      ],
-    },
-    kicker:
-      "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
-    deeper: {
-      claim: "Boris Cherny, who built Claude Code, never walked back verification",
-      note: "while deleting instructions, plan mode, and prompts release by release.",
-      links: [
-        {
-          label: "ycrootaccess.com",
-          href: "https://www.ycrootaccess.com/p/boris-cherny-building-claude-code",
-        },
-        {
-          label: "claude.com/blog",
-          href: "https://claude.com/blog/running-an-ai-native-engineering-org",
-        },
-      ],
-    },
-    media: { image: genS30Unplugging, speed: -0.15 },
   },
 
   {

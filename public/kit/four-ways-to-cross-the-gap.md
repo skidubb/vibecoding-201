@@ -30,7 +30,7 @@ Microsoft, Google, or AWS, whichever one holds your company's identity and data.
 
 **Problem it solves:** the governance problem. Identity, access, residency, and audit exist before you write a line, which is the expensive part of every other path.
 
-**Still yours:** patience and a partner. The business-user products here are new and several carry preview labels; the strong products assume an engineer in the loop.
+**Still yours:** integration lead time and a partner. The business-user products here are new and several carry preview labels; the strong products assume an engineer in the loop.
 
 **Fits:** regulated data, systems that cross teams, an IT department that acts as a partner. Sweeper and Maintainer territory.
 
@@ -67,3 +67,16 @@ A vendor whose whole business is your workflow. Uptime, security, and maintenanc
 5. Is this workflow one your company competes on?
 
 Edge plus sensitive data points to Path 2 or 3. Speed plus internal data points to Path 1. A common workflow with no edge points to Path 4.
+
+## The six stages, whatever the path
+
+Every path runs the same lifecycle. What changes is who covers each stage, never whether it happens. On any path, a stage is done when its artifact exists and its exit check passes.
+
+| Stage | Artifact | Exit check | Owner |
+|---|---|---|---|
+| Spec | Acceptance specification: job, user, checkable Done | Another person can determine whether it is done | You |
+| Plan | Reviewed implementation proposal | Assumptions, access, risks, and tests are explicit | You approve; the agent drafts |
+| Build | Working preview | The specified workflow exists end to end | The agent, inside your rules |
+| Test | Verification evidence | Success and failure cases pass, repeatably | The agent runs; you verify as a user |
+| Ship | Promoted release | An accountable person approved it and rollback is ready | You |
+| Run | Operated service: logs, alerts, review date, shutdown path | Failures reach someone able to respond | The named owner |

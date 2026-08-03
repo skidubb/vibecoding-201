@@ -2,6 +2,7 @@
 
 import { Glow } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
+import { Logo } from "@/components/layouts/Logo";
 import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 
 /**
@@ -106,6 +107,25 @@ export function MatrixLayout({ section }: LayoutProps) {
                             style={{ color: "var(--text)" }}
                           >
                             {cell}
+                            {/* Platform marks for the row, each linked to its
+                                offering. `data-deck-keys="off"` keeps a click
+                                from doubling as a deck keypress. */}
+                            {(section.rowBrands?.[r]?.length ?? 0) > 0 && (
+                              <span className="mt-2 flex flex-wrap items-center gap-3">
+                                {section.rowBrands?.[r]?.map((mark) => (
+                                  <a
+                                    key={mark.brand}
+                                    href={mark.href}
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                    data-deck-keys="off"
+                                    className="opacity-75 transition-opacity hover:opacity-100"
+                                  >
+                                    <Logo brand={mark.brand} height={15} />
+                                  </a>
+                                ))}
+                              </span>
+                            )}
                           </th>
                         ) : (
                           <td
