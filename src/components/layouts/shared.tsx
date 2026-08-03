@@ -3,6 +3,7 @@
 import type { Section } from "@/content/sections";
 import { AccentTitle, NeuBadge, Reveal } from "@/components/neu/Neu";
 import { ImageBackdrop, VideoBackdrop } from "@/components/core/ParallaxLayer";
+import { Logo } from "@/components/layouts/Logo";
 import { logEvent } from "@/lib/events";
 
 export type LayoutProps = { section: Section; index: number };
@@ -269,6 +270,13 @@ export function Deeper({
                   className="underline-offset-4 hover:underline"
                   style={{ color: "var(--accent)" }}
                 >
+                  {/* The source's mark, where the source is a brand. Inline at
+                      text height so the strip stays a citation, not a logo row. */}
+                  {link.brand && (
+                    <span className="mr-1 inline-flex translate-y-[2px]">
+                      <Logo brand={link.brand} height={13} />
+                    </span>
+                  )}
                   {link.label} <span aria-hidden>{external ? "↗" : "→"}</span>
                 </a>
               </span>
