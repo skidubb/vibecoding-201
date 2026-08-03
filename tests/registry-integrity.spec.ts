@@ -394,6 +394,14 @@ test("the loop slide renders every stage with both of its labels", async ({ page
         `${id}: ${produces} produces and ${advances} advances rows for ${declared} stages`,
       );
     }
+
+    // The return arrow is drawn geometry plus a hardcoded label, so neither
+    // the content check nor the counts above can see it — a refactor could
+    // drop the entire band with nothing failing anywhere.
+    const returns = await page.locator(`#${id} [data-loop-return]`).count();
+    if (returns !== 1) {
+      problems.push(`${id}: ${returns} return-arrow bands on the page, expected 1`);
+    }
   }
 
   expect(checked, "no section declares loopStages").toBeGreaterThan(0);
