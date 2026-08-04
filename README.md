@@ -3,19 +3,19 @@
 A neumorphic, parallax-scrolling presentation of *Vibecoding 201: Building Production
 GTM Tools* (Pavilion AI in GTM School) — the polls, the copyable prompts, and the tool
 the class is about, deployed for real. The site is the presentation surface, not a
-companion: all 30 sections of `deck-content-v15.md` are on the page, with every title
+companion: all 21 sections of `deck-content-v16.md` are on the page, with every title
 quoted from the deck verbatim. See `SPEC.md` for what this is
 meant to do and `ARCHITECTURE.md` for why it is built this way.
 
-**The class runs against a shared deal set.** `../data/kit/` publishes a 10,000-row deal
+**The class runs against one starter app.** `../data/kit/` publishes a 10,000-row deal
 set (synthetic, courtesy of Andy's Class 0 data, deliberately uncleaned) to a
-public bucket, and `../data/kit/jobs.md` gives six jobs with the exact row count one
-precise Done returns. Attendees pick a job at `#pick-your-job`, and it is stored on their
-profile so every later exercise runs against it. Two exercises submit a number rather than
-a private tick: what your Done returned, and what your plan invented. Those go to
-`answer_tallies` by trigger and come back as the room's distribution, which is how the
-class shows that "no recorded activity since 5 May" returns 634 or 834 depending on who is
-reading. `/yours` is where one attendee's own job, Done, numbers and unchecked items live;
+public bucket. Everyone forks the same app against it — Pipeline Review, which lists open
+deals that have gone quiet by the rep who owns them — and it ships missing the three
+things the hour is about: it saves nothing, it has no sign-in, and it counts the 200 open
+deals with no activity date as active without saying so. Four timed blocks add the missing
+pieces back, 29 hands-on minutes in total, and each one ends in something visible on the
+attendee's own screen: a refresh that keeps the results, an incognito window that is
+refused, a skipped row that gets named. `/yours` is where one attendee's own work lives;
 it needs a session, which is exactly what `/report` does not.
 
 **Live:** https://crossing-the-gap-site.vercel.app
@@ -53,7 +53,7 @@ The two asset scripts (`gen:media`, `assets`) are documented under
   its height: every stop is somewhere the deck can actually travel to, so no
   key press is ever a no-op
 - The right-hand rail is clickable; the bottom-left readout shows position in
-  this deck (`7 / 26`) and nothing else — the source deck's numbering is
+  this deck (`7 / 21`) and nothing else — the source deck's numbering is
   deliberately not mirrored
 
 **The login is on the deck itself**: signed out, a **Sign in** pill sits fixed
@@ -78,10 +78,12 @@ bare letters would collide with the deck's own navigation:
 - On a poll — **Shift-O** open, **Shift-C** close, **Shift-R** reveal. The
   readout carries the tally, the number of distinct accounts behind it, and
   the per-option counts; Refresh re-reads if a websocket quietly dropped
-- On the spec exercise — **Shift-S** opens the panel of submissions the room
-  has shared. Nothing an author kept private is readable from that account, so
-  the panel cannot show it even by mistake. "Put it on screen" sets
-  `surfaced_at`, which is what the section renders to everyone
+- On the spec-and-plan block — **Shift-S** opens the panel of submissions the
+  room has shared. Nothing an author kept private is readable from that account,
+  so the panel cannot show it even by mistake. "Put it on screen" sets
+  `surfaced_at`. Note that v16 carries no `surfaced` section, so nothing in the
+  deck currently renders a surfaced submission to the room — the panel and the
+  console are where shared specs are read until a section asks for them again
 - An admin also sees every poll's bars before the reveal, labelled "Presenter
   preview" — decide whether the projector should be a signed-in browser, or
   present signed out and drive from `/admin`

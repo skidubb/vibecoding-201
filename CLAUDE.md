@@ -28,7 +28,7 @@ operational rules that don't belong in it.
   yourself writing a title, stop —
   you are decorating, and it reads as hiding the point. Every eyebrow, headline, body
   line, table cell and kicker in `src/content/sections.ts` is quoted from
-  `../deck/deck-content-v15.md` (30 sections; v7 through v14 and the earlier 40-section
+  `../deck/deck-content-v16.md` (21 sections; v7 through v15 and the earlier 40-section
   `../Vibecoding-201-Production-GTM-Tools-v6.pptx` cut are superseded). The one standing
   exception is the `why-me` section, whose bracketed `[SCOTT: …]` lines are placeholders
   Scott fills before the branch merges. The deck's slide
@@ -39,9 +39,12 @@ operational rules that don't belong in it.
   restates the one before it; every headline has to make sense with the rest of the slide
   covered; and (new in v8) every slide stands on its own: no line may depend on another
   slide's content, and a line that needs it repeats it.
-- **The GO DEEPER strip is on 17 of the 30 sections.** The other 13 are the polls, the
-  exercises and the demo, where the room is talking or typing rather than reading. Do not
-  add strips to complete the set.
+- **The GO DEEPER strip is on 10 of the 21 sections, carrying 13 links between them.**
+  The other 11 are the four polls, the four hands-on blocks, and `why-me`,
+  `three-additions` and `three-kinds` — sections where the room is talking, typing, or
+  reading a table that is already the whole point. Do not add strips to complete the set.
+  The floor in `tests/registry-integrity.spec.ts` counts links rather than strips: it
+  asserts more than 10, and v16 parses 13.
 - **`SectionTail` renders `strip`, `kicker`, `footnote` and `deeper`** so each layout has one
   call site instead of four. Five registry fields have been dropped by layouts that did not
   handle them. Add any new tier there rather than in twelve components, and extend
