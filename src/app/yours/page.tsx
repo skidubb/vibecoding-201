@@ -99,7 +99,7 @@ export default function YoursPage() {
                 The job you took
               </h2>
               <p className="mt-2 text-[0.98rem] leading-relaxed">
-                {chosen ? chosen.job : "You did not pick one. Six are in the kit."}
+                {chosen ? chosen.job : "You did not pick one. The full list is in the kit."}
               </p>
               {chosen && (
                 <p className="mt-2 text-[0.92rem]" style={{ color: "var(--text-dim)" }}>
@@ -171,6 +171,23 @@ export default function YoursPage() {
           <a href="/report" className="text-[0.9rem] underline underline-offset-4" style={{ color: "var(--text-faint)" }}>
             What the room answered
           </a>
+          {/* The one page an attendee is certain to visit signed in, so the way
+              out of the account lives here as well as on the presenter bar. */}
+          {signedIn && (
+            <button
+              type="button"
+              data-signout
+              onClick={() => {
+                const client = supabase();
+                if (!client) return;
+                void client.auth.signOut().then(() => window.location.reload());
+              }}
+              className="text-[0.9rem] underline underline-offset-4"
+              style={{ color: "var(--text-faint)" }}
+            >
+              Sign out
+            </button>
+          )}
         </div>
       </div>
     </main>

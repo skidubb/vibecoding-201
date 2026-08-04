@@ -39,7 +39,19 @@ operational rules that don't belong in it.
   restates the one before it; every headline has to make sense with the rest of the slide
   covered; and (new in v8) every slide stands on its own: no line may depend on another
   slide's content, and a line that needs it repeats it.
-- **The GO DEEPER strip is on 17 of the 30 sections.** The other 13 are the polls, the
+- **Scott's 2026-08-04 student-QA pass is the standing copy ruling.** Four edicts from it
+  apply to every student-facing surface (deck sections, /kit, /yours), and the QA wording
+  outranks `deck-content-v15.md` on the sections it touched until a later deck version
+  absorbs it:
+  - **Never count the items.** "Three ingredients", "six jobs", "the seven artifacts" —
+    name the things or list them, never number them. He has asked repeatedly.
+  - **The data is "CRM data", never "the deal set"**, on anything a student reads.
+  - **Plain language on links and notes.** "The bucket", "read-only", a bare "schema" —
+    say what the reader gets when they click, without assuming the vocabulary.
+  - **Never verb an artifact that cannot take the verb.** "Run your Done" is the canonical
+    offence; the instruction is to run the prompt. A "Done" may be named as the taught
+    term (slides 10–11 define it) but never used in constructions like "two Dones".
+- **The GO DEEPER strip is on 17 of the 29 sections.** The other 12 are the polls, the
   exercises and the demo, where the room is talking or typing rather than reading. Do not
   add strips to complete the set.
 - **`SectionTail` renders `strip`, `kicker`, `footnote` and `deeper`** so each layout has one

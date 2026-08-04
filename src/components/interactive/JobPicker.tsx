@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Job } from "@/content/sections";
+import { publishJob } from "@/lib/job-store";
 import { backendConfigured, supabase } from "@/lib/supabase/client";
 import { NeuPanel } from "@/components/neu/Neu";
 
@@ -36,7 +37,10 @@ export function JobPicker({ jobs }: { jobs: Job[] }) {
         .select("job")
         .eq("id", session.session.user.id)
         .maybeSingle();
-      if (!cancelled && data?.job) setChosen(data.job as string);
+      if (!cancelled && data?.job) {
+        setChosen(data.job as string);
+        publishJob(data.job as string);
+      }
     })();
     return () => void (cancelled = true);
   }, []);
@@ -44,8 +48,11 @@ export function JobPicker({ jobs }: { jobs: Job[] }) {
   async function pick(id: string) {
     // Chosen on screen first. The rest of the section reads this immediately,
     // and a picker that waited on a round trip before showing a selection would
-    // read as broken on a conference network.
+    // read as broken on a conference network. Published at the same moment so
+    // the sections downstream that depend on the pick re-render now rather
+    // than on the next reload.
     setChosen(id);
+    publishJob(id);
 
     const client = supabase();
     if (!client) {

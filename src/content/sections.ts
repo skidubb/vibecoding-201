@@ -26,7 +26,6 @@ import genS27HandsUp2 from "@/assets/generated/s27-hands-up-2.webp";
 import genS28GreenLights from "@/assets/generated/s28-green-lights.webp";
 import genS36ThreeLines from "@/assets/generated/s36-three-lines.webp";
 import genS38AboutToSend from "@/assets/generated/s38-about-to-send.webp";
-import genS39NineItems from "@/assets/generated/s39-nine-items.webp";
 import genS40Council from "@/assets/generated/s40-council.webp";
 import genS09Ring from "@/assets/generated/s09-ring.webp";
 import genS31ThreeDoors from "@/assets/generated/s31-three-doors.webp";
@@ -194,6 +193,12 @@ export type Matrix = {
    * treats every quoted string inside `matrix` as a cell that must render.
    */
   highlight?: number;
+  /**
+   * Render the rows without the inset panel around the table. For sections
+   * whose rows are the slide's content rather than a comparison — boxing them
+   * reads as chrome (Scott's 2026-08-04 QA on the ingredients slide).
+   */
+  plain?: boolean;
 };
 
 /**
@@ -285,7 +290,7 @@ export type DeeperLink = { label: string; href: string; brand?: BrandKey };
  * `tests/registry-integrity.spec.ts` exists to catch. The type lists only what is
  * drawn.
  *
- * Seventeen sections have one and thirteen do not. The thirteen are the polls,
+ * Seventeen sections have one and twelve do not. The twelve are the polls,
  * the exercises, the demo and the placeholder, where the room is talking or
  * typing rather than reading.
  */
@@ -367,7 +372,12 @@ export type Section = {
 /**
  * The deck, in order.
  *
- * Thirty sections, quoted from `deck-content-v15.md`.
+ * Twenty-nine sections, quoted from `deck-content-v15.md`, as revised by
+ * Scott's 2026-08-04 student-QA pass. Where this file and v15 disagree, the QA
+ * pass wins: it retitled `what-changed`, `evolution`, `ingredients`,
+ * `pick-your-job` and `done-count`, cut the prototype/tool/system table, and
+ * de-carded `why-me`. Those lines are Scott's dictation and go back into the
+ * next deck version, not the other way around.
  *
  * v15 is v14 reordered to walk Spec → Plan → Build → Test → Ship → Run exactly
  * once, with each step's hands-on attached to the step it practises. The
@@ -422,17 +432,23 @@ export const sections: Section[] = [
     // A placeholder until Scott writes it: the deck previously had no
     // credibility beat at all. The bracketed lines are a deliberate merge
     // blocker; this section must not reach production unfilled.
+    //
+    // Claim layout, not cards. Scott's 2026-08-04 QA: three raised cards for
+    // three lines of bio read as chrome, so the lines sit in the page as one
+    // strip instead. Cards stay only where they are useful.
     id: "why-me",
     theme: "dark",
-    layout: "cards",
+    layout: "claim",
     eyebrow: "Your instructor",
     title: "[SCOTT: one sentence that says why you]",
     railLabel: "Why me",
-    cards: [
-      { title: "[SCOTT: bullet 1, career line]" },
-      { title: "[SCOTT: bullet 2, Cardinal Element]" },
-      { title: "[SCOTT: bullet 3, what you run today]" },
-    ],
+    strip: {
+      items: [
+        "[SCOTT: bullet 1, career line]",
+        "[SCOTT: bullet 2, Cardinal Element]",
+        "[SCOTT: bullet 3, what you run today]",
+      ],
+    },
     kicker:
       "This deck is built with the method it teaches, and its repo is public.",
     media: { image: genS17OverShoulder, speed: -0.12 },
@@ -443,12 +459,13 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "claim",
     eyebrow: "101 · May 20",
-    title: "You built prototypes. Today you build something people depend on.",
-    accent: "depend on.",
+    // Scott's 2026-08-04 QA: this title and kicker are his wording. The lede
+    // ("cheap to build" / "where tools die") was cut as extra text.
+    title: "You built a prototype in 101. Today, you'll build a system.",
+    accent: "system.",
     railLabel: "What changed since 101",
     kicker:
-      "Production means someone depends on it: records that persist, access that is controlled, failures that are handled, behavior that is verified, and an owner with a name.",
-    lede: "Everything you can see is cheap to build now. Everything underneath is where tools die.",
+      "A production system means someone depends on it: records that persist, access that is controlled, failures that are handled, behavior that is verified, and an owner with a name.",
     deeper: {
       claim:
         "Google's New SDLC whitepaper draws the same line between vibe coding and agentic engineering.",
@@ -482,10 +499,11 @@ export const sections: Section[] = [
     theme: "light",
     layout: "chart",
     chart: "divergence",
-    eyebrow: "Why this class teaches checks, not prompts",
+    // Scott's 2026-08-04 QA wording for both lines.
+    eyebrow: "Trends in AI development",
     title:
-      "Models require less instruction over time. Reliable systems require more explicit verification.",
-    accent: "more explicit verification.",
+      "Frontier models require less step-by-step instruction. This continues to change how we prompt and how we guide agents to develop.",
+    accent: "how we prompt and how we guide agents to develop.",
     railLabel: "The premise",
     kicker:
       "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
@@ -530,10 +548,13 @@ export const sections: Section[] = [
       systemOptionId: "cold-open:b",
       options: [
         {
+          // Scott's 2026-08-04 QA: no "Sample data", no "Open link" — the data
+          // on both screens is real, and the difference the poll asks about is
+          // what runs underneath, not what shows on the glass.
           id: "cold-open:a",
           label: "A",
           name: "Screen A",
-          body: "Built in twelve minutes. Sample data. Open link.",
+          body: "Built in twelve minutes.",
         },
         {
           id: "cold-open:b",
@@ -546,55 +567,10 @@ export const sections: Section[] = [
     media: { image: genS02TwoLaptops, speed: -0.12 },
   },
 
-  {
-    id: "three-kinds",
-    theme: "dark",
-    layout: "matrix",
-    eyebrow: "Before you commit",
-    title: "Is it a prototype, a tool, or a system?",
-    accent: "prototype, a tool, or a system?",
-    matrix: {
-      head: ["", "Test you can observe", "What it changes"],
-      rows: [
-        [
-          "System",
-          "Runs across teams, data sources, permissions, time, and failure",
-          "The business",
-        ],
-        [
-          "Tool",
-          "A defined group reliably completes a real workflow",
-          "The work",
-        ],
-        [
-          "Prototype",
-          "Demonstrates the idea with sample or temporary inputs",
-          "Belief",
-        ],
-      ],
-    },
-    strip: {
-      label: "Ask before you build",
-      items: [
-        "Is the workflow frequent or consequential enough to matter?",
-        "Is the process stable enough to encode?",
-        "Is there a named user, outcome, and owner?",
-        "What new risk appears when others depend on it?",
-      ],
-    },
-    // v15: the answer is printed. The slide implied it and Scott's arc for the
-    // hour states it as a beat: should everything be a production system? No.
-    kicker:
-      "Most of what you build should stay a prototype. No is the right answer at this gate more often than yes.",
-    // A lateral drift past one person alone, then a pair, then a full room in
-    // session. That is this table's three rows in order, despite the filename:
-    // the clip is about who depends on the thing, not about deploy environments.
-    media: {
-      video: "/media/three-environments.mp4",
-      poster: "/media/three-environments-poster.jpg",
-      speed: -0.12,
-    },
-  },
+  // The prototype/tool/system table ("Is it a prototype, a tool, or a
+  // system?") was cut here in Scott's 2026-08-04 QA pass — his call, restore
+  // from git if he reverses it. Its backdrop clip moved to `the-bar`, which
+  // makes the same argument: who depends on the thing.
 
   {
     // The working set, laid out before anything is picked or specced. This is
@@ -605,15 +581,19 @@ export const sections: Section[] = [
     id: "ingredients",
     theme: "light",
     layout: "matrix",
-    eyebrow: "What you build with",
-    title: "Three ingredients: a deal set, your coding agent, and this deck",
-    accent: "a deal set, your coding agent, and this deck",
-    railLabel: "The ingredients",
+    // Scott's 2026-08-04 QA: never count the items ("three ingredients"), the
+    // data is called CRM data rather than "the deal set", no row highlight,
+    // and the table renders without its inset box (`plain`).
+    eyebrow: "Setting the table for today",
+    title: "What you'll work with: CRM data, your coding agent, and this deck",
+    accent: "CRM data, your coding agent, and this deck",
+    railLabel: "Setting the table",
     matrix: {
+      plain: true,
       rows: [
         [
-          "The deal set",
-          "10,000 synthetic deals, 36 columns, courtesy of Andy from the Class 0 data set. Public bucket, no account and no key. An uncleaned working export whose defects are real CRM defects",
+          "CRM data",
+          "10,000 deals, 36 columns, from Andy's Class 0 data set. An uncleaned working export whose defects are real CRM defects. Linked below — no account needed",
         ],
         [
           "Your coding agent",
@@ -624,7 +604,6 @@ export const sections: Section[] = [
           "Built with the method it teaches. The repo is public, and every claim in the next hour is checkable there",
         ],
       ],
-      highlight: 1,
     },
     rowBrands: [
       [],
@@ -638,12 +617,14 @@ export const sections: Section[] = [
       ],
       [{ brand: "github", href: "https://github.com/skidubb/vibecoding-201" }],
     ],
+    // Scott's 2026-08-04 QA: no "schema", "bucket" or "read-only" without
+    // saying what they mean. The links say what a reader gets when they click.
     deeper: {
-      claim: "The schema and the 200-row sample.",
-      note: "Query the bucket read-only, or paste the sample into whatever assistant you have.",
+      claim: "The CRM data, explained.",
+      note: "A guide to what every column means, and a 200-row sample you can paste straight into any AI assistant. No account needed for either.",
       links: [
         {
-          label: "schema.md",
+          label: "The column guide",
           href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
         },
         { label: "/kit", href: "/kit" },
@@ -669,11 +650,15 @@ export const sections: Section[] = [
     id: "pick-your-job",
     theme: "light",
     layout: "jobs",
-    eyebrow: "Six jobs · pick one",
-    title: "Pick one job. Every exercise after this runs against it.",
-    accent: "Every exercise after this runs against it.",
-    railLabel: "Pick your job",
-    lede: "If you brought your own job, build that one.",
+    // Scott's 2026-08-04 QA wording: no counted enumeration ("six jobs") and
+    // no "pick one" — the frame is choosing an adventure, and bringing your
+    // own prototype or tool is a first-class option.
+    eyebrow: "Choose your adventure",
+    title:
+      "Select a project you want to build with. The exercises downstream flow from it.",
+    accent: "The exercises downstream flow from it.",
+    railLabel: "Choose your adventure",
+    lede: "If you have your own prototype or your own tool, use that one and build with it.",
     jobs: [
       {
         id: "identify",
@@ -878,14 +863,14 @@ export const sections: Section[] = [
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Spec"],
     },
-    // v15 headline rewrite: "your Done and this one" pointed at the example
-    // Done printed on the Spec slide, which the room saw several slides ago —
-    // the cross-slide dependency rule 4 exists to catch. The comparison now
-    // lives in the kicker, self-contained.
-    title: "Run your Done and submit the rows it returns",
+    // Scott's 2026-08-04 QA: "Run your Done" is a sentence that means nothing
+    // to a reader — the instruction is to run the prompt, which is printed on
+    // this slide, built for whichever project this reader picked. Copy here
+    // stays project-neutral; the prompt itself carries the specifics.
+    title: "Run the prompt below and submit the rows it returns",
     accent: "the rows it returns",
-    railLabel: "What your Done returns",
-    lede: "The prompt above the box is built for the job you picked and carries the Done you wrote.",
+    railLabel: "Your row count",
+    lede: "The prompt is built for the project you picked and carries the definition of done you wrote.",
     exercise: {
       id: "done-count",
       seconds: 120,
@@ -894,7 +879,7 @@ export const sections: Section[] = [
       unit: "rows",
     },
     kicker:
-      "Different numbers mean two Dones asking different questions. That difference is the exercise, not a mistake.",
+      "Different numbers mean two definitions of done asking different questions. That difference is the exercise, not a mistake.",
     // The data arrives in the prompt above the box, built for the job this
     // reader picked and carrying the Done they wrote.
     //
@@ -904,7 +889,7 @@ export const sections: Section[] = [
     // turns on. A link out is not an exercise.
     jobPrompt: true,
     deeper: {
-      claim: "The six jobs, each with the number one precise Done returns.",
+      claim: "Every project, with the row count one precise definition of done returns.",
       links: [
         {
           label: "jobs.md",
@@ -1598,7 +1583,14 @@ export const sections: Section[] = [
         },
       ],
     },
-    media: { image: genS39NineItems, speed: -0.15 },
+    // A lateral drift past one person alone, then a pair, then a full room in
+    // session — who depends on the thing. Moved here from the cut
+    // prototype/tool/system table; this slide asks the same question.
+    media: {
+      video: "/media/three-environments.mp4",
+      poster: "/media/three-environments-poster.jpg",
+      speed: -0.15,
+    },
   },
 
   {

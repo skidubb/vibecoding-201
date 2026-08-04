@@ -349,6 +349,24 @@ export function PresenterBar() {
             Shared {shared.length}
           </button>
         )}
+
+        {/* Scott's 2026-08-04 QA: signed in with a personal account, there was
+            no way back out. A reload after sign-out, because every widget on
+            the page read the session when it mounted. */}
+        <button
+          type="button"
+          data-signout
+          data-deck-keys="off"
+          onClick={() => {
+            const client = supabase();
+            if (!client) return;
+            void client.auth.signOut().then(() => window.location.reload());
+          }}
+          className="rounded-full px-3 py-1.5 text-[12px] font-medium uppercase tracking-[0.14em]"
+          style={{ color: CHROME_TEXT_DIM }}
+        >
+          Sign out
+        </button>
       </div>
     </div>
   );

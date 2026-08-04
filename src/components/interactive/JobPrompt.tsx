@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { sections } from "@/content/sections";
+import { currentJob, subscribeJob } from "@/lib/job-store";
 import { supabase } from "@/lib/supabase/client";
 import { PromptBlock } from "@/components/interactive/PromptBlock";
 
@@ -16,7 +17,7 @@ const HINT: Record<string, string> = {
   prepare: "Use the same definition of quiet as job 1, for a single territory.",
 };
 
-const BLANK = "[ your Done goes here ]";
+const BLANK = "[ your definition of done goes here ]";
 
 /**
  * The prompt for the job this person picked, with their own Done in it.
@@ -37,6 +38,11 @@ export function JobPrompt() {
   const [job, setJob] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
+
+  // The pick as it changes on this page. Every section is mounted at once, so
+  // a reader who changes their selection up at the picker must see this prompt
+  // rebuilt now — the profile fetch below only covers arriving on a reload.
+  const liveJob = useSyncExternalStore(subscribeJob, currentJob, () => null);
 
   useEffect(() => {
     const client = supabase();
@@ -67,17 +73,17 @@ export function JobPrompt() {
     return () => void (cancelled = true);
   }, []);
 
-  if (!checked) return null;
+  if (!checked && !liveJob) return null;
 
-  const chosen = JOBS.find((j) => j.id === job);
+  const chosen = JOBS.find((j) => j.id === (liveJob ?? job));
 
-  // No job picked, and no session to have picked one in. Rather than a prompt
-  // built on a guess, send them back to the slide that makes the choice.
+  // No project picked, and no session to have picked one in. Rather than a
+  // prompt built on a guess, send them back to the slide that makes the choice.
   if (!chosen) {
     return (
       <p className="mt-8 text-[0.95rem]" style={{ color: "var(--text-dim)" }}>
-        Pick one of the six jobs first and this becomes the prompt for it, with
-        your own Done already in it.
+        Choose your project first and this becomes the prompt for it, with your
+        own definition of done already in it.
       </p>
     );
   }
@@ -106,12 +112,12 @@ export function JobPrompt() {
         {chosen.verb} · your job
       </p>
       <PromptBlock
-        label="Run your Done"
+        label="Your prompt"
         text={text}
         caption={
           done
-            ? "Your Done, from the spec you wrote. Paste this into your agent and put the number it gives you in the box below."
-            : "You have not submitted a spec, so the Done is left blank. Replace the bracketed line with yours before running it."
+            ? "The definition of done comes from the spec you wrote. Paste this into your agent and put the number it gives you in the box below."
+            : "You have not submitted a spec, so the definition of done is left blank. Replace the bracketed line with yours before running it."
         }
       />
     </div>
