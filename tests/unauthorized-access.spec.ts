@@ -95,11 +95,17 @@ test("the review slide renders nothing that writes", async ({ page }) => {
   await expect(section.getByText(/Nothing on screen yet/)).toBeVisible();
 });
 
-test("a timer-only exercise offers nothing to submit", async ({ page }) => {
-  // Two of the three exercises are self-scoring against a list on the slide.
-  // They keep the clock and lose the box — a Submit button on a slide with
-  // nothing to store is a control that can only fail.
-  for (const id of ["place-yours", "the-bar"]) {
+test("an answering exercise keeps its clock and stores no prose", async ({ page }) => {
+  // This test used to assert the opposite: that these slides had no Submit,
+  // because a control with nothing to store can only fail. That was true while
+  // they stored nothing. Ninety seconds that wrote nothing, returned nothing
+  // and showed the room nothing is what made the hour go flat, so the premise
+  // changed and this test changed with it.
+  //
+  // What still has to hold is that they take a number and not an essay. `body`
+  // on these rows is generated from the answer, never typed, so a textarea here
+  // would mean free text was reaching a column the room's histogram groups on.
+  for (const id of ["done-count", "invented-count", "the-bar"]) {
     await page.goto(`/#${id}`);
     await ready(page);
     await settle(page);
@@ -107,9 +113,23 @@ test("a timer-only exercise offers nothing to submit", async ({ page }) => {
     const section = page.locator(`#${id}`);
     await expect(section.locator("[data-timer]")).toHaveCount(1);
     await expect(section.locator("[data-timer-toggle]")).toHaveCount(1);
+    await expect(section.locator("[data-submit]")).toHaveCount(1);
     await expect(section.locator("textarea")).toHaveCount(0);
-    await expect(section.locator("[data-submit]")).toHaveCount(0);
   }
+});
+
+test("the room's distribution names nobody", async ({ page }) => {
+  // The argument for publishing `answer_tallies` at all is that it says how
+  // many people chose a number and not which people. The section renders that
+  // table directly, so anything identifying reaching the page would be visible
+  // here before it was visible anywhere else.
+  await page.goto("/#done-count");
+  await ready(page);
+  await settle(page);
+
+  const section = page.locator("#done-count");
+  await expect(section).not.toContainText("@");
+  await expect(section.locator("[data-author]")).toHaveCount(0);
 });
 
 test("the report does not spoil a poll that has not been revealed", async ({ page }) => {
