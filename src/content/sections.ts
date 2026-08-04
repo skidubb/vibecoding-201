@@ -15,6 +15,9 @@ import genS11TwoSheets from "@/assets/generated/s11-two-sheets.webp";
 import genS12Timer from "@/assets/generated/s12-timer.webp";
 import genS14TheQuestion from "@/assets/generated/s14-the-question.webp";
 import genS17OverShoulder from "@/assets/generated/s17-over-shoulder.webp";
+// Hand-made asset (a photo of Scott presenting), not pipeline output, so it
+// lives at the assets root where `npm run assets` never writes.
+import whyMePresenting from "@/assets/why-me-presenting.webp";
 import genS18SixBinders from "@/assets/generated/s18-six-binders.webp";
 import genS19HandsUp from "@/assets/generated/s19-hands-up.webp";
 import genS21WrongSide from "@/assets/generated/s21-wrong-side.webp";
@@ -440,18 +443,19 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "claim",
     eyebrow: "Your instructor",
-    title: "[SCOTT: one sentence that says why you]",
+    title: "My authority to recommend these tools is that I run them.",
+    accent: "I run them.",
     railLabel: "Why me",
     strip: {
       items: [
-        "[SCOTT: bullet 1, career line]",
-        "[SCOTT: bullet 2, Cardinal Element]",
-        "[SCOTT: bullet 3, what you run today]",
+        "Started in TV buys for Coca-Cola; then a $250MM product portfolio at Boingo and 10x acquisition growth at TruConnect.",
+        "Founder of Cardinal Element, an advisory and build practice in Studio City where engagements end in production software.",
+        "Running today: AI strategy for airports across North America, and an AI playbook live in 15 auto-repair shops across Texas and Wisconsin. Pavilion member since 2025.",
       ],
     },
     kicker:
       "This deck is built with the method it teaches, and its repo is public.",
-    media: { image: genS17OverShoulder, speed: -0.12 },
+    media: { image: whyMePresenting, speed: -0.12 },
   },
 
   {
