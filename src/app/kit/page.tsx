@@ -4,7 +4,7 @@ import { NeuBadge, NeuPanel } from "@/components/neu/Neu";
 /**
  * The participant kit.
  *
- * Seven files, served as plain Markdown from `public/kit/` rather than rendered.
+ * Eight files, served as plain Markdown from `public/kit/` rather than rendered.
  * That is the point of them: they are meant to be dropped into a repository,
  * pasted into an agent, or printed — not read once on a website. A page that
  * only rendered them prettily would make the reader copy out of a browser.
@@ -23,7 +23,7 @@ import { NeuBadge, NeuPanel } from "@/components/neu/Neu";
 export const metadata: Metadata = {
   title: "Participant kit · Vibecoding 201",
   description:
-    "The seven artifacts from Building Production GTM Tools: readiness checklist, prompt pack, agent instructions, ownership card, CLI reference, route map. Plus the deal set the class builds against.",
+    "The eight artifacts from Building Production GTM Tools: readiness checklist, prompt pack, pre-generated plan, agent instructions, ownership card, CLI reference, route map. Plus the deal set the class builds against.",
 };
 
 const FILES = [
@@ -36,6 +36,11 @@ const FILES = [
     file: "prompt-pack.md",
     title: "Prompt pack",
     use: "You are directing an agent and want the request to produce something you can review.",
+  },
+  {
+    file: "pregenerated-plan.md",
+    title: "The pre-generated plan",
+    use: "Your plan prompt returned nothing usable and the exercise clock is running.",
   },
   {
     file: "agent-instructions.md",
@@ -60,7 +65,7 @@ const FILES = [
   {
     file: "README.md",
     title: "Read me first",
-    use: "You want the order to use the other six in.",
+    use: "You want the order to use the other seven in.",
   },
 ];
 
@@ -109,7 +114,7 @@ export default function KitPage() {
         <NeuBadge accent>Vibecoding 201 · participant kit</NeuBadge>
 
         <h1 className="mt-6 font-display text-[clamp(1.8rem,5vw,2.6rem)] font-semibold leading-tight">
-          Seven files. Take them and use them.
+          Eight files. Take them and use them.
         </h1>
         <p className="mt-4 leading-relaxed" style={{ color: "var(--text-dim)" }}>
           These are the artifacts the class is built on, not a summary of it.

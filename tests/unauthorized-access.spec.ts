@@ -46,7 +46,7 @@ test("the kit is served without an account, and the files are real", async ({
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
   const links = page.locator("a[download]");
-  await expect(links).toHaveCount(7);
+  await expect(links).toHaveCount(8);
 
   // Every listed file resolves and carries content. A kit page that 404s on
   // the download is worse than no kit page: the room leaves believing they
