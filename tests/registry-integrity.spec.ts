@@ -147,7 +147,7 @@ test("no layout silently drops content it was handed", async ({ page }) => {
     // counted by their own test below.
     const loop = block.match(/loopStages: \[([\s\S]*?)\n {4}\]/)?.[1];
     if (loop) {
-      for (const m of loop.matchAll(/(?:produces|advances): "((?:[^"\\]|\\.)*)"/g)) {
+      for (const m of loop.matchAll(/produces: "((?:[^"\\]|\\.)*)"/g)) {
         push(m[1]);
       }
     }
@@ -364,12 +364,12 @@ test("the loop slide does not also carry a step strip", () => {
   expect(offenders, "a section carries both loopStages and steps").toEqual([]);
 });
 
-test("the loop slide renders every stage with both of its labels", async ({ page }) => {
+test("the loop slide renders every stage with its produces row", async ({ page }) => {
   // Counts nodes rather than matching text: the six stage names are eight
   // characters or shorter, which the content check discards, so a layout that
-  // dropped half the stages would pass it. The produces/advances strings are
-  // covered by the content check; the counts below catch a stage rendered
-  // with one of its two rows missing.
+  // dropped half the stages would pass it. The produces strings are covered by
+  // the content check; the counts below catch a stage rendered with its
+  // produces row missing. (v15 removed the advances row from the layout.)
   await page.goto("/");
 
   const problems: string[] = [];
@@ -384,15 +384,12 @@ test("the loop slide renders every stage with both of its labels", async ({ page
     const declared = [...loop.matchAll(/name: "/g)].length;
     const stages = await page.locator(`#${id} [data-loop-stage]`).count();
     const produces = await page.locator(`#${id} [data-produces]`).count();
-    const advances = await page.locator(`#${id} [data-advances]`).count();
 
     if (stages !== declared) {
       problems.push(`${id}: ${declared} stages in the registry, ${stages} on the page`);
     }
-    if (produces !== declared || advances !== declared) {
-      problems.push(
-        `${id}: ${produces} produces and ${advances} advances rows for ${declared} stages`,
-      );
+    if (produces !== declared) {
+      problems.push(`${id}: ${produces} produces rows for ${declared} stages`);
     }
 
     // The return arrow is drawn geometry plus a hardcoded label, so neither

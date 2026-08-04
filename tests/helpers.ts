@@ -73,7 +73,12 @@ export async function scrollsPast(page: Page, from: number): Promise<number> {
 export async function promptCard(page: Page, label: string): Promise<Locator> {
   await page.goto("/#director-mode");
   await settle(page);
-  const card = page.locator("[data-deck-keys='off']").filter({ hasText: label });
+  // Scoped to the section, not the page: v15 prints the plan prompt a second
+  // time on #plan-fire under the same label, so a page-wide filter resolves to
+  // two cards and fails strict mode.
+  const card = page
+    .locator("#director-mode [data-deck-keys='off']")
+    .filter({ hasText: label });
   await expect(card).toBeVisible();
   return card;
 }
