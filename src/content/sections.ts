@@ -367,31 +367,34 @@ export type Section = {
 /**
  * The deck, in order.
  *
- * Thirty sections, quoted from `deck-content-v15.md`.
+ * Twenty-one sections, quoted from `deck-content-v16.md`.
  *
- * v15 is v14 reordered to walk Spec → Plan → Build → Test → Ship → Run exactly
- * once, with each step's hands-on attached to the step it practises. The
- * four-routes contract moved to the kit; Why me (a placeholder until Scott
- * fills it), The ingredients and Fire the plan prompt came in; the
- * fifteen-minute assignment became an eight-minute spec block and a
- * three-minute plan block. Job and schema strings are quoted from
- * `../data/kit/jobs.md`, `../data/kit/schema.md` and
- * `../delivery/deal-set-ground-truth.md`, which are sources alongside the deck
- * for the same reason it was ever the source: the words are Scott's and the
- * numbers are checkable.
+ * v16 replaces v15's six-stage walk with one starter app and three additions.
+ * v15 taught the loop and spent 25 of its 60 minutes on Spec and Plan; nineteen
+ * minutes were hands-on and none of them built anything, so an attendee left
+ * with a spec, a plan they never read, and two counts. Here everyone forks the
+ * same app, which saves nothing, has no sign-in, and reports a total that
+ * quietly skips 200 rows, and adds each missing piece in a timed block. Every
+ * block ends in something the attendee can see on their own screen.
  *
- * Three rules from that file apply to every entry:
+ * Cut from v15: pick-your-job, loop-overview, done-count, room-specs, plan-fire,
+ * demo, invented-count, data-doors, idempotency, test-and-ship, breach-test,
+ * run, harness, secrets, insight-rule. The six jobs and the connection map moved
+ * to the kit; credentials fold into Addition 1 and the code/model division into
+ * Addition 3, on the slides where the room needs them.
+ *
+ * Rules from that file apply to every entry:
  *
  *   1. The deck teaches on its own. Anything the audience must learn is printed
  *      here or in a GO DEEPER strip; narration adds color and never carries
- *      content. (Inverted in v11 — earlier versions kept spoken lines off the
- *      slide, which left definitions nowhere a reader could find them.)
+ *      content.
  *   2. No sentence restates the one before it.
  *   3. Every headline has to make sense with the rest of the slide covered.
- *
- * A fourth rule overrides those three wherever they conflict: no metaphors, and no
- * line that refers to something not on the slide. Several phrases quoted faithfully
- * from the outline broke both and were rewritten. See CLAUDE.md.
+ *   4. Every slide stands on its own; a line that needs another slide repeats it.
+ *   5. Every hands-on block ends in something the attendee can see. A submitted
+ *      number is not proof; a page that behaves differently is.
+ *   6. Say it straight. No metaphors, no dramatic one-liners. This restates the
+ *      standing rule in CLAUDE.md and overrides the others where they conflict.
  */
 export const sections: Section[] = [
   {
@@ -401,7 +404,7 @@ export const sections: Section[] = [
     eyebrow: "Vibecoding 201",
     title: "Building Production GTM Tools",
     accent: "Production",
-    lede: "One GTM prototype, from a chat window to a tool your team depends on.",
+    lede: "One prototype, three additions, and a link you can send someone by the end of the hour.",
     kicker: "Scott Ewalt · Founder, Cardinal Element",
     footnote: "Pavilion AI in GTM School",
     deeper: {
@@ -417,7 +420,6 @@ export const sections: Section[] = [
     },
     media: { image: genS01Doorway, speed: -0.12 },
   },
-
   {
     // A placeholder until Scott writes it: the deck previously had no
     // credibility beat at all. The bracketed lines are a deliberate merge
@@ -437,7 +439,6 @@ export const sections: Section[] = [
       "This deck is built with the method it teaches, and its repo is public.",
     media: { image: genS17OverShoulder, speed: -0.12 },
   },
-
   {
     id: "what-changed",
     theme: "dark",
@@ -448,7 +449,7 @@ export const sections: Section[] = [
     railLabel: "What changed since 101",
     kicker:
       "Production means someone depends on it: records that persist, access that is controlled, failures that are handled, behavior that is verified, and an owner with a name.",
-    lede: "Everything you can see is cheap to build now. Everything underneath is where tools die.",
+    lede: "The interface is the cheap part now. What sits behind it is the work.",
     deeper: {
       claim:
         "Google's New SDLC whitepaper draws the same line between vibe coding and agentic engineering.",
@@ -469,7 +470,6 @@ export const sections: Section[] = [
       speed: -0.15,
     },
   },
-
   {
     // Added in v9 as the closing slide; moved forward in v11. The premise that
     // explains why the hour teaches checks instead of prompts belongs before
@@ -488,7 +488,7 @@ export const sections: Section[] = [
     accent: "more explicit verification.",
     railLabel: "The premise",
     kicker:
-      "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
+      "An agent that runs for three days without a check is the most expensive way to be wrong that is currently available.",
     deeper: {
       claim: "Boris Cherny, who built Claude Code,",
       note: "deleted instructions, plan mode, and prompts release by release and never walked back verification.",
@@ -505,7 +505,6 @@ export const sections: Section[] = [
       ],
     },
   },
-
   {
     // `cold-open`, not `two-screens`: the id is the poll slug's twin and the
     // anchor two specs locate this section by. The slide's name changed; what
@@ -545,7 +544,43 @@ export const sections: Section[] = [
     },
     media: { image: genS02TwoLaptops, speed: -0.12 },
   },
-
+  {
+    // The spine of v16. v15 had no equivalent: it taught a six-stage loop and
+    // spent 25 of 60 minutes on the first two stages, so the room left with a
+    // taxonomy rather than a capability. Three problems, three additions, and
+    // the rest of the hour is the room performing the right-hand column.
+    id: "three-additions",
+    theme: "dark",
+    layout: "matrix",
+    eyebrow: "The three additions",
+    title: "Three things separate a prototype from a tool people can use",
+    accent: "a tool people can use",
+    railLabel: "What a prototype is missing",
+    matrix: {
+      head: ["The problem", "What you see", "The addition"],
+      rows: [
+        [
+          "It does not save anything",
+          "Close the tab and the work is gone. State lives in the browser",
+          "A database, so a record is still there after a refresh",
+        ],
+        [
+          "Anyone with the link can see everything",
+          "No sign-in. The URL is the only control",
+          "Sign-in, plus rules on the table that decide who reads what",
+        ],
+        [
+          "It does not tell you when it is wrong",
+          "A confident number, no indication that some rows were skipped",
+          "Counts and messages for every row the tool could not handle",
+        ],
+      ],
+    },
+    lede: "Almost every problem you will hit is one of these three. Add all three and you have a tool other people can use.",
+    kicker:
+      "You are going to do this to one app, on your own machine, in the next forty minutes: three additions, eight minutes each.",
+    media: { image: genS09Ring, speed: -0.12 },
+  },
   {
     id: "three-kinds",
     theme: "dark",
@@ -585,7 +620,7 @@ export const sections: Section[] = [
     // v15: the answer is printed. The slide implied it and Scott's arc for the
     // hour states it as a beat: should everything be a production system? No.
     kicker:
-      "Most of what you build should stay a prototype. No is the right answer at this gate more often than yes.",
+      "The three additions are what move a prototype to a tool. Plenty of prototypes should stay prototypes, and those are cheap to abandon.",
     // A lateral drift past one person alone, then a pair, then a full room in
     // session. That is this table's three rows in order, despite the filename:
     // the clip is about who depends on the thing, not about deploy environments.
@@ -595,52 +630,41 @@ export const sections: Section[] = [
       speed: -0.12,
     },
   },
-
   {
-    // The working set, laid out before anything is picked or specced. This is
-    // where the deal set stops appearing cold: it used to be first mentioned in
-    // the headline of the slide that asked the room to use it. The set is
-    // synthetic (Andy's Class 0 data) and the row says so; its defects are real
-    // CRM defects, which is the pedagogy, so "real data" is never claimed.
-    id: "ingredients",
+    // Replaces `ingredients` and `pick-your-job`. Six jobs meant six unlike
+    // exercises and six distributions that could not be read against each other;
+    // one starter app means every later beat runs against the same object, and
+    // the before picture on `cold-open` is the same app as the after picture on
+    // `the-bar`. The set is synthetic (Andy's Class 0 data) and the row says so.
+    id: "starter-app",
     theme: "light",
     layout: "matrix",
-    eyebrow: "What you build with",
-    title: "Three ingredients: a deal set, your coding agent, and this deck",
-    accent: "a deal set, your coding agent, and this deck",
-    railLabel: "The ingredients",
+    eyebrow: "What you are forking",
+    title: "Pipeline Review: a working app that is missing all three",
+    accent: "missing all three",
+    railLabel: "Your starter app",
+    lede: "It reads Andy's deal set, finds open deals that have gone quiet, and lists them by rep. It works. It is also a fair description of most prototypes.",
     matrix: {
       rows: [
         [
-          "The deal set",
-          "10,000 synthetic deals, 36 columns, courtesy of Andy from the Class 0 data set. Public bucket, no account and no key. An uncleaned working export whose defects are real CRM defects",
+          "Nothing is saved",
+          "Results live in the browser. Refresh and they are gone",
         ],
         [
-          "Your coding agent",
-          "Claude Code, Codex, or Cursor, the tool you set up in 101, driving GitHub, Vercel, and Supabase",
+          "No sign-in",
+          "Anyone with the URL can read every record",
         ],
         [
-          "This deck",
-          "Built with the method it teaches. The repo is public, and every claim in the next hour is checkable there",
+          "No handling for bad rows",
+          "200 open deals carry no activity date. It counts them as active and shows a total with no indication",
         ],
       ],
-      highlight: 1,
+      highlight: 2,
     },
-    rowBrands: [
-      [],
-      [
-        { brand: "claude", href: "https://claude.com/claude-code" },
-        { brand: "openai", href: "https://developers.openai.com/codex" },
-        { brand: "cursor", href: "https://cursor.com" },
-        { brand: "github", href: "https://github.com" },
-        { brand: "vercel", href: "https://vercel.com" },
-        { brand: "supabase", href: "https://supabase.com" },
-      ],
-      [{ brand: "github", href: "https://github.com/skidubb/vibecoding-201" }],
-    ],
+    kicker: "Fork it now. One click, no account, no key.",
     deeper: {
-      claim: "The schema and the 200-row sample.",
-      note: "Query the bucket read-only, or paste the sample into whatever assistant you have.",
+      claim: "The deal set: 10,000 synthetic deals, 36 columns.",
+      note: "Courtesy of Andy from the Class 0 data set. Schema and a 200-row sample.",
       links: [
         {
           label: "schema.md",
@@ -651,513 +675,148 @@ export const sections: Section[] = [
     },
     media: { image: genS31ThreeDoors, speed: -0.12 },
   },
-
   {
-    // The hinge of the hour, and what the fifteen-minute block used to spend
-    // itself on. Every later beat operates on whichever of these the attendee
-    // picks, so the choice is stored on their profile rather than held in a
-    // component: it has to survive a reload and be readable from the page they
-    // leave with.
-    //
-    // The six jobs are quoted from ../data/kit/jobs.md. The Done is missing
-    // from all six on purpose: printing one here would answer the question the
-    // next forty minutes ask. The framing lines were rewritten in v15 — the
-    // v14 headline said "spec against the deal set" before either term was
-    // taught, "Starting points, not a menu" winked at a literal menu, and "You
-    // write the Done" used a word the Spec slide had not yet defined. The
-    // kicker now defines the idea in place instead of naming it.
-    id: "pick-your-job",
+    // v15 gave Spec and Plan three slides and two exercises across 25 of the 60
+    // minutes. Here they are one teach slide and one six-minute block: enough to
+    // practise the motion, not enough to crowd out the three additions. The
+    // prompt id stays `plan-approval` because tests/helpers.ts locates it.
+    id: "spec-and-plan",
     theme: "light",
-    layout: "jobs",
-    eyebrow: "Six jobs · pick one",
-    title: "Pick one job. Every exercise after this runs against it.",
-    accent: "Every exercise after this runs against it.",
-    railLabel: "Pick your job",
-    lede: "If you brought your own job, build that one.",
-    jobs: [
+    layout: "prompt",
+    eyebrow: "Before the agent touches anything",
+    title: "Say what done looks like, then make the agent show you its plan",
+    accent: "show you its plan",
+    railLabel: "Spec and plan",
+    lede: "Your spec is three lines. Job, User, Done. The Done is written as steps someone else could follow to check it.",
+    prompts: [
       {
-        id: "identify",
-        verb: "Identify",
-        job: "Identify open deals that have gone quiet, and list them by the rep who owns them.",
-        user: "A RevOps analyst who sends the list to sales managers on Monday morning.",
+        id: "three-line-spec",
+        label: "The spec, for the starter app",
+        text: "Job. Flag open deals that have gone quiet, listed by the rep who owns them.\n\nUser. A RevOps analyst who sends the list to sales managers on Monday morning.\n\nDone. Open deals in Prospecting, Qualification, Proposal or Negotiation whose last activity falls before 5 May 2026, grouped by rep, with deals carrying no activity date counted separately and labeled.",
+        caption:
+          "Working on your own project instead? Replace all three lines. The Done is the one that has to read as steps another person could follow.",
       },
       {
-        id: "reconcile",
-        verb: "Reconcile",
-        job: "Reconcile how a lost deal was coded internally against what the buyer said, and list the deals where the two disagree.",
-        user: "A sales enablement lead preparing a quarterly loss review.",
-      },
-      {
-        id: "route",
-        verb: "Route",
-        job: "Route open deals that have fewer than three known contacts to the rep's manager.",
-        user: "A sales manager who wants them worked before the quarter closes.",
-      },
-      {
-        id: "prepare",
-        verb: "Prepare",
-        job: "Prepare a weekly digest of quiet open pipeline for a single territory.",
-        user: "The regional director for that territory, who reads it in a Monday email.",
-      },
-      {
-        id: "summarize",
-        verb: "Summarize",
-        job: "Summarize one rep's closed-lost deals into a coaching note their manager can read in two minutes.",
-        user: "A first-line sales manager preparing for a one-to-one.",
-      },
-      {
-        id: "approve",
-        verb: "Approve",
-        job: "Approve for correction every deal whose expected close date falls before the deal was created.",
-        user: "A RevOps administrator who will run the correction after someone signs off.",
+        id: "plan-approval",
+        label: "The plan prompt",
+        text: "Inspect the current project. Propose the smallest coherent implementation for this specification. Identify the data model, permissions, environment variables, failure states, tests, and files involved. Do not change anything until I approve the plan.",
+        caption:
+          "The last sentence is the whole prompt. Without it the agent starts typing while it is still guessing.",
       },
     ],
-    kicker:
-      "Each job gives you the work and the user. What counts as finished, you write yourself.",
-    // No link out to the data here. Picking a job is the only thing this slide
-    // asks for; the deal-set links live on the ingredients slide before this
-    // one, and the data reaches them in the prompt on the slide that needs it,
-    // already addressed to the job they chose.
-    media: { image: genS14TheQuestion, speed: -0.12 },
-  },
-
-  {
-    // Added in v9: four step slides referenced a six-step loop the deck never
-    // introduced. This slide introduces it by name before the Spec step.
-    // v13: the six card definitions became one pathway. Each stage prints
-    // what it produces and what lets the work advance, and the return band
-    // carries evidence from use back to Spec.
-    id: "loop-overview",
-    theme: "dark",
-    layout: "loop",
-    eyebrow: "How the next forty minutes are organized",
-    title:
-      "How a prototype becomes production: Spec, Plan, Build, Test, Ship, Run",
-    accent: "Spec, Plan, Build, Test, Ship, Run",
-    railLabel: "The development process",
-    loopStages: [
-      { name: "Spec", produces: "The job, the user, and a checkable Done" },
-      {
-        name: "Plan",
-        produces: "A reviewable proposal: data, permissions, tests, and files",
-      },
-      { name: "Build", produces: "The smallest working implementation" },
-      {
-        name: "Test",
-        produces: "Repeatable evidence the workflow and its failure cases behave",
-      },
-      {
-        name: "Ship",
-        produces: "The approved version, live where people depend on it",
-      },
-      {
-        name: "Run",
-        produces: "Monitoring, alerts, a named owner, a rollback path",
-      },
-    ],
-    kicker:
-      "The agent can propose, implement, and test. A person stays accountable for scope, access, promotion, and operation.",
-    media: { image: genS09Ring, speed: -0.12 },
-  },
-
-  {
-    id: "spec",
-    theme: "dark",
-    layout: "matrix",
-    eyebrow: "Step 1 · Spec",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Spec"],
-    },
-    title: "Write down the job, the user, and how you will check it",
-    accent: "how you will check it",
-    // Job and User are quoted from job 1 in ../data/kit/jobs.md, which is the
-    // file the room has open. The Done is the one the kit deliberately withholds:
-    // jobs.md gives every job its Job and its User and says "You write the Done",
-    // because that is the part being practised.
-    cards: [
-      {
-        title: "Job",
-        body: "Identify open deals that have gone quiet, and list them by the rep who owns them.",
-      },
-      {
-        title: "User",
-        body: "A RevOps analyst who sends the list to sales managers on Monday morning.",
-      },
-      {
-        title: "Done",
-        body: "Open deals in Prospecting, Qualification, Proposal or Negotiation whose last activity date falls before 5 May 2026, grouped by rep, with the deals carrying no activity date counted separately.",
-      },
-    ],
-    // The two readings that split a room. 200 open deals carry no
-    // last_activity_date at all, so "gone quiet" returns 634 or 834 depending on
-    // how one English sentence is read, and both readings are defensible.
-    matrix: {
-      head: ["Vague", "Testable"],
-      rows: [
-        [
-          "Shows the stale deals",
-          "Names the stages, names the date, and says what happens to the deals with no activity date at all.",
-        ],
-      ],
-    },
-    kicker:
-      "If you cannot write the steps, you do not yet know what you are asking for.",
-    // v15 moved "also specify: source data, access rules, failure behavior,
-    // non-goals" off the slide face and into the GO DEEPER note — five
-    // competing elements buried the one teach this slide exists for.
     deeper: {
-      claim: "GitHub Spec Kit.",
-      note: "Spec-driven development as a full toolchain. A full spec also covers source data, access rules, failure behavior, and non-goals.",
+      claim: "Spec-driven development as a full toolchain, and the open format for agent instructions.",
       links: [
         {
           label: "github/spec-kit",
           href: "https://github.com/github/spec-kit",
           brand: "github",
         },
-        { label: "docs", href: "https://github.github.com/spec-kit" },
-      ],
-    },
-    media: { image: genS11TwoSheets, speed: -0.12 },
-  },
-
-  {
-    // v15 split the fifteen-minute assignment: this block writes the spec, and
-    // firing the plan prompt is its own three-minute beat after the Plan slide.
-    // The exercise id stays `spec` — the submissions table predates the split.
-    id: "assignment",
-    theme: "light",
-    layout: "exercise",
-    eyebrow: "Hands on · 8 minutes",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Spec"],
-    },
-    title: "Write your three-line spec: Job, User, Done",
-    accent: "Job, User, Done",
-    railLabel: "Write your spec",
-    cards: [
-      {
-        title: "Job and User come from the job you picked",
-        body: "Copy them as given, or bring your own.",
-      },
-      {
-        title: "The Done is yours",
-        body: "Written as steps someone else could follow to check it.",
-      },
-      {
-        title: "Submit it",
-        body: "Share it if you want it in the mix.",
-      },
-    ],
-    exercise: {
-      id: "spec",
-      seconds: 480,
-      placeholder:
-        "Job.\nUser.\nDone, written as steps someone else could follow to check it.",
-    },
-    media: { image: genS12Timer, speed: -0.12 },
-  },
-
-  {
-    // The beat the hour turns on.
-    //
-    // 200 of the open deals carry no `last_activity_date` at all, so "no
-    // recorded activity since 5 May" returns 634 or 834 depending on whether a
-    // deal with no date counts as having no activity. Both readings are
-    // defensible English and both people think they are finished. The room
-    // submits its numbers and the histogram prints the disagreement, which is
-    // the argument of this class made by the room instead of by the presenter.
-    //
-    // Quoted from ../data/kit/jobs.md, which the room has open.
-    id: "done-count",
-    theme: "light",
-    layout: "exercise",
-    eyebrow: "Hands on · 2 minutes",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Spec"],
-    },
-    // v15 headline rewrite: "your Done and this one" pointed at the example
-    // Done printed on the Spec slide, which the room saw several slides ago —
-    // the cross-slide dependency rule 4 exists to catch. The comparison now
-    // lives in the kicker, self-contained.
-    title: "Run your Done and submit the rows it returns",
-    accent: "the rows it returns",
-    railLabel: "What your Done returns",
-    lede: "The prompt above the box is built for the job you picked and carries the Done you wrote.",
-    exercise: {
-      id: "done-count",
-      seconds: 120,
-      mode: "count",
-      question: "Rows your Done returns",
-      unit: "rows",
-    },
-    kicker:
-      "Different numbers mean two Dones asking different questions. That difference is the exercise, not a mistake.",
-    // The data arrives in the prompt above the box, built for the job this
-    // reader picked and carrying the Done they wrote.
-    //
-    // This slide briefly linked to the bucket instead. That file offers four
-    // ways to reach the deal set and asks the reader to choose between them,
-    // which is the decision jobs.md exists to remove, at the one beat the hour
-    // turns on. A link out is not an exercise.
-    jobPrompt: true,
-    deeper: {
-      claim: "The six jobs, each with the number one precise Done returns.",
-      links: [
-        {
-          label: "jobs.md",
-          href: "https://storage.googleapis.com/vibecoding-201-data/jobs.md",
-        },
-      ],
-    },
-    media: { image: genS11TwoSheets, speed: -0.12 },
-  },
-
-  {
-    id: "room-specs",
-    theme: "dark",
-    layout: "surfaced",
-    eyebrow: "What you wrote",
-    title: "Specs you just wrote, rewritten live on this screen",
-    accent: "rewritten live",
-    lede: "Submissions appear here as their authors share them.",
-    surfaced: {
-      exerciseId: "spec",
-      empty:
-        "Nothing on screen yet. Shared specs appear here when Scott puts one up.",
-    },
-    media: { image: genS36ThreeLines, speed: -0.15 },
-  },
-
-  {
-    // `director-mode`, not `plan`: tests/helpers.ts locates the plan prompt by
-    // this anchor, and the prompt is the same object the deck has always called
-    // Director mode.
-    id: "director-mode",
-    theme: "light",
-    layout: "prompt",
-    eyebrow: "Step 2 · Plan",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Plan"],
-    },
-    title: "Approve a plan before anything changes",
-    accent: "before anything changes",
-    railLabel: "Plan",
-    lede: "A plan is a proposal you can read and question: how the agent intends to satisfy the spec.",
-    prompts: [
-      {
-        id: "plan-approval",
-        label: "The plan prompt",
-        text: "Inspect the current project. Propose the smallest coherent implementation for this specification. Identify the data model, permissions, environment variables, failure states, tests, and files involved. Do not change anything until I approve the plan.",
-        caption:
-          "The last sentence is why the whole prompt works: it makes the plan the thing you review, and a plan is cheap to change.",
-      },
-    ],
-    strip: {
-      label: "Questions to ask of any plan",
-      items: [
-        "Does it solve the stated job?",
-        "What assumptions did it invent?",
-        "What data and permissions does it require?",
-        "How will the core workflow be tested?",
-        "What is deliberately excluded?",
-      ],
-    },
-    deeper: {
-      claim: "Claude Code best practices.",
-      note: "Plan mode, context handling, and how to structure work an agent will pick up cold.",
-      links: [
-        {
-          label: "code.claude.com/docs",
-          href: "https://code.claude.com/docs/en/best-practices",
-          brand: "claude",
-        },
+        { label: "agents.md", href: "https://agents.md" },
       ],
     },
     media: { image: genS10PagePassed, speed: -0.15 },
   },
-
   {
-    // Split out of the fifteen-minute assignment in v15 so Plan has its own
-    // hands-on beat. The prompt is printed a second time deliberately: the
-    // slide it teaches on cannot be two slides back when the room needs to
-    // paste it. No database exercise here; invented-count collects the return
-    // after the demo has covered generation time.
-    id: "plan-fire",
-    theme: "dark",
-    layout: "prompt",
-    eyebrow: "Hands on · 3 minutes",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Plan"],
-    },
-    title: "Paste the plan prompt above your spec and fire it",
-    accent: "fire it",
-    railLabel: "Fire the plan prompt",
-    prompts: [
-      {
-        id: "plan-approval-fire",
-        label: "The plan prompt",
-        text: "Inspect the current project. Propose the smallest coherent implementation for this specification. Identify the data model, permissions, environment variables, failure states, tests, and files involved. Do not change anything until I approve the plan.",
-        caption: "Use your 101 Claude Project.",
-      },
-    ],
-    kicker:
-      "Send it, then leave it generating: counting what it invented comes in a few minutes.",
-    footnote: "No plan came back? Take the pre-generated one from the kit",
-    footnoteHref: "/kit",
-    media: { image: genS12Timer, speed: -0.15 },
-  },
-
-  {
-    id: "demo",
-    theme: "light",
-    layout: "cards",
-    eyebrow: "Demonstration",
-    title: "Watch the agent plan a change before it makes it",
-    accent: "before it makes it",
-    railLabel: "Live demo",
-    lede: "What this demo proves: a reviewed plan catches wrong assumptions before they become code.",
-    cards: [
-      { title: "The project is already in GitHub" },
-      { title: "The agent reads the project before acting" },
-      { title: "It proposes a plan. I approve it before any file changes" },
-      {
-        title:
-          "It makes one change that survives a refresh, written to the database",
-      },
-    ],
-    kicker: "Your job: chat the assumptions it invented.",
-    media: { image: genS17OverShoulder, speed: -0.12 },
-  },
-
-  {
-    // The count the assignment asked the room to keep, now collected.
-    //
-    // Job 3 is the cleanest case in the set: the deal set has no manager column,
-    // so a plan that routes anything to a rep's manager has invented the routing
-    // target. Everyone who picked that job invented at least one, which makes the
-    // distribution a fact about their plans rather than an opinion about them.
-    //
-    // The schema is the contract this counts against, quoted from
-    // ../data/kit/schema.md.
-    id: "invented-count",
+    // The exercise id stays `spec` — the submissions table predates v16, and an
+    // attendee's spec is still the thing being written and optionally shared.
+    id: "spec-plan-block",
     theme: "dark",
     layout: "exercise",
-    eyebrow: "Hands on · 2 minutes",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Plan"],
-    },
-    // v15 headline rewrite: "The plan invented it" had no referent until the
-    // lede. The headline now states the thing and the lede only enumerates.
-    title: "Your plan named things the schema does not contain. Count them.",
-    accent: "Count them.",
-    railLabel: "What the plan invented",
-    lede: "A table, a column, a status, or a permission. Submit how many you find.",
+    eyebrow: "Hands on · 6 minutes",
+    title: "Point your agent at your fork and make it plan before it builds",
+    accent: "plan before it builds",
+    railLabel: "Write the spec, fire the plan",
+    cards: [
+      {
+        title: "Open your fork in your agent",
+        body: "Claude Code, Codex, or Cursor, whichever you set up in 101.",
+      },
+      {
+        title: "Paste the spec, then the plan prompt",
+        body: "Send it, and read what comes back.",
+      },
+      {
+        title: "Find one thing it invented",
+        body: "A table, a column, or a permission the data does not contain.",
+      },
+    ],
     exercise: {
-      id: "invented-count",
-      seconds: 120,
-      mode: "count",
-      question: "Things your plan invented",
-      unit: "assumptions",
+      id: "spec",
+      seconds: 360,
+      placeholder:
+        "Job.\nUser.\nDone, written as steps someone else could follow to check it.",
     },
     kicker:
-      "A zero usually means you did not look hard enough. The schema is the whole contract.",
-    deeper: {
-      claim: "The 36 columns, and the values each one holds.",
-      links: [
-        {
-          label: "schema.md",
-          href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
-        },
-      ],
-    },
-    media: { image: genS18SixBinders, speed: -0.15 },
+      "Do not approve it yet. Stuck? The kit has a written spec and a pre-generated plan.",
+    media: { image: genS12Timer, speed: -0.12 },
   },
-
   {
-    id: "harness",
-    theme: "dark",
-    layout: "matrix",
-    eyebrow: "Step 3 · Build",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Build"],
-    },
-    title: "Files to add to your folder / repo",
-    accent: "your folder / repo",
-    lede: "Create only the files this tool warrants. A one-screen tool does not need all six.",
-    matrix: {
-      rows: [
-        [
-          "PRODUCT.md",
-          "What this is, who it serves, what it deliberately does not do",
-        ],
-        [
-          "ARCHITECTURE.md",
-          "The decisions and why, so the next change does not quietly undo one",
-        ],
-        ["DATA_MODEL.md", "What is stored, and what each rule protects"],
-        ["SECURITY.md", "Who may read and change what, and how that is enforced"],
-        ["CLAUDE.md / AGENTS.md", "How your agent should work in this repository"],
-        [".env.example", "The names of every credential. Never the values"],
-      ],
-    },
-    kicker:
-      "The assistant you rent is the same one your competitors rent. The edge is what yours is grounded in.",
-    deeper: {
-      claim: "AGENTS.md is the open format for this file,",
-      note: "readable by most coding agents rather than one vendor's.",
-      links: [{ label: "agents.md", href: "https://agents.md" }],
-    },
-    media: { image: genS18SixBinders, speed: -0.12 },
-  },
-
-  // v9 removed the "Signing in and being allowed" section per Scott's comment
-  // ("too in the weeds"); its lesson is one spoken line in the security-test
-  // notes now.
-  {
-    id: "secrets",
+    // Addition 1. Carries the credentials material because this is the first
+    // slide where the room needs a key: v15 taught secrets on a standalone slide
+    // sixty seconds long, two slides away from the exercise that needed them.
+    id: "nothing-saved",
     theme: "light",
     layout: "matrix",
-    eyebrow: "Build · credentials",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Build"],
-    },
-    title: "Keep your credentials out of your code",
-    accent: "out of your code",
+    eyebrow: "Addition 1 · a database",
+    title: "Close the tab and the work is gone",
+    accent: "the work is gone",
+    railLabel: "Nothing is saved",
+    lede: "The starter app holds its results in the browser. Refresh and you are back to an empty screen. Every prototype does this, and it is the first thing a colleague notices when you hand it over.",
     matrix: {
+      head: ["", "What it holds"],
       rows: [
-        [".env.local", "The real values. Never leaves your machine."],
-        [".env.example", "The names only. Safe to commit."],
-        [".gitignore", "Keeps the first one out of GitHub."],
+        [".env.local", "The real values. Never leaves your machine"],
+        [".env.example", "The names only. Safe to commit"],
       ],
     },
-    strip: {
-      items: [
-        "Secrets never go in GitHub or in browser code.",
-        "An exposed secret gets revoked and rotated, never hidden.",
-      ],
-    },
+    kicker: "A tool writes to a database. A row that is still there after a refresh is what separates this from a demo.",
+    footnote:
+      "Credentials never go in GitHub or in browser code. An exposed key gets revoked and rotated, not hidden.",
     deeper: {
-      claim: "OWASP secrets management cheat sheet.",
-      note: "Rotation, vaulting, and what to do the morning after a leak.",
+      claim: "What happens when the same write runs twice.",
+      note: "Stripe's idempotency keys are the reference implementation, and the reason your card is not charged twice.",
       links: [
         {
-          label: "cheatsheetseries.owasp.org",
-          href: "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
-          brand: "owasp",
+          label: "docs.stripe.com",
+          href: "https://docs.stripe.com/api/idempotent_requests",
+          brand: "stripe",
         },
       ],
     },
     media: { image: genS22SealedEnvelope, speed: -0.15 },
   },
-
+  {
+    // Addition 1, performed. The check is the whole block: a refresh that keeps
+    // the results is something the attendee sees on their own screen, which is
+    // the fifth rule in deck-content-v16.md. A submitted number is not proof.
+    id: "save-results",
+    theme: "dark",
+    layout: "exercise",
+    eyebrow: "Hands on · 8 minutes · Addition 1",
+    title: "Write the results to a database, then refresh the page",
+    accent: "then refresh the page",
+    railLabel: "Save the results",
+    cards: [
+      { title: "Run a review", body: "Whatever your app already does." },
+      { title: "Refresh the page", body: "The browser reload, not a re-run." },
+      {
+        title: "Your results are still there",
+        body: "Screenshot it. That is the first of three.",
+      },
+    ],
+    prompts: [
+      {
+        id: "save-results-prompt",
+        label: "Paste this into your agent",
+        text: "Connect this app to a Supabase table. When a review runs, save the result with a timestamp and a run ID. On load, show the most recent saved run. Put the credentials in .env.local, add a .env.example with names only, and confirm .env.local is gitignored.",
+        caption:
+          "Stuck? The kit has the migration and the connection code. Take them and keep moving.",
+      },
+    ],
+    exercise: { id: "save-results", seconds: 480, mode: "timer" },
+    media: { image: genS12Timer, speed: -0.12 },
+  },
   {
     id: "poll-debugging",
     theme: "dark",
@@ -1185,77 +844,74 @@ export const sections: Section[] = [
     },
     media: { image: genS19HandsUp, speed: -0.12 },
   },
-
   {
-    id: "data-doors",
+    // Addition 2. The teach slide, immediately before the room does it. The
+    // sentence about hiding rows in the interface is the most common
+    // misunderstanding in a GTM room and a good number have shipped it.
+    id: "link-open",
     theme: "dark",
-    layout: "matrix",
-    eyebrow: "Build · connections",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Build"],
-    },
-    title: "Choose how your tool connects to its data",
-    accent: "connects to its data",
-    matrix: {
-      head: ["", "Use when", "Costs you"],
-      rows: [
-        [
-          "Manual",
-          "Rare, ambiguous, or judgment-heavy work",
-          "Stale data and human effort",
-        ],
-        [
-          "Computer use",
-          "Stable interface, no usable integration",
-          "Fragility and terms-of-service limits",
-        ],
-        [
-          "API",
-          "App-to-app work at runtime",
-          "Auth, rate limits, engineering overhead",
-        ],
-        [
-          "MCP",
-          "Governed agent access to tools and context",
-          "Connector quality and permissions",
-        ],
-        [
-          "CLI",
-          "The agent driving GitHub, Vercel, Supabase, tests, logs",
-          "Powerful access needs guardrails",
-        ],
-      ],
-    },
+    layout: "claim",
+    eyebrow: "Addition 2 · sign-in and access rules",
+    title: "Your app now stores real records and has no sign-in",
+    accent: "and has no sign-in",
+    railLabel: "Anyone with the link",
+    lede: "Anyone with the URL can read all of them. That was acceptable when nothing was saved. It is not acceptable now.",
     strip: {
-      label: "Choose on",
       items: [
-        "frequency",
-        "consequence",
-        "volume",
-        "expected lifetime",
-        "stability",
-        "retry safety",
+        "Signing in says who you are.",
+        "Access rules decide what you may read.",
+        "Hiding rows in the interface does neither, because the data still goes over the wire.",
       ],
     },
-    // v11: the two unfamiliar rows are defined in print; the note used to be
-    // spoken.
     kicker:
-      "MCP is the agent's native protocol for live connections. CLI is the agent driving another platform's own tools, and your agent already speaks every CLI.",
+      "The rule belongs on the table, not in the page. A policy on the table refuses the request no matter which page, script, or curl command asks.",
     deeper: {
-      claim: "The MCP specification itself.",
-      note: "Worth reading if you are deciding what your company exposes to agents.",
+      claim: "What this prevents.",
+      note: "170+ apps on one prototyping platform shipped without it, and their records were readable by anyone who looked.",
       links: [
         {
-          label: "modelcontextprotocol.io",
-          href: "https://modelcontextprotocol.io/specification",
-          brand: "mcp",
+          label: "mattpalmer.io",
+          href: "https://mattpalmer.io/posts/2025/05/CVE-2025-48757",
         },
       ],
     },
-    media: { image: genS23FiveEntrances, speed: -0.12 },
+    media: { image: genS21WrongSide, speed: -0.15 },
   },
-
+  {
+    // Addition 2, performed. v15 ran this as two clicks on the presenter's own
+    // deployed app; here the attendee builds the policy and then fails to get
+    // past it themselves, which is the difference between watching a security
+    // test and passing one.
+    id: "add-signin",
+    theme: "light",
+    layout: "exercise",
+    eyebrow: "Hands on · 8 minutes · Addition 2",
+    title: "Add sign-in and a table policy, then try to read your data while signed out",
+    accent: "while signed out",
+    railLabel: "Add sign-in and rules",
+    cards: [
+      { title: "Sign in and run a review", body: "You see your own result." },
+      {
+        title: "Open the same URL in an incognito window",
+        body: "Same address, no session.",
+      },
+      {
+        title: "It refuses you",
+        body: "Screenshot the refusal. That is the second of three.",
+      },
+    ],
+    prompts: [
+      {
+        id: "add-signin-prompt",
+        label: "Paste this into your agent",
+        text: "Add Supabase auth to this app. Attach the signed-in user ID to every saved run. Enable row level security on the table with a policy that lets a user read only their own runs. Redirect signed-out visitors to a login screen.",
+        caption:
+          "Stuck? The kit has the policy SQL and the auth setup, plus one curl command that settles whether your rule is on the table or in your interface.",
+      },
+    ],
+    exercise: { id: "add-signin", seconds: 480, mode: "timer" },
+    media: { image: genS19HandsUp, speed: -0.12 },
+  },
   {
     id: "poll-door",
     theme: "dark",
@@ -1288,250 +944,92 @@ export const sections: Section[] = [
     },
     media: { image: genS27HandsUp2, speed: -0.12 },
   },
-
   {
-    id: "idempotency",
-    theme: "dark",
-    layout: "claim",
-    eyebrow: "Build · idempotency",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Build"],
-    },
-    title: "What happens if this runs twice?",
-    accent: "runs twice?",
-    lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat, and the duplicate they create stays invisible until a customer finds it.",
-    strip: {
-      items: [
-        "An operation is idempotent when running it twice has the same effect as running it once.",
-        "The safe answer is an update to the existing record, never a second copy.",
-      ],
-    },
-    deeper: {
-      claim: "Stripe's idempotency key design",
-      note: "is the reference implementation, and the reason your card never gets charged twice.",
-      links: [
-        {
-          label: "docs.stripe.com",
-          href: "https://docs.stripe.com/api/idempotent_requests",
-          brand: "stripe",
-        },
-      ],
-    },
-    media: { image: genS25TwoParcels, speed: -0.15 },
-  },
-
-  // v9 removed the "Show people when the data is stale" section per Scott's
-  // comment; the Run section carries the observability lesson.
-  {
-    id: "test-and-ship",
+    // Addition 3, taught. The longest teach slide in v16 at three minutes, and
+    // the one nobody else teaches. The number on the room's own screen is the
+    // case: 200 open deals carry no last_activity_date, so "quiet since 5 May"
+    // is 634 or 834, and the starter app picks one without saying which.
+    id: "not-telling",
     theme: "light",
     layout: "matrix",
-    eyebrow: "Steps 4 and 5 · Test and ship",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Test", "Ship"],
-    },
-    title: "The agent writes the tests. You decide when it ships.",
-    accent: "You decide when it ships.",
+    eyebrow: "Addition 3 · counts and messages",
+    title: "Your app is showing a total right now that skips 200 deals without saying so",
+    accent: "without saying so",
+    railLabel: "It does not tell you when it is wrong",
+    lede: "200 of the open deals in the set carry no activity date. The app counts them as active. The total on screen has no note, no warning, and no way for the reader to know.",
     matrix: {
-      rows: [
-        ["You", "Define the behavior, then verify the finished work as a user"],
-        [
-          "The agent",
-          "Writes the test, watches it fail, implements, and runs it until green",
-        ],
-      ],
-    },
-    lede:
-      "Break things in a local copy and prove the fix on a preview link. Production is the version other people depend on.",
-    strip: {
-      label: "Tests to pass before anyone depends on it",
-      items: [
-        "the workflow completes",
-        "a user without permission is refused",
-        "malformed input is rejected",
-        "a double submission stays one record",
-        "a dead data source is handled",
-        "a saved change survives a refresh",
-      ],
-    },
-    kicker:
-      "Promotion is a decision someone makes, never a side effect of saving a file.",
-    deeper: {
-      claim: "Agents now run these tests themselves:",
-      note: "promoting a preview as an explicit step, and an agent that tests apps in a real browser.",
-      links: [
-        {
-          label: "vercel.com/docs",
-          href: "https://vercel.com/docs/deployments/promote-preview-to-production",
-          brand: "vercel",
-        },
-        {
-          label: "replit.com/blog",
-          href: "https://replit.com/blog/introducing-agent-3-our-most-autonomous-agent-yet",
-          brand: "replit",
-        },
-      ],
-    },
-    media: { image: genS28GreenLights, speed: -0.15 },
-  },
-
-  {
-    id: "breach-test",
-    theme: "dark",
-    layout: "claim",
-    eyebrow: "Hands on · 2 minutes",
-    // v15: this is the Test step's hands-on — the room runs "a user without
-    // permission is refused" from the test-and-ship list against a live
-    // database. It sat untagged between a poll and the credentials slide.
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Test"],
-    },
-    title: "Ask my database for a record you have no right to",
-    accent: "no right to",
-    railLabel: "Run the security test",
-    // v11: the identity-versus-permission distinction is printed now. It was a
-    // spoken line after v9 cut its standalone slide, which left it nowhere a
-    // reader could find it.
-    kicker:
-      "Signing in says who you are. The database decides what you may read. Hiding records in the interface is neither.",
-    strip: {
-      items: [
-        "Open the link. Sign in as a guest.",
-        "Button 1. Request a record from your organization.",
-        "Button 2. Request a record from Organization B.",
-      ],
-    },
-    footnote: "Live database. The policy is in the public repo",
-    footnoteHref:
-      "https://github.com/skidubb/vibecoding-201/blob/main/supabase/migrations/20260727000000_init.sql",
-    deeper: {
-      claim: "The fifteen policies you just hit,",
-      note: "and the breach class they prevent: 170+ apps on one prototyping platform shipped without them.",
-      links: [
-        {
-          label: "authorization.sql",
-          href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
-          brand: "github",
-        },
-        {
-          label: "CVE-2025-48757",
-          href: "https://mattpalmer.io/posts/2025/05/CVE-2025-48757",
-        },
-      ],
-    },
-    media: { image: genS21WrongSide, speed: -0.15 },
-  },
-
-  {
-    // Keep this id. `CardsLayout` renders this site's own live event feed on it —
-    // the slide argues for logging and then shows its own log, which is the
-    // difference between teaching analytics and having them.
-    id: "run",
-    theme: "light",
-    layout: "cards",
-    eyebrow: "Step 6 · Run",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Run"],
-    },
-    title: "Watch it, log it, and name who fixes it",
-    accent: "name who fixes it",
-    cards: [
-      { title: "Analytics", body: "Is it being used, and is it creating value?" },
-      {
-        title: "Logs",
-        body: "A record of what happened on every run, for the day something looks wrong.",
-      },
-      {
-        title: "Alerts",
-        body: "When it fails, a named human finds out. A log entry nobody reads is not an alert.",
-      },
-    ],
-    strip: {
-      label: "Ownership, written down",
-      items: [
-        "a named owner and a backup",
-        "a way to roll back a bad change",
-        "known limitations",
-        "a review date",
-        "a way to shut it down on purpose",
-      ],
-    },
-    kicker:
-      "Planning how a tool ends costs an afternoon. Skipping it is how a working tool becomes somebody's unpaid second job.",
-    footnote:
-      "A tool nobody owns dies the first time it breaks, and the old spreadsheet comes back.",
-    deeper: {
-      claim: "This project's OWNERSHIP.md,",
-      note: "including the two items still marked undecided.",
-      links: [
-        {
-          label: "OWNERSHIP.md",
-          href: "https://github.com/skidubb/vibecoding-201/blob/main/OWNERSHIP.md",
-          brand: "github",
-        },
-      ],
-    },
-    // A slow orbit of six working stations that returns to where it started. Run
-    // is the sixth step and the one that feeds the next spec, so the closed
-    // circuit belongs here rather than on any single earlier step.
-    media: {
-      video: "/media/workflow-loop.mp4",
-      poster: "/media/workflow-loop-poster.jpg",
-      speed: -0.12,
-    },
-  },
-
-  {
-    // v15: retagged Build → Run and moved beside the Run slide. The
-    // code-calculates governance rule applies to the analytics a running tool
-    // produces, not to the build phase it was previously filed under.
-    id: "insight-rule",
-    theme: "light",
-    layout: "matrix",
-    eyebrow: "Run · win rate by contact count",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Run"],
-    },
-    title: "Code calculates, the model explains",
-    accent: "the model explains",
-    matrix: {
-      head: ["What the code does", "What the model does"],
+      head: ["What the code should do", "What the model should do"],
       rows: [
         [
-          "Counts the deals, computes the win rate, and ranks them",
-          "Explains why a number moved and recommends the next action",
+          "Count the deals and compute the total",
+          "Explain what moved and what to do next",
         ],
         [
-          "The same inputs produce the same number every run",
-          "Grounded in numbers the code already produced, never inventing them",
+          "Same inputs, same number, every run",
+          "Work from numbers the code produced, never its own",
         ],
         [
           "Can be audited and tested",
-          "Turns the numbers into language a sales manager can act on",
+          "Turn the number into language a manager can act on",
         ],
       ],
     },
-    // The trap, on real rows. Win rate climbs monotonically from one contact to
-    // seven, and the deals recorded with zero contacts sit above the whole
-    // trend, which is the shape that produces a confident wrong answer.
-    lede: "Win rate runs from 25.0% at one known contact to 90.4% at seven. The deals recorded with zero contacts win 59.2%.",
     kicker:
-      "Zero is not a measurement, it is an absence wearing a number. A finding the model invented has nothing behind it to audit.",
+      "Every row your tool cannot classify has to be counted and shown. A number that quietly excludes rows is worse than no number, because people act on it.",
+    deeper: {
+      claim: "The full picture on this data.",
+      note: "Win rate runs from 25.0% at one known contact to 90.4% at seven, and deals recorded with zero contacts win 59.2%. Zero contacts is a missing record, not a finding.",
+      links: [
+        {
+          label: "schema.md",
+          href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
+        },
+      ],
+    },
     media: { image: genS26LedgerAndNote, speed: -0.15 },
   },
-
+  {
+    // Addition 3, performed. This is the beat v15 ran as a histogram that split
+    // the room 634 against 834 and proved everyone had been sloppy. Same defect
+    // in the same data, inverted: it is now a bug in the app the attendee finds
+    // and fixes, and their total changes in front of them.
+    id: "show-gaps",
+    theme: "dark",
+    layout: "exercise",
+    eyebrow: "Hands on · 7 minutes · Addition 3",
+    title: "Make the app show the rows it skipped, and say why",
+    accent: "and say why",
+    railLabel: "Show what it could not handle",
+    cards: [
+      {
+        title: "Run a review",
+        body: "The excluded count is on screen, next to the total.",
+      },
+      { title: "Submit a broken row", body: "The kit has three, each broken differently." },
+      {
+        title: "It tells you what it rejected",
+        body: "In words. Screenshot it. That is the third of three.",
+      },
+    ],
+    prompts: [
+      {
+        id: "show-gaps-prompt",
+        label: "Paste this into your agent",
+        text: "Count open deals with no activity date separately and display that count next to the total, labeled. If a queried or uploaded row is malformed, do not skip it silently: catch it, count it, and show the user what was rejected and why, in plain language.",
+        caption:
+          "Stuck? The kit has the error-handling pattern and three malformed rows to test with.",
+      },
+    ],
+    exercise: { id: "show-gaps", seconds: 420, mode: "timer" },
+    media: { image: genS28GreenLights, speed: -0.12 },
+  },
   {
     id: "the-bar",
     theme: "dark",
     layout: "exercise",
-    eyebrow: "Hands on · 90 seconds",
-    title: "What a tool must have before people depend on it",
-    accent: "before people depend on it",
+    eyebrow: "Fifty minutes ago this was Screen A",
+    title: "You have a tool. Here is what it now passes.",
+    accent: "what it now passes.",
     railLabel: "The production standard",
     cards: [
       {
@@ -1545,12 +1043,12 @@ export const sections: Section[] = [
         href: "https://github.com/skidubb/vibecoding-201/blob/main/src/app/signin/page.tsx",
       },
       {
-        title: "Enforced authorization",
+        title: "Enforced access rules",
         body: "The database decides what each user may see. Hiding records in the interface is not security.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
       },
       {
-        title: "Server-side secrets",
+        title: "Server-side credentials",
         body: "Credentials never appear in code. The repository holds references to a vault, never values.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/.env.op",
       },
@@ -1558,6 +1056,7 @@ export const sections: Section[] = [
         title: "A tested critical workflow",
         body: "The main workflow runs under an automated test on every change.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/.github/workflows/ci.yml",
+        met: false,
       },
       {
         title: "Visible error states",
@@ -1568,11 +1067,13 @@ export const sections: Section[] = [
         title: "Logs and analytics",
         body: "Every run leaves a record someone can read back.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/src/lib/events.ts",
+        met: false,
       },
       {
         title: "Preview before production",
         body: "A person promotes each change. Saving a file is not shipping.",
         href: "https://github.com/skidubb/vibecoding-201/blob/main/ARCHITECTURE.md",
+        met: false,
       },
       {
         title: "A named owner",
@@ -1586,7 +1087,7 @@ export const sections: Section[] = [
     // the homework in words, and the room sees how it scored as a whole.
     exercise: { id: "score", seconds: 90, mode: "checklist" },
     kicker:
-      "Score a tool you have built. Check what it passes, leave the rest blank. The blanks are your homework.",
+      "Five in fifty minutes. Drop your link in chat: not for me, but so you can see how many of these exist that did not an hour ago.",
     deeper: {
       claim: "This site scored against all nine,",
       note: "with every link going to the thing itself, including the one it fails.",
@@ -1600,7 +1101,6 @@ export const sections: Section[] = [
     },
     media: { image: genS39NineItems, speed: -0.15 },
   },
-
   {
     id: "homework",
     theme: "dark",
@@ -1635,7 +1135,6 @@ export const sections: Section[] = [
     },
     media: { image: genS38AboutToSend, speed: -0.12 },
   },
-
   {
     id: "qa",
     theme: "dark",
@@ -1657,7 +1156,7 @@ export const sections: Section[] = [
         {
           id: "priya:c",
           label: "C",
-          body: "Hold. It needs real storage, controlled access, and a review before anything external-facing ships",
+          body: "Hold. Nothing is saved, anyone with the link sees everything, and nobody has checked what it skips",
         },
         {
           id: "priya:d",

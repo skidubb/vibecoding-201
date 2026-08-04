@@ -14,7 +14,7 @@ import { ready, scrollY, settle } from "./helpers";
  * what is wrong while they still have time to fix it.
  */
 
-const EXERCISE = "#assignment";
+const EXERCISE = "#spec-plan-block";
 
 /**
  * The clock, read from the registry rather than pinned here.
@@ -26,14 +26,14 @@ const EXERCISE = "#assignment";
  */
 const CLOCK = (() => {
   const src = readFileSync(join(__dirname, "..", "src", "content", "sections.ts"), "utf8");
-  const block = src.split('id: "assignment"')[1] ?? "";
+  const block = src.split('id: "spec-plan-block"')[1] ?? "";
   const seconds = Number(block.match(/seconds: (\d+)/)?.[1]);
-  if (!Number.isFinite(seconds)) throw new Error("no assignment exercise in the registry");
+  if (!Number.isFinite(seconds)) throw new Error("no spec block in the registry");
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 })();
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/#assignment");
+  await page.goto("/#spec-plan-block");
   await ready(page);
   await settle(page);
 });

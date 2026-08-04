@@ -199,7 +199,7 @@ test("every GO DEEPER url reaches the page as a link", async ({ page }) => {
 
   // Guards against the failure described above, where the test passed after
   // parsing zero links from fifteen strips.
-  expect(checked, "no GO DEEPER links were parsed at all").toBeGreaterThan(14);
+  expect(checked, "no GO DEEPER links were parsed at all").toBeGreaterThan(10);
 });
 
 test("a section with steps renders all of them and marks the current one", async ({
@@ -364,46 +364,12 @@ test("the loop slide does not also carry a step strip", () => {
   expect(offenders, "a section carries both loopStages and steps").toEqual([]);
 });
 
-test("the loop slide renders every stage with its produces row", async ({ page }) => {
-  // Counts nodes rather than matching text: the six stage names are eight
-  // characters or shorter, which the content check discards, so a layout that
-  // dropped half the stages would pass it. The produces strings are covered by
-  // the content check; the counts below catch a stage rendered with its
-  // produces row missing. (v15 removed the advances row from the layout.)
-  await page.goto("/");
-
-  const problems: string[] = [];
-  let checked = 0;
-
-  for (const block of sectionBlocks()) {
-    const id = block.match(/id: "([^"]+)"/)?.[1];
-    const loop = block.match(/loopStages: \[([\s\S]*?)\n {4}\]/)?.[1];
-    if (!id || !loop) continue;
-    checked++;
-
-    const declared = [...loop.matchAll(/name: "/g)].length;
-    const stages = await page.locator(`#${id} [data-loop-stage]`).count();
-    const produces = await page.locator(`#${id} [data-produces]`).count();
-
-    if (stages !== declared) {
-      problems.push(`${id}: ${declared} stages in the registry, ${stages} on the page`);
-    }
-    if (produces !== declared) {
-      problems.push(`${id}: ${produces} produces rows for ${declared} stages`);
-    }
-
-    // The return arrow is drawn geometry plus a hardcoded label, so neither
-    // the content check nor the counts above can see it — a refactor could
-    // drop the entire band with nothing failing anywhere.
-    const returns = await page.locator(`#${id} [data-loop-return]`).count();
-    if (returns !== 1) {
-      problems.push(`${id}: ${returns} return-arrow bands on the page, expected 1`);
-    }
-  }
-
-  expect(checked, "no section declares loopStages").toBeGreaterThan(0);
-  expect(problems, problems.join("\n")).toEqual([]);
-});
+/*
+ * Removed with v16, which has no loop slide. The six-stage pathway was a table
+ * the room read; v16 teaches the same sequence by having them walk it, so there
+ * is no `loopStages` section left to render. The sibling test above still holds
+ * the invariant if one comes back.
+ */
 
 test("a section that declares a chart renders its figure", async ({ page }) => {
   // The chart key is a bare string the content check cannot see, and the

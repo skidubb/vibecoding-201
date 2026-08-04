@@ -6,6 +6,7 @@ import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProp
 import { ExerciseWidget } from "@/components/interactive/ExerciseWidget";
 import { AnswerWidget } from "@/components/interactive/AnswerWidget";
 import { JobPrompt } from "@/components/interactive/JobPrompt";
+import { PromptBlock } from "@/components/interactive/PromptBlock";
 
 /**
  * A hands-on section: the brief, a clock, and somewhere to write.
@@ -93,6 +94,21 @@ export function ExerciseLayout({ section }: LayoutProps) {
         {/* Above the box, because it is what fills the box: the prompt for the
             job this reader picked, carrying the Done they wrote. */}
         {section.jobPrompt && <JobPrompt />}
+
+        {/* The prompt a build block asks the room to paste into their own agent.
+            Rendered here rather than on a preceding `prompt` section because two
+            hundred people pasting need it on the slide they are working from, and
+            a layout that accepted `prompts` and dropped them is the defect
+            tests/registry-integrity.spec.ts exists to catch. */}
+        {section.prompts && section.prompts.length > 0 && (
+          <div className="mt-10 grid gap-8 lg:grid-cols-2">
+            {section.prompts.map((prompt, i) => (
+              <Reveal key={prompt.id} delay={0.1 + i * 0.08}>
+                <PromptBlock label={prompt.label} text={prompt.text} caption={prompt.caption} />
+              </Reveal>
+            ))}
+          </div>
+        )}
 
         {/* Two widgets, chosen by mode. `count` and `checklist` return something
             to the person and an aggregate to the room, which is a different

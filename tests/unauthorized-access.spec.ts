@@ -75,25 +75,14 @@ test("the deck points at the kit from the homework slide", async ({ page }) => {
   ).toHaveAttribute("href", "/kit");
 });
 
-test("the review slide renders nothing that writes", async ({ page }) => {
-  // The room's shared specs get their own slide, and surfacing stays in the
-  // presenter bar. A write control here — a textarea, a Submit, a
-  // put-it-on-screen button — would put the `authors_cannot_surface` guarantee
-  // back in the UI's hands, and that guarantee is the one the class spends an
-  // hour arguing belongs in the database.
-  await page.goto("/#room-specs");
-  await ready(page);
-  await settle(page);
-
-  const section = page.locator("#room-specs");
-  await expect(section.locator("textarea")).toHaveCount(0);
-  await expect(section.locator("[data-submit]")).toHaveCount(0);
-  await expect(section.locator("[data-share]")).toHaveCount(0);
-  await expect(section.locator("[data-surface]")).toHaveCount(0);
-
-  // And it says so in words rather than rendering an empty slide.
-  await expect(section.getByText(/Nothing on screen yet/)).toBeVisible();
-});
+/*
+ * Removed with v16: the room's shared-specs slide and the two counting
+ * exercises. v16 replaced the submit-a-number beats with three build blocks
+ * whose result is the attendee's own app behaving differently, so there is no
+ * page rendering `answer_tallies` or a surfaced submission to assert against.
+ * `authors_cannot_surface` and the tally grants are still enforced in Postgres
+ * and still covered by supabase/tests/authorization.sql.
+ */
 
 test("an answering exercise keeps its clock and stores no prose", async ({ page }) => {
   // This test used to assert the opposite: that these slides had no Submit,
@@ -105,7 +94,7 @@ test("an answering exercise keeps its clock and stores no prose", async ({ page 
   // What still has to hold is that they take a number and not an essay. `body`
   // on these rows is generated from the answer, never typed, so a textarea here
   // would mean free text was reaching a column the room's histogram groups on.
-  for (const id of ["done-count", "invented-count", "the-bar"]) {
+  for (const id of ["the-bar"]) {
     await page.goto(`/#${id}`);
     await ready(page);
     await settle(page);
@@ -116,20 +105,6 @@ test("an answering exercise keeps its clock and stores no prose", async ({ page 
     await expect(section.locator("[data-submit]")).toHaveCount(1);
     await expect(section.locator("textarea")).toHaveCount(0);
   }
-});
-
-test("the room's distribution names nobody", async ({ page }) => {
-  // The argument for publishing `answer_tallies` at all is that it says how
-  // many people chose a number and not which people. The section renders that
-  // table directly, so anything identifying reaching the page would be visible
-  // here before it was visible anywhere else.
-  await page.goto("/#done-count");
-  await ready(page);
-  await settle(page);
-
-  const section = page.locator("#done-count");
-  await expect(section).not.toContainText("@");
-  await expect(section.locator("[data-author]")).toHaveCount(0);
 });
 
 test("the report does not spoil a poll that has not been revealed", async ({ page }) => {
