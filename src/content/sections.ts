@@ -1621,7 +1621,7 @@ export const sections: Section[] = [
     footnoteHref: "/yours",
     deeper: {
       claim:
-        "Checklist, prompt pack, agent instructions, ownership card, CLI reference, route map, and the deal set.",
+        "Checklist, prompt pack, agent instructions, ownership card, CLI reference, route map, and the CRM data.",
       note: "No email.",
       links: [{ label: "/kit", href: "/kit" }],
     },
