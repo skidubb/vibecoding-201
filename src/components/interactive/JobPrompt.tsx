@@ -91,6 +91,7 @@ export function JobPrompt() {
   const hint = HINT[chosen.id];
   const text = [
     `Read the CSV at ${DATA_URL}. It is 10,000 sales deals, 36 columns.`,
+    "If that URL is unreachable from your environment (a 403 from a cloud workspace), download the file in a browser, attach it here, and continue.",
     "",
     `Job: ${chosen.job}`,
     hint ? `Note: ${hint}` : null,
