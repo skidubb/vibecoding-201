@@ -81,7 +81,7 @@ export default function YoursPage() {
         <NeuBadge accent>Vibecoding 201 · your work</NeuBadge>
 
         <h1 className="mt-6 font-display text-[clamp(1.8rem,5vw,2.6rem)] font-semibold leading-tight">
-          Your job, your numbers, and what is left.
+          Your app, your numbers, and what is left.
         </h1>
 
         {signedIn === false && (
@@ -96,10 +96,10 @@ export default function YoursPage() {
           <div className="mt-10 space-y-4">
             <NeuPanel radius="rounded-[22px]" className="px-6 py-5">
               <h2 className="font-sans text-[11px] uppercase tracking-[0.16em]" style={{ color: "var(--text-faint)" }}>
-                The job you took
+                The app you worked in
               </h2>
               <p className="mt-2 text-[0.98rem] leading-relaxed">
-                {chosen ? chosen.job : "You did not pick one. The full list is in the kit."}
+                {chosen ? chosen.job : "You did not choose one. The starter app is in the kit."}
               </p>
               {chosen && (
                 <p className="mt-2 text-[0.92rem]" style={{ color: "var(--text-dim)" }}>

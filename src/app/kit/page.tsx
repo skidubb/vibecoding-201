@@ -46,10 +46,10 @@ type Entry = {
 const served = (file: string) => `/kit/${file}`;
 
 /**
- * The hour itself: the data every exercise runs against, then the two
- * fallbacks the deck names — the pre-generated plan the *Fire the plan
- * prompt* slide promises, and the no-account path for the attendee whose
- * workspace blocks everything.
+ * The hour itself: the starter app the exercises run from, the data it
+ * carries, then the two fallbacks the deck names — the pre-generated plan the
+ * *Fire the plan prompt* slide promises, and the no-account path for the
+ * attendee whose workspace blocks everything.
  *
  * The CSV entries carry their row count because choosing between them is a
  * decision about the reader's tool, not about the data: one pastes into a
@@ -57,15 +57,14 @@ const served = (file: string) => `/kit/${file}`;
  */
 const DURING_CLASS: Entry[] = [
   {
-    href: `${BUCKET}/schema.md`,
-    title: "The column guide",
-    use: "You need the 36 columns, the values they hold, and where the data lives. Start here.",
-    external: true,
+    href: served("monday-gtm-dashboard-standalone.html"),
+    title: "The starter app",
+    use: "The app the hour works in: a working GTM dashboard with the CRM data baked into the file. Download it, double-click it, and it runs — no server, no account, no key.",
   },
   {
-    href: `${BUCKET}/jobs.md`,
-    title: "Jobs you can spec against the CRM data",
-    use: "You want a job to spec against instead of inventing one.",
+    href: `${BUCKET}/schema.md`,
+    title: "The column guide",
+    use: "You need the 36 columns, the values they hold, and where the data lives.",
     external: true,
   },
   {
@@ -122,6 +121,12 @@ const REFERENCE: Entry[] = [
     href: served("cli-reference.md"),
     title: "CLI reference",
     use: "You are installing the tools, or you have forgotten what a command does. Do it the night before class, not during it.",
+  },
+  {
+    href: `${BUCKET}/jobs.md`,
+    title: "Jobs you can spec against the CRM data",
+    use: "Homework variety: more jobs to spec against the same data. The class hour works the went-quiet list from the starter app.",
+    external: true,
   },
   {
     href: served("four-ways-to-cross-the-gap.md"),
@@ -215,7 +220,7 @@ export default function KitPage() {
 
         <TierHeading
           title="During class"
-          note="The CRM data every exercise runs against — a synthetic set of 10,000 sales transactions, no account needed, and nothing you run can change it — plus the two fallbacks the deck names."
+          note="The starter app the exercises run from, the CRM data it carries — a synthetic set of 10,000 sales transactions, no account needed, and nothing you run can change it — plus the two fallbacks the deck names."
         />
         <KitList entries={DURING_CLASS} />
 

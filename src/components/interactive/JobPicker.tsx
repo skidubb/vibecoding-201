@@ -133,7 +133,7 @@ export function JobPicker({ jobs }: { jobs: Job[] }) {
           (busy
             ? "Saving"
             : chosen
-              ? "Saved. Every exercise from here runs against this job."
+              ? "Saved. Every exercise from here runs against this app."
               : backendConfigured
                 ? ""
                 : "Pick one. Saving is offline, so keep a note of it.")}

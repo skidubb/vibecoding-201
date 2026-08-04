@@ -8,6 +8,9 @@ run. All of that is learnable with a browser and whatever assistant you already 
 
 ## What you need
 
+- The starter app, from `/kit`: `monday-gtm-dashboard-standalone.html`. It opens by
+  double-click — no server, no account, no key. This is the app the class hour works
+  in, and it was built for exactly this path.
 - Any assistant you already use. The chat window is enough.
 - The 200-row sample: <https://storage.googleapis.com/vibecoding-201-data/sample-200.csv>
 - The class link, during the session, for the polls and the security test.
@@ -30,19 +33,14 @@ Paste the sample into your assistant with:
 > return: [your Done, written as steps].
 
 The sample is smaller than the full set, so your number is smaller. The check is the
-same check:
-
-| Job | Full set returns | The 200-row sample returns |
-| --- | --- | --- |
-| 1 Identify | 634, plus 200 with no activity date | **15**, plus **4** with no activity date |
-| 2 Reconcile | 866 of 2,479 closed-lost | **20** of **55** closed-lost |
-| 3 Route | 1,463 | **31** |
-| 4 Prepare (East) | 148 rows, $19,392,867 | **2** rows, **$126,666** |
-| 5 Summarize | Rep-20: 63 closed-lost | **Rep-33: 4** (Rep-20 has none in the sample) |
-| 6 Approve | 2,248 | **42** |
+same check. The hour works the went-quiet job — open deals with no recorded activity,
+listed by the rep who owns them: a precise Done returns **634** rows against the full
+set, plus **200** open deals with no activity date at all; against the 200-row sample,
+**15** rows plus **4** with no date.
 
 A different number means your Done asks a different question. That difference is the
-exercise, not a mistake.
+exercise, not a mistake. Working on your own app, the check is a second run returning
+the same number.
 
 ### 3. Fire the plan prompt — 3 minutes
 

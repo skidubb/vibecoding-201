@@ -11,6 +11,7 @@ invisible system, written down. It holds the artifacts rather than the theory.
 
 | File | Use it when |
 | --- | --- |
+| `monday-gtm-dashboard-standalone.html` | The starter app — the app the class hour works in unless you brought your own. Double-click it and it runs, with the CRM data inside it. |
 | `no-account-path.md` | Nothing installed and no accounts — the whole class hour with a browser and whatever assistant you already use. |
 | `pregenerated-plan.md` | Your plan prompt returned nothing usable and the exercise clock is running. |
 | `prompt-pack.md` | You are directing an agent and want the request to produce something you can review. |

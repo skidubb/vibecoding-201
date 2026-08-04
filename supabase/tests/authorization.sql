@@ -112,23 +112,28 @@ select case when count(*)=0 then 'PASS' else 'FAIL' end || '  but cannot put it 
 reset role;
 
 \echo ''
-\echo '11 an attendee picks their own job, and only a job that exists'
+\echo '11 an attendee picks their own app, and only a choice that exists'
+-- Since 2026-08-04 the choice is starter/own. The six legacy job values stay
+-- legal in the column constraint for rows written before the change, but
+-- set_job() no longer accepts them — a legacy value arriving today is refused
+-- exactly like a made-up one.
 set role authenticated; set test.uid = :ALICE;
-select case when public.set_job('identify')='ok' then 'PASS' else 'FAIL' end || '  a known job is accepted';
+select case when public.set_job('starter')='ok' then 'PASS' else 'FAIL' end || '  a known choice is accepted';
 select case when public.set_job('drop-table')='unknown-job' then 'PASS' else 'FAIL' end || '  an unknown one is refused by name';
-select case when job='identify' then 'PASS' else 'FAIL' end || '  and the refusal left the first choice alone'
+select case when public.set_job('identify')='unknown-job' then 'PASS' else 'FAIL' end || '  a legacy job value is refused the same way';
+select case when job='starter' then 'PASS' else 'FAIL' end || '  and the refusal left the first choice alone'
   from public.profiles where id=:ALICE;
 reset role;
 
-\echo '12 picking a job touches one row, not the room'
+\echo '12 picking an app touches one row, not the room'
 -- set_job() is SECURITY DEFINER, so it runs with rights the caller does not
 -- have. The question that matters for a definer function is not whether it
 -- works but whose row it writes: it names auth.uid() rather than taking an id.
 set role authenticated; set test.uid = :BOB;
-select public.set_job('reconcile');
+select public.set_job('own');
 reset role;
 select case when count(*)=1 then 'PASS' else 'FAIL' end || '  alice still owns her own choice'
-  from public.profiles where id=:ALICE and job='identify';
+  from public.profiles where id=:ALICE and job='starter';
 
 \echo '13 a tally counts people, and a changed answer moves rather than doubles'
 set role authenticated; set test.uid = :ALICE;
