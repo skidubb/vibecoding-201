@@ -5,6 +5,7 @@ import { NeuPanel, Reveal } from "@/components/neu/Neu";
 import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 import { ExerciseWidget } from "@/components/interactive/ExerciseWidget";
 import { AnswerWidget } from "@/components/interactive/AnswerWidget";
+import { JobPrompt } from "@/components/interactive/JobPrompt";
 
 /**
  * A hands-on section: the brief, a clock, and somewhere to write.
@@ -88,6 +89,10 @@ export function ExerciseLayout({ section }: LayoutProps) {
             ))}
           </div>
         )}
+
+        {/* Above the box, because it is what fills the box: the prompt for the
+            job this reader picked, carrying the Done they wrote. */}
+        {section.jobPrompt && <JobPrompt />}
 
         {/* Two widgets, chosen by mode. `count` and `checklist` return something
             to the person and an aggregate to the room, which is a different

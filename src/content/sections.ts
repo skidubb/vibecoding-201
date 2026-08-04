@@ -350,6 +350,14 @@ export type Section = {
   exercise?: Exercise;
   surfaced?: Surfaced;
   jobs?: Job[];
+  /**
+   * Render the prompt for whichever job this reader picked, above the exercise.
+   *
+   * A flag rather than content because the text cannot live in this file: it is
+   * composed from their `profiles.job` and the Done they wrote, neither of which
+   * exists until the class is running.
+   */
+  jobPrompt?: boolean;
 };
 
 /**
@@ -678,10 +686,9 @@ export const sections: Section[] = [
       },
     ],
     kicker: "You write the Done. That is the part being practised, and the part that is hard.",
-    // Where the room first meets the data, so the address belongs here rather
-    // than only in the strip below.
-    footnote: "The deal set: storage.googleapis.com/vibecoding-201-data",
-    footnoteHref: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
+    // No link out to the data here. Picking a job is the only thing this slide
+    // asks for, and the data reaches them in the prompt on the slide that needs
+    // it, already addressed to the job they chose.
     deeper: {
       claim: "10,000 deals, 36 columns, no account and no key.",
       note: "Query it read-only, or paste the 200-row sample into whatever assistant you have.",
@@ -981,13 +988,14 @@ export const sections: Section[] = [
       unit: "rows",
     },
     kicker: "That difference is the exercise, not a mistake.",
-    // The endpoint goes on the slide face, not only in the strip below it. This
-    // slide asks the room to run something against the deal set, and the deck's
-    // own rule is that anything the audience must act on is printed: a GO DEEPER
-    // strip is never read aloud and is for people already ahead, so an attendee
-    // following the slides had no way to reach the data the exercise needs.
-    footnote: "The deal set: storage.googleapis.com/vibecoding-201-data",
-    footnoteHref: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
+    // The data arrives in the prompt above the box, built for the job this
+    // reader picked and carrying the Done they wrote.
+    //
+    // This slide briefly linked to the bucket instead. That file offers four
+    // ways to reach the deal set and asks the reader to choose between them,
+    // which is the decision jobs.md exists to remove, at the one beat the hour
+    // turns on. A link out is not an exercise.
+    jobPrompt: true,
     deeper: {
       claim: "The six jobs, each with the number one precise Done returns.",
       links: [
