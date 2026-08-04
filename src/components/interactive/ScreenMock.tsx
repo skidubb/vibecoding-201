@@ -44,16 +44,21 @@ export function ScreenMock() {
           className="ml-2 font-sans text-[9px] uppercase tracking-[0.16em]"
           style={{ color: "var(--text-faint)" }}
         >
-          Churn risk · Q3
+          Quiet open deals
         </span>
       </div>
 
+      {/* The numbers are the deal set's own, so the screen the room votes on is
+          the screen they spend the hour building. It read "Churn risk · Q3" with
+          invented figures, which was the last place the cut running case still
+          appeared on a slide face. 634 quiet open deals, $79.0M of quiet open
+          pipeline, 50 reps: see ../../delivery/deal-set-ground-truth.md. */}
       <div aria-hidden className="px-4 py-4">
         <div className="flex gap-6">
           {[
-            ["At risk", "18"],
-            ["ARR", "$412K"],
-            ["Renewals", "31"],
+            ["Quiet", "634"],
+            ["Value", "$79.0M"],
+            ["Reps", "50"],
           ].map(([label, value]) => (
             <div key={label}>
               <p

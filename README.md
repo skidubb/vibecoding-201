@@ -3,9 +3,19 @@
 A neumorphic, parallax-scrolling presentation of *Vibecoding 201: Building Production
 GTM Tools* (Pavilion AI in GTM School) — the polls, the copyable prompts, and the tool
 the class is about, deployed for real. The site is the presentation surface, not a
-companion: all 28 sections of `deck-content-v13.md` are on the page, with every title
+companion: all 28 sections of `deck-content-v14.md` are on the page, with every title
 quoted from the deck verbatim. See `SPEC.md` for what this is
 meant to do and `ARCHITECTURE.md` for why it is built this way.
+
+**The class runs against real data.** `../data/kit/` publishes a 10,000-row deal set to a
+public bucket, and `../data/kit/jobs.md` gives six jobs with the exact row count one
+precise Done returns. Attendees pick a job at `#pick-your-job`, and it is stored on their
+profile so every later exercise runs against it. Two exercises submit a number rather than
+a private tick: what your Done returned, and what your plan invented. Those go to
+`answer_tallies` by trigger and come back as the room's distribution, which is how the
+class shows that "no recorded activity since 5 May" returns 634 or 834 depending on who is
+reading. `/yours` is where one attendee's own job, Done, numbers and unchecked items live;
+it needs a session, which is exactly what `/report` does not.
 
 **Live:** https://crossing-the-gap-site.vercel.app
 
@@ -87,6 +97,7 @@ the deck, verbatim; if you find yourself writing one, stop.
   theme: "dark",          // flips every neumorphic surface beneath it
   layout: "cards",        // hero | split | claim | cards | timeline | chart | loop
                           // | cta | prompt | poll | exercise | matrix | surfaced
+                          // | jobs
   eyebrow: "The bar",
   title: "A production standard.",
   accent: "production standard.",   // rendered in magenta

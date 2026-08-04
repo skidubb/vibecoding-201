@@ -1,11 +1,6 @@
 import type { StaticImageData } from "next/image";
 import type { BrandKey } from "@/components/layouts/Logo";
 
-import opsRoomA from "@/assets/ops-room-a.webp";
-import opsRoomB from "@/assets/ops-room-b.webp";
-import recordRefreshB from "@/assets/record-refresh-b.webp";
-import failureB from "@/assets/failure-b.webp";
-
 /**
  * Backdrops.
  *
@@ -15,7 +10,6 @@ import failureB from "@/assets/failure-b.webp";
  */
 import genS01Doorway from "@/assets/generated/s01-doorway.webp";
 import genS02TwoLaptops from "@/assets/generated/s02-two-laptops.webp";
-import genS04Monday from "@/assets/generated/s04-monday.webp";
 import genS10PagePassed from "@/assets/generated/s10-page-passed.webp";
 import genS11TwoSheets from "@/assets/generated/s11-two-sheets.webp";
 import genS12Timer from "@/assets/generated/s12-timer.webp";
@@ -34,9 +28,6 @@ import genS36ThreeLines from "@/assets/generated/s36-three-lines.webp";
 import genS38AboutToSend from "@/assets/generated/s38-about-to-send.webp";
 import genS39NineItems from "@/assets/generated/s39-nine-items.webp";
 import genS40Council from "@/assets/generated/s40-council.webp";
-import genS20bOneKey from "@/assets/generated/s20b-one-key.webp";
-import genS13HoveringPen from "@/assets/generated/s13-hovering-pen.webp";
-import genS32ManyPhones from "@/assets/generated/s32-many-phones.webp";
 import genS09Ring from "@/assets/generated/s09-ring.webp";
 import genS31ThreeDoors from "@/assets/generated/s31-three-doors.webp";
 
@@ -53,7 +44,8 @@ export type LayoutKind =
   | "poll"
   | "exercise"
   | "matrix"
-  | "surfaced";
+  | "surfaced"
+  | "jobs";
 
 export type Media = {
   image?: StaticImageData;
@@ -143,14 +135,43 @@ export type Poll = {
 export type Exercise =
   | { id: string; seconds: number; mode?: "write"; placeholder: string }
   /**
-   * A clock with nothing to submit, for the two self-scoring exercises.
+   * A clock with nothing to submit.
    *
-   * The room scores work it already has against a list on the slide, so this mode
-   * opens no database connection. A union rather than a `submit: false` flag so a
-   * timer cannot carry a placeholder and a writing box cannot omit one, which
-   * makes `npm run build` catch the mistake.
+   * Opens no database connection. Kept for a beat that genuinely has nothing to
+   * store, but it is no longer how the self-scoring exercises run: ninety
+   * seconds that wrote nothing, returned nothing and showed the room nothing was
+   * the reason this hour went flat.
    */
-  | { id: string; seconds: number; mode: "timer"; placeholder?: never };
+  | { id: string; seconds: number; mode: "timer"; placeholder?: never }
+  /**
+   * One integer, and the room's distribution of it.
+   *
+   * The row count a Done returns, or the number of things a plan invented. The
+   * answer is stored on the submission and aggregated into `answer_tallies` by
+   * trigger, so every person sees where they fall without anyone seeing whose
+   * answer is whose.
+   *
+   * This is what carries job 1. Two defensible readings of "gone quiet" return
+   * 634 and 834, and the histogram splits the room in half in front of itself.
+   */
+  | {
+      id: string;
+      seconds: number;
+      mode: "count";
+      /** What the box is asking for, printed above it. */
+      question: string;
+      /** Printed after the number, so "634" reads as 634 rows. */
+      unit: string;
+      placeholder?: never;
+    }
+  /**
+   * Checkboxes over the section's own cards, scored out of their count.
+   *
+   * The items are not repeated here: `ExerciseLayout` hands the widget
+   * `section.cards`, which are already the list being scored. Duplicating them
+   * would put the same nine strings in the registry twice and let them drift.
+   */
+  | { id: string; seconds: number; mode: "checklist"; placeholder?: never };
 
 /**
  * A comparison table.
@@ -183,6 +204,21 @@ export type Matrix = {
  * readable and allows two highlighted steps that are not adjacent.
  */
 export type Steps = { all: string[]; current: string[] };
+
+/**
+ * One of the six jobs from `../data/kit/jobs.md`.
+ *
+ * `id` matches the value `profiles.job` is constrained to, so a rename has to
+ * land in the migration as well. The Job and the User are given and the Done is
+ * deliberately absent: that is the part the room writes, and printing one here
+ * would answer the question the next forty minutes ask.
+ */
+export type Job = {
+  id: "identify" | "reconcile" | "route" | "prepare" | "summarize" | "approve";
+  verb: string;
+  job: string;
+  user: string;
+};
 
 /**
  * One stage of the development process on the loop slide.
@@ -313,13 +349,23 @@ export type Section = {
   poll?: Poll;
   exercise?: Exercise;
   surfaced?: Surfaced;
+  jobs?: Job[];
 };
 
 /**
  * The deck, in order.
  *
- * Twenty-eight sections, quoted from `deck-content-v13.md`. Three rules from
- * that file apply to every entry:
+ * Twenty-eight sections, quoted from `deck-content-v14.md`.
+ *
+ * v14 is v13 with three sections out and three in. The running character, the
+ * ninety-second self-scoring timer and the second showing of the route table
+ * were cut; the job picker and the two counts replaced them. Everything they
+ * introduce is quoted from `../data/kit/jobs.md`, `../data/kit/schema.md` and
+ * `../delivery/deal-set-ground-truth.md`, which are now sources alongside the
+ * deck for the same reason it was ever the source: the words are Scott's and
+ * the numbers are checkable.
+ *
+ * Three rules from that file apply to every entry:
  *
  *   1. The deck teaches on its own. Anything the audience must learn is printed
  *      here or in a GO DEEPER strip; narration adds color and never carries
@@ -400,7 +446,11 @@ export const sections: Section[] = [
     railLabel: "Two screens",
     title: "Which one runs Monday's retention meeting?",
     accent: "Monday's retention meeting?",
-    lede: "Vote in the chat.",
+    // Was "Vote in the chat", which the deck inherited from before this site
+    // existed. The slide it now renders on carries the poll, counts the votes
+    // and draws the result, so the printed instruction pointed the room away
+    // from the control in front of them.
+    lede: "Vote on this screen.",
     poll: {
       slug: "cold-open",
       variant: "two-up",
@@ -525,59 +575,6 @@ export const sections: Section[] = [
   },
 
   {
-    id: "jordan",
-    theme: "light",
-    layout: "timeline",
-    eyebrow: "Running case · Jordan, VP RevOps",
-    title: "The week the prototype died",
-    accent: "died",
-    railLabel: "Jordan's week",
-    timeline: [
-      {
-        day: "Sunday",
-        title: "Builds a churn-risk dashboard in Lovable",
-        image: opsRoomA,
-      },
-      {
-        day: "Monday",
-        title: "Leadership loves it, asks the team to use it every Monday",
-        image: opsRoomB,
-      },
-      {
-        day: "Tuesday",
-        title:
-          "A partner changes one number in the URL and sees another team's accounts",
-        tone: "bad",
-        repaired: "by rules enforced in the database",
-        image: genS20bOneKey,
-      },
-      {
-        day: "Wednesday",
-        title:
-          "The screen looks healthy while the sync has been dead for nine days",
-        tone: "bad",
-        repaired: "by logs and alerts a named human reads",
-        image: recordRefreshB,
-      },
-      {
-        day: "Thursday",
-        title: "Nobody can explain the risk score",
-        tone: "bad",
-        repaired: "when code calculates and the model explains",
-        image: genS13HoveringPen,
-      },
-      {
-        day: "Friday",
-        title: "The spreadsheet returns",
-        tone: "bad",
-        repaired: "by a named owner",
-        image: failureB,
-      },
-    ],
-    media: { image: genS04Monday, speed: -0.12 },
-  },
-
-  {
     id: "three-kinds",
     theme: "dark",
     layout: "matrix",
@@ -624,26 +621,78 @@ export const sections: Section[] = [
   },
 
   {
-    id: "place-yours",
-    theme: "light",
-    layout: "exercise",
-    eyebrow: "Hands on · 90 seconds",
-    title: "Pick something you have built. Prototype, tool, or system?",
-    accent: "Prototype, tool, or system?",
-    exercise: { id: "place-yours", seconds: 90, mode: "timer" },
-    // The four questions are repeated from the previous slide. This slide
-    // previously read "Then the four questions. Yes or no." while showing none of
-    // them, so the instruction referred to content the room could not see.
+    // The hinge of the hour, and what the fifteen-minute block used to spend
+    // itself on. Every later beat operates on whichever of these the attendee
+    // picks, so the choice is stored on their profile rather than held in a
+    // component: it has to survive a reload and be readable from the page they
+    // leave with.
     //
-    // Cards rather than a `strip`: `Strip` joins its items with a dot separator,
-    // which turned four full questions into one unreadable run of text.
-    cards: [
-      { title: "Is the workflow frequent or consequential enough to matter?" },
-      { title: "Is the process stable enough to encode?" },
-      { title: "Is there a named user, outcome, and owner?" },
-      { title: "What new risk appears when others depend on it?" },
+    // Every string is quoted from ../data/kit/jobs.md. The Done is missing from
+    // all six on purpose. jobs.md prints "You write the Done" because that is
+    // the part being practised, and printing one here would answer the question
+    // the next forty minutes ask.
+    id: "pick-your-job",
+    theme: "light",
+    layout: "jobs",
+    eyebrow: "Six jobs · pick one",
+    title: "Six jobs you can spec against the deal set",
+    accent: "pick one",
+    railLabel: "Pick your job",
+    lede: "Starting points, not a menu. If you brought your own job, build that one.",
+    jobs: [
+      {
+        id: "identify",
+        verb: "Identify",
+        job: "Identify open deals that have gone quiet, and list them by the rep who owns them.",
+        user: "A RevOps analyst who sends the list to sales managers on Monday morning.",
+      },
+      {
+        id: "reconcile",
+        verb: "Reconcile",
+        job: "Reconcile how a lost deal was coded internally against what the buyer said, and list the deals where the two disagree.",
+        user: "A sales enablement lead preparing a quarterly loss review.",
+      },
+      {
+        id: "route",
+        verb: "Route",
+        job: "Route open deals that have fewer than three known contacts to the rep's manager.",
+        user: "A sales manager who wants them worked before the quarter closes.",
+      },
+      {
+        id: "prepare",
+        verb: "Prepare",
+        job: "Prepare a weekly digest of quiet open pipeline for a single territory.",
+        user: "The regional director for that territory, who reads it in a Monday email.",
+      },
+      {
+        id: "summarize",
+        verb: "Summarize",
+        job: "Summarize one rep's closed-lost deals into a coaching note their manager can read in two minutes.",
+        user: "A first-line sales manager preparing for a one-to-one.",
+      },
+      {
+        id: "approve",
+        verb: "Approve",
+        job: "Approve for correction every deal whose expected close date falls before the deal was created.",
+        user: "A RevOps administrator who will run the correction after someone signs off.",
+      },
     ],
-    kicker: "Answer each one yes or no.",
+    kicker: "You write the Done. That is the part being practised, and the part that is hard.",
+    // Where the room first meets the data, so the address belongs here rather
+    // than only in the strip below.
+    footnote: "The deal set: storage.googleapis.com/vibecoding-201-data",
+    footnoteHref: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
+    deeper: {
+      claim: "10,000 deals, 36 columns, no account and no key.",
+      note: "Query it read-only, or paste the 200-row sample into whatever assistant you have.",
+      links: [
+        {
+          label: "schema.md",
+          href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
+        },
+        { label: "/kit", href: "/kit" },
+      ],
+    },
     media: { image: genS14TheQuestion, speed: -0.12 },
   },
 
@@ -709,26 +758,33 @@ export const sections: Section[] = [
     },
     title: "Write down the job, the user, and how you will check it",
     accent: "how you will check it",
+    // Job and User are quoted from job 1 in ../data/kit/jobs.md, which is the
+    // file the room has open. The Done is the one the kit deliberately withholds:
+    // jobs.md gives every job its Job and its User and says "You write the Done",
+    // because that is the part being practised.
     cards: [
       {
         title: "Job",
-        body: "Every Monday, identify the ten accounts most at risk of churn and show the evidence behind each flag.",
+        body: "Identify open deals that have gone quiet, and list them by the rep who owns them.",
       },
       {
         title: "User",
-        body: "The VP of RevOps and the assigned account owner.",
+        body: "A RevOps analyst who sends the list to sales managers on Monday morning.",
       },
       {
         title: "Done",
-        body: "A user can sign in, load current records, understand every flag, update the next action, refresh, and confirm the change persists.",
+        body: "Open deals in Prospecting, Qualification, Proposal or Negotiation whose last activity date falls before 5 May 2026, grouped by rep, with the deals carrying no activity date counted separately.",
       },
     ],
+    // The two readings that split a room. 200 open deals carry no
+    // last_activity_date at all, so "gone quiet" returns 634 or 834 depending on
+    // how one English sentence is read, and both readings are defensible.
     matrix: {
       head: ["Vague", "Testable"],
       rows: [
         [
-          "Preserves updates",
-          "Change an account's next action, refresh, confirm it persists.",
+          "Shows the stale deals",
+          "Names the stages, names the date, and says what happens to the deals with no activity date at all.",
         ],
       ],
     },
@@ -894,6 +950,57 @@ export const sections: Section[] = [
   },
 
   {
+    // The beat the hour turns on.
+    //
+    // 200 of the open deals carry no `last_activity_date` at all, so "no
+    // recorded activity since 5 May" returns 634 or 834 depending on whether a
+    // deal with no date counts as having no activity. Both readings are
+    // defensible English and both people think they are finished. The room
+    // submits its numbers and the histogram prints the disagreement, which is
+    // the argument of this class made by the room instead of by the presenter.
+    //
+    // Quoted from ../data/kit/jobs.md, which the room has open.
+    id: "done-count",
+    theme: "light",
+    layout: "exercise",
+    eyebrow: "Hands on · 2 minutes",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Spec"],
+    },
+    title:
+      "If your number is different, your Done and this one are not asking the same question",
+    accent: "not asking the same question",
+    railLabel: "What your Done returns",
+    lede: "Run your Done against the deal set and submit the number of rows it returns.",
+    exercise: {
+      id: "done-count",
+      seconds: 120,
+      mode: "count",
+      question: "Rows your Done returns",
+      unit: "rows",
+    },
+    kicker: "That difference is the exercise, not a mistake.",
+    // The endpoint goes on the slide face, not only in the strip below it. This
+    // slide asks the room to run something against the deal set, and the deck's
+    // own rule is that anything the audience must act on is printed: a GO DEEPER
+    // strip is never read aloud and is for people already ahead, so an attendee
+    // following the slides had no way to reach the data the exercise needs.
+    footnote: "The deal set: storage.googleapis.com/vibecoding-201-data",
+    footnoteHref: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
+    deeper: {
+      claim: "The six jobs, each with the number one precise Done returns.",
+      links: [
+        {
+          label: "jobs.md",
+          href: "https://storage.googleapis.com/vibecoding-201-data/jobs.md",
+        },
+      ],
+    },
+    media: { image: genS11TwoSheets, speed: -0.12 },
+  },
+
+  {
     id: "demo",
     theme: "light",
     layout: "cards",
@@ -913,6 +1020,49 @@ export const sections: Section[] = [
     ],
     kicker: "Your job: chat the assumptions it invented.",
     media: { image: genS17OverShoulder, speed: -0.12 },
+  },
+
+  {
+    // The count the assignment asked the room to keep, now collected.
+    //
+    // Job 3 is the cleanest case in the set: the deal set has no manager column,
+    // so a plan that routes anything to a rep's manager has invented the routing
+    // target. Everyone who picked that job invented at least one, which makes the
+    // distribution a fact about their plans rather than an opinion about them.
+    //
+    // The schema is the contract this counts against, quoted from
+    // ../data/kit/schema.md.
+    id: "invented-count",
+    theme: "dark",
+    layout: "exercise",
+    eyebrow: "Hands on · 2 minutes",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Plan"],
+    },
+    title: "The plan invented it, and that invention is now yours to own",
+    accent: "yours to own",
+    railLabel: "What the plan invented",
+    lede: "A table, a column, a status or a permission your plan named that the schema does not contain. Submit how many.",
+    exercise: {
+      id: "invented-count",
+      seconds: 120,
+      mode: "count",
+      question: "Things your plan invented",
+      unit: "assumptions",
+    },
+    kicker:
+      "A zero usually means you did not look hard enough. The schema is the whole contract.",
+    deeper: {
+      claim: "The 36 columns, and the values each one holds.",
+      links: [
+        {
+          label: "schema.md",
+          href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
+        },
+      ],
+    },
+    media: { image: genS18SixBinders, speed: -0.15 },
   },
 
   {
@@ -968,7 +1118,7 @@ export const sections: Section[] = [
       "https://github.com/skidubb/vibecoding-201/blob/main/supabase/migrations/20260727000000_init.sql",
     deeper: {
       claim: "The fifteen policies you just hit,",
-      note: "and the breach class they prevent: 170+ apps on the platform Jordan used shipped without them.",
+      note: "and the breach class they prevent: 170+ apps on one prototyping platform shipped without them.",
       links: [
         {
           label: "authorization.sql",
@@ -992,6 +1142,10 @@ export const sections: Section[] = [
     theme: "light",
     layout: "matrix",
     eyebrow: "Build · credentials",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
     title: "Keep your credentials out of your code",
     accent: "out of your code",
     matrix: {
@@ -1026,6 +1180,10 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "matrix",
     eyebrow: "Build · connections",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
     title: "Choose how your tool connects to its data",
     accent: "connects to its data",
     matrix: {
@@ -1092,6 +1250,10 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "claim",
     eyebrow: "Build · idempotency",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
     title: "What happens if this runs twice?",
     accent: "runs twice?",
     lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat, and the duplicate they create stays invisible until a customer finds it.",
@@ -1121,7 +1283,7 @@ export const sections: Section[] = [
     layout: "poll",
     eyebrow: "Poll 2 · single choice",
     title:
-      "A competitor publishes pricing with no API. Jordan needs a reviewed snapshot every Monday.",
+      "A competitor publishes pricing with no API. You need a reviewed snapshot every Monday.",
     accent: "every Monday.",
     lede: "Most proportionate start?",
     poll: {
@@ -1152,15 +1314,19 @@ export const sections: Section[] = [
     id: "insight-rule",
     theme: "light",
     layout: "matrix",
-    eyebrow: "Build · Jordan's churn-risk dashboard",
+    eyebrow: "Build · win rate by contact count",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
     title: "Code calculates, the model explains",
     accent: "the model explains",
     matrix: {
       head: ["What the code does", "What the model does"],
       rows: [
         [
-          "Calculates the churn score, the thresholds, and the ranking",
-          "Explains why an account was flagged and recommends the next action",
+          "Counts the deals, computes the win rate, and ranks them",
+          "Explains why a number moved and recommends the next action",
         ],
         [
           "The same inputs produce the same number every run",
@@ -1168,12 +1334,16 @@ export const sections: Section[] = [
         ],
         [
           "Can be audited and tested",
-          "Turns the numbers into language an account owner can act on",
+          "Turns the numbers into language a sales manager can act on",
         ],
       ],
     },
-    lede: "The model does not invent the churn score from raw CRM data.",
-    kicker: "A risk score the model invented has nothing behind it to audit.",
+    // The trap, on real rows. Win rate climbs monotonically from one contact to
+    // seven, and the deals recorded with zero contacts sit above the whole
+    // trend, which is the shape that produces a confident wrong answer.
+    lede: "Win rate runs from 25.0% at one known contact to 90.4% at seven. The deals recorded with zero contacts win 59.2%.",
+    kicker:
+      "Zero is not a measurement, it is an absence wearing a number. A finding the model invented has nothing behind it to audit.",
     media: { image: genS26LedgerAndNote, speed: -0.15 },
   },
 
@@ -1350,7 +1520,10 @@ export const sections: Section[] = [
         met: false,
       },
     ],
-    exercise: { id: "score", seconds: 90, mode: "timer" },
+    // Was a timer that wrote nothing. The nine checks are now checkboxes over
+    // the cards above, so the score is stored, the unchecked items come back as
+    // the homework in words, and the room sees how it scored as a whole.
+    exercise: { id: "score", seconds: 90, mode: "checklist" },
     kicker:
       "Score a tool you have built. Check what it passes, leave the rest blank. The blanks are your homework.",
     deeper: {
@@ -1365,69 +1538,6 @@ export const sections: Section[] = [
       ],
     },
     media: { image: genS39NineItems, speed: -0.15 },
-  },
-
-  {
-    // Added in v9 as the reveal that the class taught one route of four; the
-    // reveal moved to `contract` at minute five in v11, and this table stays
-    // late as the decision aid, read as confirmation of the hour.
-    id: "routes",
-    theme: "dark",
-    layout: "matrix",
-    eyebrow: "The wider map · verified August 2026",
-    title: "What each route solves, and what stays yours",
-    accent: "what stays yours",
-    railLabel: "The route map",
-    matrix: {
-      head: ["", "Solves", "Still yours"],
-      rows: [
-        [
-          "Stay in the platform you prototyped in: Replit or Lovable",
-          "The assembly problem: hosting, sign-in, a database, and scanning come built in",
-          "The authorization rules, the final verification, the owner",
-        ],
-        [
-          "Assemble the stack, as this class did: agent, GitHub, Vercel, Supabase",
-          "The control problem: every layer visible, testable, swappable",
-          "The assembly itself, and every check until you delegate it",
-        ],
-        [
-          "Build on the platform your company already runs: Microsoft, Google, or AWS",
-          "The governance problem: identity, permissions, and compliance already exist",
-          "Integration lead time, and an engineering partner",
-        ],
-        [
-          "Buy it",
-          "The ownership problem: uptime and maintenance are the vendor's payroll",
-          "The acceptance test, and an owner for the contract",
-        ],
-      ],
-    },
-    rowBrands: [
-      [
-        { brand: "replit", href: "https://replit.com" },
-        { brand: "lovable", href: "https://lovable.dev" },
-      ],
-      [
-        { brand: "github", href: "https://github.com" },
-        { brand: "vercel", href: "https://vercel.com" },
-        { brand: "supabase", href: "https://supabase.com" },
-      ],
-      [
-        { brand: "microsoft", href: "https://azure.microsoft.com" },
-        { brand: "google", href: "https://cloud.google.com" },
-        { brand: "aws", href: "https://aws.amazon.com" },
-      ],
-      [],
-    ],
-    kicker:
-      "On every route, the authorization rules, the final verification, and the named owner stay with your organization.",
-    deeper: {
-      claim: "The full route map:",
-      note: "the nine checks covered per route, and five questions that pick one. Verified August 2026.",
-      links: [{ label: "/kit", href: "/kit" }],
-    },
-    media: { image: genS32ManyPhones, speed: -0.12 },
   },
 
   {
@@ -1454,12 +1564,12 @@ export const sections: Section[] = [
     lede:
       "The skill is knowing which work you are not doing, and directing it instead.",
     kicker: "Ship something small. Make sure it gets used.",
-    footnote: "The kit is at /kit. No email required",
-    footnoteHref: "/kit",
+    footnote: "Your job, your numbers and your unchecked items are at /yours",
+    footnoteHref: "/yours",
     deeper: {
       claim:
-        "Checklist, prompt pack, agent instructions, ownership card, CLI reference, route map.",
-      note: "All six, no email.",
+        "Checklist, prompt pack, agent instructions, ownership card, CLI reference, route map, and the deal set.",
+      note: "No email.",
       links: [{ label: "/kit", href: "/kit" }],
     },
     media: { image: genS38AboutToSend, speed: -0.12 },

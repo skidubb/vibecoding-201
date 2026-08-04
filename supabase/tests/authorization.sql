@@ -110,3 +110,64 @@ update public.submissions set surfaced_at = now() where exercise_id='spec';
 select case when count(*)=0 then 'PASS' else 'FAIL' end || '  but cannot put it back up themselves'
   from public.submissions where exercise_id='spec' and surfaced_at is not null;
 reset role;
+
+\echo ''
+\echo '11 an attendee picks their own job, and only a job that exists'
+set role authenticated; set test.uid = :ALICE;
+select case when public.set_job('identify')='ok' then 'PASS' else 'FAIL' end || '  a known job is accepted';
+select case when public.set_job('drop-table')='unknown-job' then 'PASS' else 'FAIL' end || '  an unknown one is refused by name';
+select case when job='identify' then 'PASS' else 'FAIL' end || '  and the refusal left the first choice alone'
+  from public.profiles where id=:ALICE;
+reset role;
+
+\echo '12 picking a job touches one row, not the room'
+-- set_job() is SECURITY DEFINER, so it runs with rights the caller does not
+-- have. The question that matters for a definer function is not whether it
+-- works but whose row it writes: it names auth.uid() rather than taking an id.
+set role authenticated; set test.uid = :BOB;
+select public.set_job('reconcile');
+reset role;
+select case when count(*)=1 then 'PASS' else 'FAIL' end || '  alice still owns her own choice'
+  from public.profiles where id=:ALICE and job='identify';
+
+\echo '13 a tally counts people, and a changed answer moves rather than doubles'
+set role authenticated; set test.uid = :ALICE;
+insert into public.submissions (exercise_id, user_id, body, answer)
+  values ('done-count', :ALICE, '634', 634)
+  on conflict (exercise_id, user_id) do update set body=excluded.body, answer=excluded.answer;
+reset role;
+select case when people=1 then 'PASS' else 'FAIL' end || '  one person on 634'
+  from public.answer_tallies where exercise_id='done-count' and answer=634;
+
+set role authenticated; set test.uid = :ALICE;
+update public.submissions set answer=834 where exercise_id='done-count' and user_id=:ALICE;
+reset role;
+select case when coalesce((select people from public.answer_tallies
+    where exercise_id='done-count' and answer=634), 0)=0
+  then 'PASS' else 'FAIL' end || '  634 gave the person back';
+select case when people=1 then 'PASS' else 'FAIL' end || '  and 834 has them now'
+  from public.answer_tallies where exercise_id='done-count' and answer=834;
+
+\echo '14 the trigger is the only writer, and the room may still read'
+set role authenticated; set test.uid = :ALICE;
+insert into public.answer_tallies (exercise_id, answer, people) values ('done-count', 1, 9999);
+select case when count(*)=0 then 'PASS' else 'FAIL' end || '  an attendee cannot invent a tally'
+  from public.answer_tallies where exercise_id='done-count' and answer=1;
+update public.answer_tallies set people=9999 where exercise_id='done-count';
+select case when count(*)=0 then 'PASS' else 'FAIL' end || '  nor inflate a real one'
+  from public.answer_tallies where people=9999;
+reset role;
+set role anon;
+select case when count(*)>0 then 'PASS' else 'FAIL' end || '  and a signed-out reader still sees the distribution'
+  from public.answer_tallies where exercise_id='done-count';
+reset role;
+
+\echo '15 a tally is an aggregate, and carries no author'
+-- The whole argument for publishing this table is that it says how many people
+-- chose a number and not which people. If a user_id ever appears here, the
+-- histogram becomes a roster and the split between votes and poll_tallies has
+-- been quietly undone.
+select case when count(*)=0 then 'PASS' else 'FAIL' end || '  no column on answer_tallies identifies anyone'
+  from information_schema.columns
+ where table_schema='public' and table_name='answer_tallies'
+   and column_name in ('user_id','email','display_name');

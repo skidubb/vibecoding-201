@@ -4,6 +4,7 @@ import { Glow } from "@/components/core/ParallaxLayer";
 import { NeuPanel, Reveal } from "@/components/neu/Neu";
 import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
 import { ExerciseWidget } from "@/components/interactive/ExerciseWidget";
+import { AnswerWidget } from "@/components/interactive/AnswerWidget";
 
 /**
  * A hands-on section: the brief, a clock, and somewhere to write.
@@ -25,7 +26,12 @@ export function ExerciseLayout({ section }: LayoutProps) {
       <div className={CONTAINER}>
         <SectionHeader section={section} />
 
-        {section.cards && section.cards.length > 0 && (
+        {/* A checklist exercise renders these itself, as the rows you tick. Left
+            in, the nine checks printed twice on one slide: once as cards with
+            their evidence links and again as a bare list underneath, which also
+            pushed the timer and the boxes below nine tall cards on a slide whose
+            eyebrow says HANDS ON. */}
+        {section.exercise?.mode !== "checklist" && section.cards && section.cards.length > 0 && (
           <div
             className={`mt-8 grid gap-4 ${
               // Four items read as a 2x2 block. At three columns the fourth card
@@ -83,7 +89,18 @@ export function ExerciseLayout({ section }: LayoutProps) {
           </div>
         )}
 
-        {exercise && <ExerciseWidget exercise={exercise} sectionId={section.id} />}
+        {/* Two widgets, chosen by mode. `count` and `checklist` return something
+            to the person and an aggregate to the room, which is a different
+            shape from the write/submit/share sequence the spec block needs, so
+            they are a separate component rather than a branch inside that one.
+            The checklist scores the cards above rather than a list of its own,
+            which is why they are handed over here. */}
+        {exercise &&
+          (exercise.mode === "count" || exercise.mode === "checklist" ? (
+            <AnswerWidget exercise={exercise} cards={section.cards ?? []} />
+          ) : (
+            <ExerciseWidget exercise={exercise} sectionId={section.id} />
+          ))}
 
         <SectionTail section={section} />
       </div>

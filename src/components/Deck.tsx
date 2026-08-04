@@ -19,6 +19,7 @@ import { PollLayout } from "@/components/layouts/PollLayout";
 import { ExerciseLayout } from "@/components/layouts/ExerciseLayout";
 import { MatrixLayout } from "@/components/layouts/MatrixLayout";
 import { SurfacedLayout } from "@/components/layouts/SurfacedLayout";
+import { JobsLayout } from "@/components/layouts/JobsLayout";
 
 type LayoutComponent = (props: { section: Section; index: number }) => React.ReactNode;
 
@@ -37,6 +38,7 @@ const LAYOUTS: Record<LayoutKind, LayoutComponent> = {
   exercise: ExerciseLayout,
   matrix: MatrixLayout,
   surfaced: SurfacedLayout,
+  jobs: JobsLayout,
 };
 
 /**
