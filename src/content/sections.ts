@@ -15,9 +15,9 @@ import genS11TwoSheets from "@/assets/generated/s11-two-sheets.webp";
 import genS12Timer from "@/assets/generated/s12-timer.webp";
 import genS14TheQuestion from "@/assets/generated/s14-the-question.webp";
 import genS17OverShoulder from "@/assets/generated/s17-over-shoulder.webp";
-// Hand-made asset (a photo of Scott presenting), not pipeline output, so it
+// Hand-made asset (a photo of Scott keynoting), not pipeline output, so it
 // lives at the assets root where `npm run assets` never writes.
-import whyMePresenting from "@/assets/why-me-presenting.webp";
+import whyMeKeynote from "@/assets/why-me-keynote.webp";
 import genS18SixBinders from "@/assets/generated/s18-six-binders.webp";
 import genS19HandsUp from "@/assets/generated/s19-hands-up.webp";
 import genS21WrongSide from "@/assets/generated/s21-wrong-side.webp";
@@ -443,19 +443,22 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "claim",
     eyebrow: "Your instructor",
-    title: "My authority to recommend these tools is that I run them.",
-    accent: "I run them.",
+    title: "I've had your job. Now I build the tools I wished I'd had.",
+    accent: "wished I'd had.",
     railLabel: "Why me",
     strip: {
       items: [
-        "Started in TV buys for Coca-Cola; then a $250MM product portfolio at Boingo and 10x acquisition growth at TruConnect.",
-        "Founder of Cardinal Element, an advisory and build practice in Studio City where engagements end in production software.",
-        "Running today: AI strategy for airports across North America, and an AI playbook live in 15 auto-repair shops across Texas and Wisconsin. Pavilion member since 2025.",
+        "Twenty years in GTM: Boingo, TruConnect",
+        "Founder, Cardinal Element",
+        "AI running today in airports and auto-repair shops",
+        "Studio City, CA",
+        "Golf: the original business networking game",
+        "Pavilion classmate since 2025",
       ],
     },
     kicker:
       "This deck is built with the method it teaches, and its repo is public.",
-    media: { image: whyMePresenting, speed: -0.12 },
+    media: { image: whyMeKeynote, speed: -0.12 },
   },
 
   {
