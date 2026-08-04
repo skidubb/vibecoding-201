@@ -131,12 +131,33 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     // the deck instead of re-activating a rail tick.
     (document.activeElement as HTMLElement | null)?.blur?.();
     if (lenisRef.current) {
+      // Long jumps land instantly; neighbouring stops keep the ease.
+      //
+      // An eased scroll travels through every section between here and there,
+      // and each one it crosses fires its reveals, its parallax transforms and
+      // its lazy media. Over one slide that is nothing. Over nineteen it is
+      // every scroll-linked animation in the deck running inside 1.1s, which
+      // saturates the main thread: the rail jumps measured 10 to 18 seconds of
+      // black screen before the target painted, with no chrome and no counter,
+      // while the wheel — which crosses the same distance gradually — stayed
+      // smooth. `immediate` sets scrollTop without animating, so the sections
+      // in between are never in view and never do the work.
+      //
+      // The threshold is a viewport and a half: far enough that adjacent stops,
+      // including tall sections walked a beat at a time, keep the motion a
+      // presenter navigates by.
+      const far = Math.abs(target - window.scrollY) > window.innerHeight * 1.5;
       // `force` so a jump issued while the previous one is still easing is
       // honoured rather than swallowed by its own lock. Without it a presenter
       // pressing twice in quick succession loses the first move but keeps the
       // stop it consumed, which skips a beat — the deck arrives a slide ahead
       // of where they are in the talk.
-      lenisRef.current.scrollTo(target, { duration: 1.1, lock: true, force: true });
+      lenisRef.current.scrollTo(target, {
+        duration: 1.1,
+        lock: true,
+        force: true,
+        immediate: far,
+      });
     } else {
       window.scrollTo({ top: target });
     }

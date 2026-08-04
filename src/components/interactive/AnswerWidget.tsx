@@ -61,10 +61,16 @@ export function AnswerWidget({
   const refresh = useCallback(async () => {
     const client = supabase();
     if (!client) return;
+    // `people > 0` because the trigger decrements rather than deletes: an answer
+    // somebody moved away from stays in the table at zero, and rendering it drew
+    // a labelled row with an empty bar. One person changing 634 to 834 left a
+    // phantom "634 · 0"; two hundred people changing their minds would bury the
+    // real distribution in them.
     const { data } = await client
       .from("answer_tallies")
       .select("answer, people")
       .eq("exercise_id", exercise.id)
+      .gt("people", 0)
       .order("answer", { ascending: true });
     if (mounted.current) setTallies((data as Tally[] | null) ?? []);
   }, [exercise.id]);
@@ -247,32 +253,64 @@ export function AnswerWidget({
           </div>
         </div>
       ) : (
+        /* These rows are the only rendering of the list now, so they carry the
+           body and the evidence link the cards used to. The link sits beside the
+           toggle rather than inside it: an anchor nested in a button is invalid,
+           and a click meant for the evidence would tick the box instead. */
         <ul className="mt-7 space-y-2">
           {cards.map((card, i) => {
             const on = checked.includes(i);
             return (
               <li key={card.title}>
-                <button
-                  type="button"
-                  data-deck-keys="off"
-                  aria-pressed={on}
-                  onClick={() =>
-                    setChecked((c) => (on ? c.filter((n) => n !== i) : [...c, i]))
-                  }
-                  className={`flex w-full items-center gap-3 rounded-[16px] px-4 py-3 text-left text-[0.95rem] ${
+                <div
+                  className={`flex items-start gap-3 rounded-[16px] px-4 py-3 ${
                     on ? "neu-inset" : "neu-raised"
                   }`}
-                  style={{ color: on ? "var(--text)" : "var(--text-dim)" }}
                 >
-                  <span
-                    aria-hidden
-                    className="font-sans text-[13px]"
-                    style={{ color: on ? "var(--accent)" : "var(--text-faint)" }}
+                  <button
+                    type="button"
+                    data-deck-keys="off"
+                    aria-pressed={on}
+                    onClick={() =>
+                      setChecked((c) => (on ? c.filter((n) => n !== i) : [...c, i]))
+                    }
+                    className="flex flex-1 items-start gap-3 text-left"
+                    style={{ color: on ? "var(--text)" : "var(--text-dim)" }}
                   >
-                    {on ? "✓" : "○"}
-                  </span>
-                  {card.title}
-                </button>
+                    <span
+                      aria-hidden
+                      className="mt-[2px] font-sans text-[13px]"
+                      style={{ color: on ? "var(--accent)" : "var(--text-faint)" }}
+                    >
+                      {on ? "✓" : "○"}
+                    </span>
+                    <span>
+                      <span className="text-[0.95rem] font-semibold">{card.title}</span>
+                      {card.body && (
+                        <span
+                          className="mt-1 block text-[0.88rem] leading-relaxed"
+                          style={{ color: "var(--text-dim)" }}
+                        >
+                          {card.body}
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                  {card.href && (
+                    <a
+                      href={card.href}
+                      target={card.href.startsWith("/") ? undefined : "_blank"}
+                      rel={card.href.startsWith("/") ? undefined : "noreferrer noopener"}
+                      data-deck-keys="off"
+                      className="shrink-0 pt-[2px] font-sans text-[11px] uppercase tracking-[0.16em] underline-offset-4 hover:underline"
+                      style={{
+                        color: card.met === false ? "var(--text-faint)" : "var(--accent)",
+                      }}
+                    >
+                      {card.met === false ? "Not yet" : "Evidence"} <span aria-hidden>↗</span>
+                    </a>
+                  )}
+                </div>
               </li>
             );
           })}

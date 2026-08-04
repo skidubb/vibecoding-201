@@ -312,11 +312,20 @@ export function PollWidget({
         className="mt-4 text-[0.9rem]"
         style={{ color: status === "error" ? "var(--accent)" : "var(--text-dim)" }}
       >
+        {/* A closed or revealed poll disables its options, so a click never
+            reaches vote() and never produces the sentence that would explain
+            itself. Walking the deck signed out, this line read "Revealed." over
+            two options at 0% and one silent click: nothing said voting had
+            closed, and nothing said the zero was real. The revealed case now
+            says which it is, and a revealed poll with no votes says so plainly
+            rather than presenting an empty result as the room's answer. */}
         {status === "offline"
           ? "Voting is offline. Results are published after the live session."
           : (message ??
             (pollState === "revealed"
-              ? "Revealed."
+              ? total === 0
+                ? "Voting has closed, and nothing was recorded in this one."
+                : `Voting has closed. This is what the room answered, from ${total} ${total === 1 ? "vote" : "votes"}.`
               : presenterPreview
                 ? `Presenter preview: ${total} ${total === 1 ? "vote" : "votes"} so far. The room sees these bars only after the reveal.`
                 : showResults

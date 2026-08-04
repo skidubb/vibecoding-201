@@ -26,7 +26,12 @@ export function ExerciseLayout({ section }: LayoutProps) {
       <div className={CONTAINER}>
         <SectionHeader section={section} />
 
-        {section.cards && section.cards.length > 0 && (
+        {/* A checklist exercise renders these itself, as the rows you tick. Left
+            in, the nine checks printed twice on one slide: once as cards with
+            their evidence links and again as a bare list underneath, which also
+            pushed the timer and the boxes below nine tall cards on a slide whose
+            eyebrow says HANDS ON. */}
+        {section.exercise?.mode !== "checklist" && section.cards && section.cards.length > 0 && (
           <div
             className={`mt-8 grid gap-4 ${
               // Four items read as a 2x2 block. At three columns the fourth card

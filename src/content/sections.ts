@@ -446,7 +446,11 @@ export const sections: Section[] = [
     railLabel: "Two screens",
     title: "Which one runs Monday's retention meeting?",
     accent: "Monday's retention meeting?",
-    lede: "Vote in the chat.",
+    // Was "Vote in the chat", which the deck inherited from before this site
+    // existed. The slide it now renders on carries the poll, counts the votes
+    // and draws the result, so the printed instruction pointed the room away
+    // from the control in front of them.
+    lede: "Vote on this screen.",
     poll: {
       slug: "cold-open",
       variant: "two-up",
@@ -674,6 +678,10 @@ export const sections: Section[] = [
       },
     ],
     kicker: "You write the Done. That is the part being practised, and the part that is hard.",
+    // Where the room first meets the data, so the address belongs here rather
+    // than only in the strip below.
+    footnote: "The deal set: storage.googleapis.com/vibecoding-201-data",
+    footnoteHref: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
     deeper: {
       claim: "10,000 deals, 36 columns, no account and no key.",
       note: "Query it read-only, or paste the 200-row sample into whatever assistant you have.",
@@ -973,6 +981,13 @@ export const sections: Section[] = [
       unit: "rows",
     },
     kicker: "That difference is the exercise, not a mistake.",
+    // The endpoint goes on the slide face, not only in the strip below it. This
+    // slide asks the room to run something against the deal set, and the deck's
+    // own rule is that anything the audience must act on is printed: a GO DEEPER
+    // strip is never read aloud and is for people already ahead, so an attendee
+    // following the slides had no way to reach the data the exercise needs.
+    footnote: "The deal set: storage.googleapis.com/vibecoding-201-data",
+    footnoteHref: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
     deeper: {
       claim: "The six jobs, each with the number one precise Done returns.",
       links: [
