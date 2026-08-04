@@ -443,8 +443,7 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "claim",
     eyebrow: "Your instructor",
-    title: "I've had your job. Now I build the tools I wished I'd had.",
-    accent: "wished I'd had.",
+    title: "About me",
     railLabel: "Why me",
     strip: {
       items: [
@@ -452,7 +451,6 @@ export const sections: Section[] = [
         "Founder, Cardinal Element",
         "AI running today in airports and auto-repair shops",
         "Studio City, CA",
-        "Golf: the original business networking game",
         "Pavilion classmate since 2025",
       ],
     },
