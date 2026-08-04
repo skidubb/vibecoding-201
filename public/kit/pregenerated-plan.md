@@ -2,9 +2,9 @@
 
 The fallback the *Fire the plan prompt* exercise names. If your plan prompt returned
 nothing usable inside the three minutes, take this one and run the counting exercise
-against it. It came from the class's own agent, given job 1 (Identify) and the plan
-prompt pasted word for word. If you picked a different job, count against this one
-anyway — the shape is what transfers.
+against it. It came from the class's own agent, given the class spec — the went-quiet
+list — and the plan prompt pasted word for word. Working on your own app, count
+against this one anyway — the shape is what transfers.
 
 ## The spec it answers
 

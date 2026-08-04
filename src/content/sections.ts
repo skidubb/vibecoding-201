@@ -214,15 +214,16 @@ export type Matrix = {
 export type Steps = { all: string[]; current: string[] };
 
 /**
- * One of the six jobs from `../data/kit/jobs.md`.
+ * One of the two apps an attendee works behind: the starter app from the kit,
+ * or the one they brought. Scott's 2026-08-04 ruling replaced the six-job menu
+ * with this choice.
  *
- * `id` matches the value `profiles.job` is constrained to, so a rename has to
- * land in the migration as well. The Job and the User are given and the Done is
- * deliberately absent: that is the part the room writes, and printing one here
- * would answer the question the next forty minutes ask.
+ * `id` matches the value `set_job()` accepts, so a rename has to land in the
+ * migration as well. The card reuses the job/user fields the picker already
+ * renders: `job` is the headline line, `user` the supporting one.
  */
 export type Job = {
-  id: "identify" | "reconcile" | "route" | "prepare" | "summarize" | "approve";
+  id: "starter" | "own";
   verb: string;
   job: string;
   user: string;
@@ -588,17 +589,20 @@ export const sections: Section[] = [
     layout: "matrix",
     // Scott's 2026-08-04 QA: never count the items ("three ingredients"), the
     // data is called CRM data rather than "the deal set", no row highlight,
-    // and the table renders without its inset box (`plain`).
+    // and the table renders without its inset box (`plain`). His later ruling
+    // the same day: the starter app is the thing you build with, and the CRM
+    // data rides inside it.
     eyebrow: "Setting the table for today",
-    title: "What you'll work with: CRM data, your coding agent, and this deck",
-    accent: "CRM data, your coding agent, and this deck",
+    title:
+      "What you'll work with: the starter app, your coding agent, and this deck",
+    accent: "the starter app, your coding agent, and this deck",
     railLabel: "Setting the table",
     matrix: {
       plain: true,
       rows: [
         [
-          "CRM data",
-          "10,000 deals, 36 columns, from Andy's Class 0 data set. An uncleaned working export whose defects are real CRM defects. Linked below — no account needed",
+          "The starter app",
+          "A working GTM dashboard from the kit, with the CRM data inside it: 10,000 deals, 36 columns, from Andy's Class 0 data set, every number checked against an independent calculation. Download it below, double-click the file, and it runs — no server, no account, no key",
         ],
         [
           "Your coding agent",
@@ -625,8 +629,8 @@ export const sections: Section[] = [
     // Scott's 2026-08-04 QA: no "schema", "bucket" or "read-only" without
     // saying what they mean. The links say what a reader gets when they click.
     deeper: {
-      claim: "The CRM data, explained.",
-      note: "A guide to what every column means, and a 200-row sample you can paste straight into any AI assistant. No account needed for either.",
+      claim: "The starter app and its CRM data, explained.",
+      note: "The app download, a guide to what every column means, and a 200-row sample you can paste straight into any AI assistant. No account needed for any of them.",
       links: [
         {
           label: "The column guide",
@@ -639,75 +643,39 @@ export const sections: Section[] = [
   },
 
   {
-    // The hinge of the hour, and what the fifteen-minute block used to spend
-    // itself on. Every later beat operates on whichever of these the attendee
-    // picks, so the choice is stored on their profile rather than held in a
-    // component: it has to survive a reload and be readable from the page they
-    // leave with.
+    // The hinge of the hour. Every later beat operates on whichever of these
+    // the attendee picks, so the choice is stored on their profile rather than
+    // held in a component: it has to survive a reload and be readable from the
+    // page they leave with.
     //
-    // The six jobs are quoted from ../data/kit/jobs.md. The Done is missing
-    // from all six on purpose: printing one here would answer the question the
-    // next forty minutes ask. The framing lines were rewritten in v15 — the
-    // v14 headline said "spec against the deal set" before either term was
-    // taught, "Starting points, not a menu" winked at a literal menu, and "You
-    // write the Done" used a word the Spec slide had not yet defined. The
-    // kicker now defines the idea in place instead of naming it.
+    // Scott's 2026-08-04 ruling replaced the six-job menu: people are either
+    // working with the starter app or with their own, and the exercises
+    // downstream run from the starter app. The id stays `pick-your-job`
+    // because tests and analytics anchor on it.
     id: "pick-your-job",
     theme: "light",
     layout: "jobs",
-    // Scott's 2026-08-04 QA wording: no counted enumeration ("six jobs") and
-    // no "pick one" — the frame is choosing an adventure, and bringing your
-    // own prototype or tool is a first-class option.
     eyebrow: "Choose your adventure",
     title:
-      "Select a project you want to build with. The exercises downstream flow from it.",
+      "Work with the starter app, or the app you brought. The exercises downstream flow from it.",
     accent: "The exercises downstream flow from it.",
     railLabel: "Choose your adventure",
-    lede: "If you have your own prototype or your own tool, use that one and build with it.",
     jobs: [
       {
-        id: "identify",
-        verb: "Identify",
-        job: "Identify open deals that have gone quiet, and list them by the rep who owns them.",
-        user: "A RevOps analyst who sends the list to sales managers on Monday morning.",
+        id: "starter",
+        verb: "The starter app",
+        job: "A working GTM dashboard from the kit, with the CRM data already inside it. Double-click the file and it runs — no server, no account, no key.",
+        user: "It is a working screen with nothing underneath: no sign-in, no access rules, no logs, no owner. Everything this hour builds is the system it is missing.",
       },
       {
-        id: "reconcile",
-        verb: "Reconcile",
-        job: "Reconcile how a lost deal was coded internally against what the buyer said, and list the deals where the two disagree.",
-        user: "A sales enablement lead preparing a quarterly loss review.",
-      },
-      {
-        id: "route",
-        verb: "Route",
-        job: "Route open deals that have fewer than three known contacts to the rep's manager.",
-        user: "A sales manager who wants them worked before the quarter closes.",
-      },
-      {
-        id: "prepare",
-        verb: "Prepare",
-        job: "Prepare a weekly digest of quiet open pipeline for a single territory.",
-        user: "The regional director for that territory, who reads it in a Monday email.",
-      },
-      {
-        id: "summarize",
-        verb: "Summarize",
-        job: "Summarize one rep's closed-lost deals into a coaching note their manager can read in two minutes.",
-        user: "A first-line sales manager preparing for a one-to-one.",
-      },
-      {
-        id: "approve",
-        verb: "Approve",
-        job: "Approve for correction every deal whose expected close date falls before the deal was created.",
-        user: "A RevOps administrator who will run the correction after someone signs off.",
+        id: "own",
+        verb: "Your own app",
+        job: "The app you already built. Every exercise from here runs against it instead of the starter app.",
+        user: "Sign in and share what you are learning: submit what each exercise returns, so your numbers land in the room's distribution next to everyone else's.",
       },
     ],
-    kicker:
-      "Each job gives you the work and the user. What counts as finished, you write yourself.",
-    // No link out to the data here. Picking a job is the only thing this slide
-    // asks for; the deal-set links live on the ingredients slide before this
-    // one, and the data reaches them in the prompt on the slide that needs it,
-    // already addressed to the job they chose.
+    footnote: "The starter app is in the kit — download it, double-click, it runs",
+    footnoteHref: "/kit",
     media: { image: genS14TheQuestion, speed: -0.12 },
   },
 
@@ -761,10 +729,11 @@ export const sections: Section[] = [
     },
     title: "Write down the job, the user, and how you will check it",
     accent: "how you will check it",
-    // Job and User are quoted from job 1 in ../data/kit/jobs.md, which is the
-    // file the room has open. The Done is the one the kit deliberately withholds:
-    // jobs.md gives every job its Job and its User and says "You write the Done",
-    // because that is the part being practised.
+    // The spec the hour works, grounded in the starter app: its went-quiet
+    // panel already draws this list without stating a definition, and writing
+    // the definition is the exercise. The Done below is the worked example the
+    // deck teaches from; the room writes its own in the next block.
+    lede: "The starter app already draws this list — the panel named Went quiet. The definition the panel never states is what the Done supplies.",
     cards: [
       {
         title: "Job",
@@ -828,8 +797,8 @@ export const sections: Section[] = [
     railLabel: "Write your spec",
     cards: [
       {
-        title: "Job and User come from the job you picked",
-        body: "Copy them as given, or bring your own.",
+        title: "Job and User are given",
+        body: "Job: identify open deals that have gone quiet, and list them by the rep who owns them. User: a RevOps analyst who sends the list to sales managers on Monday morning. On your own app: the job it already does, for the person who depends on it.",
       },
       {
         title: "The Done is yours",
@@ -858,8 +827,8 @@ export const sections: Section[] = [
     // defensible English and both people think they are finished. The room
     // submits its numbers and the histogram prints the disagreement, which is
     // the argument of this class made by the room instead of by the presenter.
-    //
-    // Quoted from ../data/kit/jobs.md, which the room has open.
+    // Everyone runs the same went-quiet job now, so the distribution is pure
+    // disagreement about one English sentence, plus the own-app numbers.
     id: "done-count",
     theme: "light",
     layout: "exercise",
@@ -875,7 +844,7 @@ export const sections: Section[] = [
     title: "Run the prompt below and submit the rows it returns",
     accent: "the rows it returns",
     railLabel: "Your row count",
-    lede: "The prompt is built for the project you picked and carries the definition of done you wrote.",
+    lede: "The prompt is built for your app — the starter app's went-quiet list, or the app you brought — and carries the definition of done you wrote.",
     exercise: {
       id: "done-count",
       seconds: 120,
@@ -885,22 +854,14 @@ export const sections: Section[] = [
     },
     kicker:
       "Different numbers mean two definitions of done asking different questions. That difference is the exercise, not a mistake.",
-    // The data arrives in the prompt above the box, built for the job this
-    // reader picked and carrying the Done they wrote.
-    //
-    // This slide briefly linked to the bucket instead. That file offers four
-    // ways to reach the deal set and asks the reader to choose between them,
-    // which is the decision jobs.md exists to remove, at the one beat the hour
-    // turns on. A link out is not an exercise.
+    // The data arrives in the prompt above the box, built for the app this
+    // reader chose and carrying the Done they wrote. A link out is not an
+    // exercise, so nobody leaves the deck here.
     jobPrompt: true,
     deeper: {
-      claim: "Every project, with the row count one precise definition of done returns.",
-      links: [
-        {
-          label: "jobs.md",
-          href: "https://storage.googleapis.com/vibecoding-201-data/jobs.md",
-        },
-      ],
+      claim: "Every number in the starter app, checked against an independent calculation,",
+      note: "including the row count one precise definition of done returns.",
+      links: [{ label: "/kit", href: "/kit" }],
     },
     media: { image: genS11TwoSheets, speed: -0.12 },
   },
@@ -992,7 +953,8 @@ export const sections: Section[] = [
         id: "plan-approval-fire",
         label: "The plan prompt",
         text: "Inspect the current project. Propose the smallest coherent implementation for this specification. Identify the data model, permissions, environment variables, failure states, tests, and files involved. Do not change anything until I approve the plan.",
-        caption: "Use your 101 Claude Project.",
+        caption:
+          "Open your agent in the starter app folder from the kit — the project it inspects is one screen, the CRM data inside it, and a verification harness. Working on your own app, fire it in your own repository.",
       },
     ],
     kicker:
@@ -1012,7 +974,7 @@ export const sections: Section[] = [
     railLabel: "Live demo",
     lede: "What this demo proves: a reviewed plan catches wrong assumptions before they become code.",
     cards: [
-      { title: "The project is already in GitHub" },
+      { title: "The project is the starter app, already in GitHub" },
       { title: "The agent reads the project before acting" },
       { title: "It proposes a plan. I approve it before any file changes" },
       {
@@ -1027,10 +989,10 @@ export const sections: Section[] = [
   {
     // The count the assignment asked the room to keep, now collected.
     //
-    // Job 3 is the cleanest case in the set: the deal set has no manager column,
-    // so a plan that routes anything to a rep's manager has invented the routing
-    // target. Everyone who picked that job invented at least one, which makes the
-    // distribution a fact about their plans rather than an opinion about them.
+    // The User line does the work: the spec sends the went-quiet list to sales
+    // managers and the CRM data has no manager column, so nearly every plan
+    // invents the routing target. That makes the distribution a fact about the
+    // plans rather than an opinion about the people.
     //
     // The schema is the contract this counts against, quoted from
     // ../data/kit/schema.md.
@@ -1057,6 +1019,8 @@ export const sections: Section[] = [
     },
     kicker:
       "A zero usually means you did not look hard enough. The schema is the whole contract.",
+    footnote:
+      "Building behind your own app? Your contract is your own schema: ask the agent to print every table, column, and permission the app actually has, then count against that",
     deeper: {
       claim: "The 36 columns, and the values each one holds.",
       links: [
@@ -1576,7 +1540,7 @@ export const sections: Section[] = [
     // the homework in words, and the room sees how it scored as a whole.
     exercise: { id: "score", seconds: 90, mode: "checklist" },
     kicker:
-      "Score a tool you have built. Check what it passes, leave the rest blank. The blanks are your homework.",
+      "Score a tool you have built, or score the starter app you worked in this hour. Check what it passes, leave the rest blank. The blanks are your homework.",
     deeper: {
       claim: "This site scored against all nine,",
       note: "with every link going to the thing itself, including the one it fails.",
@@ -1626,7 +1590,7 @@ export const sections: Section[] = [
     footnoteHref: "/yours",
     deeper: {
       claim:
-        "Checklist, prompt pack, agent instructions, ownership card, CLI reference, route map, and the CRM data.",
+        "The starter app, checklist, prompt pack, agent instructions, ownership card, CLI reference, route map, and the CRM data.",
       note: "No email.",
       links: [{ label: "/kit", href: "/kit" }],
     },
