@@ -992,6 +992,10 @@ export const sections: Section[] = [
     theme: "light",
     layout: "matrix",
     eyebrow: "Build · credentials",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
     title: "Keep your credentials out of your code",
     accent: "out of your code",
     matrix: {
@@ -1026,6 +1030,10 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "matrix",
     eyebrow: "Build · connections",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
     title: "Choose how your tool connects to its data",
     accent: "connects to its data",
     matrix: {
@@ -1092,6 +1100,10 @@ export const sections: Section[] = [
     theme: "dark",
     layout: "claim",
     eyebrow: "Build · idempotency",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
     title: "What happens if this runs twice?",
     accent: "runs twice?",
     lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat, and the duplicate they create stays invisible until a customer finds it.",
@@ -1153,6 +1165,10 @@ export const sections: Section[] = [
     theme: "light",
     layout: "matrix",
     eyebrow: "Build · Jordan's churn-risk dashboard",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
     title: "Code calculates, the model explains",
     accent: "the model explains",
     matrix: {

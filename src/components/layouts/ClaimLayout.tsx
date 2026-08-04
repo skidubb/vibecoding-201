@@ -3,12 +3,19 @@
 import { motion } from "motion/react";
 import { Glow } from "@/components/core/ParallaxLayer";
 import { AccentTitle, NeuBadge } from "@/components/neu/Neu";
-import { CONTAINER, SectionBackdrop, Strip, Deeper, type LayoutProps } from "./shared";
+import { CONTAINER, SectionBackdrop, StepStrip, Strip, Deeper, type LayoutProps } from "./shared";
 
 /**
  * A pure typographic beat. No panel, no image — the page goes quiet so one
  * sentence can carry the whole argument. Words rise in sequence rather than
  * the block fading in, which reads as someone saying it out loud.
+ *
+ * This layout builds its own eyebrow and headline instead of calling
+ * `SectionHeader`, because the title animates one word at a time. That is why
+ * `StepStrip` is repeated here: a registry field rendered only inside
+ * `SectionHeader` is silently dropped by this layout, which is what happened to
+ * `steps` until `idempotency` declared six and rendered none. Any field added to
+ * `SectionHeader` has to be added here too.
  */
 export function ClaimLayout({ section }: LayoutProps) {
   const words = section.title.split(" ");
@@ -30,6 +37,8 @@ export function ClaimLayout({ section }: LayoutProps) {
             <NeuBadge>{section.eyebrow}</NeuBadge>
           </motion.div>
         )}
+
+        {section.steps && <StepStrip steps={section.steps} centered />}
 
         <h2
           className="mt-8 font-display text-[clamp(1.9rem,4.1vw,3.4rem)] font-semibold leading-[1.08] tracking-[-0.03em]"
