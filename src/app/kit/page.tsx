@@ -23,7 +23,7 @@ import { NeuBadge, NeuPanel } from "@/components/neu/Neu";
 export const metadata: Metadata = {
   title: "Participant kit · Vibecoding 201",
   description:
-    "The seven artifacts from Building Production GTM Tools: readiness checklist, prompt pack, agent instructions, ownership card, CLI reference, route map. Plus the deal set the class builds against.",
+    "The artifacts from Building Production GTM Tools: readiness checklist, prompt pack, agent instructions, ownership card, CLI reference, route map. Plus the CRM data the class builds against.",
 };
 
 const FILES = [
@@ -83,7 +83,7 @@ const DEAL_SET = [
   },
   {
     file: "jobs.md",
-    title: "Six jobs you can spec against the deal set",
+    title: "Jobs you can spec against the CRM data",
     use: "You want a job to spec against instead of inventing one.",
   },
   {
@@ -150,7 +150,7 @@ export default function KitPage() {
         </ul>
 
         <h2 className="mt-16 font-display text-[clamp(1.4rem,4vw,1.9rem)] font-semibold leading-tight">
-          The deal set
+          The CRM data
         </h2>
         <p className="mt-4 leading-relaxed" style={{ color: "var(--text-dim)" }}>
           A synthetic set of 10,000 sales transactions to build against during

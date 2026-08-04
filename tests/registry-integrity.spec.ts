@@ -347,7 +347,13 @@ test("a matrix that declares a highlighted row renders it, and only it", async (
     }
   }
 
-  expect(checked, "no matrix declares a highlight").toBeGreaterThan(0);
+  // Scott's 2026-08-04 QA removed the registry's last highlighted row (the
+  // ingredients slide), so requiring `checked > 0` would fail on a dormant
+  // feature. The guard's real job is catching this test's own parse regex
+  // rotting, so compare against what the source declares instead: every
+  // `highlight:` in the registry must have been found and checked above.
+  const declared = (SOURCE.match(/highlight: \d+/g) ?? []).length;
+  expect(checked, "a declared highlight was not parsed by this test").toBe(declared);
   expect(problems, problems.join("\n")).toEqual([]);
 });
 

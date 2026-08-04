@@ -3,8 +3,9 @@
 A neumorphic, parallax-scrolling presentation of *Vibecoding 201: Building Production
 GTM Tools* (Pavilion AI in GTM School) — the polls, the copyable prompts, and the tool
 the class is about, deployed for real. The site is the presentation surface, not a
-companion: all 30 sections of `deck-content-v15.md` are on the page, with every title
-quoted from the deck verbatim. See `SPEC.md` for what this is
+companion: 29 sections are on the page, quoted from `deck-content-v15.md` as revised
+by Scott's 2026-08-04 student-QA pass (see CLAUDE.md — the QA wording outranks the
+deck file until the next deck version absorbs it). See `SPEC.md` for what this is
 meant to do and `ARCHITECTURE.md` for why it is built this way.
 
 **The class runs against a shared deal set.** `../data/kit/` publishes a 10,000-row deal

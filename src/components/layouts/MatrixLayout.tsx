@@ -75,7 +75,16 @@ export function MatrixLayout({ section }: LayoutProps) {
 
         {rows.length > 0 && (
           <Reveal delay={0.12}>
-            <div className="neu-inset neu-edge mt-10 rounded-[24px] px-4 py-3 md:px-7 md:py-5">
+            {/* `plain` drops the inset panel: on slides whose rows are the
+                content itself, the box read as chrome (Scott's 2026-08-04 QA
+                on the ingredients slide). */}
+            <div
+              className={
+                matrix?.plain
+                  ? "mt-10"
+                  : "neu-inset neu-edge mt-10 rounded-[24px] px-4 py-3 md:px-7 md:py-5"
+              }
+            >
               <table className="w-full border-collapse">
                 {head && (
                   // Hidden on mobile: each cell repeats its own header below, so a
