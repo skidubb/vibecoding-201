@@ -3,11 +3,12 @@
 A neumorphic, parallax-scrolling presentation of *Vibecoding 201: Building Production
 GTM Tools* (Pavilion AI in GTM School) — the polls, the copyable prompts, and the tool
 the class is about, deployed for real. The site is the presentation surface, not a
-companion: all 28 sections of `deck-content-v14.md` are on the page, with every title
+companion: all 30 sections of `deck-content-v15.md` are on the page, with every title
 quoted from the deck verbatim. See `SPEC.md` for what this is
 meant to do and `ARCHITECTURE.md` for why it is built this way.
 
-**The class runs against real data.** `../data/kit/` publishes a 10,000-row deal set to a
+**The class runs against a shared deal set.** `../data/kit/` publishes a 10,000-row deal
+set (synthetic, courtesy of Andy's Class 0 data, deliberately uncleaned) to a
 public bucket, and `../data/kit/jobs.md` gives six jobs with the exact row count one
 precise Done returns. Attendees pick a job at `#pick-your-job`, and it is stored on their
 profile so every later exercise runs against it. Two exercises submit a number rather than

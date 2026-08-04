@@ -188,20 +188,6 @@ export function LoopLayout({ section }: LayoutProps) {
                       {stage.produces}
                     </span>
                   </div>
-                  <div className="mt-3" data-advances>
-                    <span
-                      className="block font-sans text-[10px] uppercase tracking-[0.2em]"
-                      style={{ color: "var(--accent)" }}
-                    >
-                      Advances when
-                    </span>
-                    <span
-                      className="mt-1 block text-[0.85rem] leading-snug"
-                      style={{ color: "var(--text-dim)" }}
-                    >
-                      {stage.advances}
-                    </span>
-                  </div>
                 </Reveal>
               </li>
             ))}

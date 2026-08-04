@@ -228,10 +228,14 @@ export type Job = {
  */
 export type LoopStage = {
   name: string;
-  /** The artifact the stage leaves behind, printed under PRODUCES. */
+  /**
+   * The artifact the stage leaves behind, printed under PRODUCES.
+   *
+   * The only per-stage text. v15 removed the ADVANCES WHEN row: eighteen text
+   * blocks on one slide buried the pathway, and each stage's gate is taught on
+   * that stage's own slide.
+   */
   produces: string;
-  /** What lets the work leave the stage, printed under ADVANCES WHEN. */
-  advances: string;
 };
 
 /**
@@ -281,9 +285,9 @@ export type DeeperLink = { label: string; href: string; brand?: BrandKey };
  * `tests/registry-integrity.spec.ts` exists to catch. The type lists only what is
  * drawn.
  *
- * Sixteen sections have one and twelve do not. The twelve are the polls, the
- * timers, the exercises and the demo, where the room is talking rather than
- * reading.
+ * Seventeen sections have one and thirteen do not. The thirteen are the polls,
+ * the exercises, the demo and the placeholder, where the room is talking or
+ * typing rather than reading.
  */
 export type Deeper = {
   /** Defaults to "Go deeper". */
@@ -363,15 +367,18 @@ export type Section = {
 /**
  * The deck, in order.
  *
- * Twenty-eight sections, quoted from `deck-content-v14.md`.
+ * Thirty sections, quoted from `deck-content-v15.md`.
  *
- * v14 is v13 with three sections out and three in. The running character, the
- * ninety-second self-scoring timer and the second showing of the route table
- * were cut; the job picker and the two counts replaced them. Everything they
- * introduce is quoted from `../data/kit/jobs.md`, `../data/kit/schema.md` and
- * `../delivery/deal-set-ground-truth.md`, which are now sources alongside the
- * deck for the same reason it was ever the source: the words are Scott's and
- * the numbers are checkable.
+ * v15 is v14 reordered to walk Spec → Plan → Build → Test → Ship → Run exactly
+ * once, with each step's hands-on attached to the step it practises. The
+ * four-routes contract moved to the kit; Why me (a placeholder until Scott
+ * fills it), The ingredients and Fire the plan prompt came in; the
+ * fifteen-minute assignment became an eight-minute spec block and a
+ * three-minute plan block. Job and schema strings are quoted from
+ * `../data/kit/jobs.md`, `../data/kit/schema.md` and
+ * `../delivery/deal-set-ground-truth.md`, which are sources alongside the deck
+ * for the same reason it was ever the source: the words are Scott's and the
+ * numbers are checkable.
  *
  * Three rules from that file apply to every entry:
  *
@@ -412,6 +419,26 @@ export const sections: Section[] = [
   },
 
   {
+    // A placeholder until Scott writes it: the deck previously had no
+    // credibility beat at all. The bracketed lines are a deliberate merge
+    // blocker; this section must not reach production unfilled.
+    id: "why-me",
+    theme: "dark",
+    layout: "cards",
+    eyebrow: "Your instructor",
+    title: "[SCOTT: one sentence that says why you]",
+    railLabel: "Why me",
+    cards: [
+      { title: "[SCOTT: bullet 1, career line]" },
+      { title: "[SCOTT: bullet 2, Cardinal Element]" },
+      { title: "[SCOTT: bullet 3, what you run today]" },
+    ],
+    kicker:
+      "This deck is built with the method it teaches, and its repo is public.",
+    media: { image: genS17OverShoulder, speed: -0.12 },
+  },
+
+  {
     id: "what-changed",
     theme: "dark",
     layout: "claim",
@@ -440,6 +467,42 @@ export const sections: Section[] = [
       video: "/media/gap-platforms.mp4",
       poster: "/media/gap-platforms-poster.jpg",
       speed: -0.15,
+    },
+  },
+
+  {
+    // Added in v9 as the closing slide; moved forward in v11. The premise that
+    // explains why the hour teaches checks instead of prompts belongs before
+    // the method it frames. Rebuilt in v13: the capability table and the photo
+    // are gone, and one figure draws the two movements a presenter stop at a
+    // time, with the warning as the final beat. No media on purpose — the
+    // chart layout renders no image backdrop, and a media block here would
+    // fail the backdrop check in tests/registry-integrity.spec.ts.
+    id: "evolution",
+    theme: "light",
+    layout: "chart",
+    chart: "divergence",
+    eyebrow: "Why this class teaches checks, not prompts",
+    title:
+      "Models require less instruction over time. Reliable systems require more explicit verification.",
+    accent: "more explicit verification.",
+    railLabel: "The premise",
+    kicker:
+      "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
+    deeper: {
+      claim: "Boris Cherny, who built Claude Code,",
+      note: "deleted instructions, plan mode, and prompts release by release and never walked back verification.",
+      links: [
+        {
+          label: "ycrootaccess.com",
+          href: "https://www.ycrootaccess.com/p/boris-cherny-building-claude-code",
+        },
+        {
+          label: "claude.com/blog",
+          href: "https://claude.com/blog/running-an-ai-native-engineering-org",
+          brand: "claude",
+        },
+      ],
     },
   },
 
@@ -484,105 +547,6 @@ export const sections: Section[] = [
   },
 
   {
-    // Added in v11, moved from the close: the class teaches one route of four,
-    // and saying so at minute five is the contract the rest of the hour is
-    // read against. The detailed solves/still-yours table stays late, as
-    // `routes`. v12 opens the lede with the four jobs a production tool does
-    // and names the builders on row 2 — "An agent" on the face left the why
-    // of the stack and the tools that build it unstated.
-    id: "contract",
-    theme: "dark",
-    layout: "matrix",
-    eyebrow: "The map · before the method",
-    title: "There are four routes to production. This class teaches one.",
-    accent: "This class teaches one.",
-    railLabel: "The contract",
-    lede: "A production tool stores real records, controls access, refreshes itself, and logs failures. Each route below is a different answer to who does those four jobs. Today teaches the assembled route because nothing on it is hidden. Learn to name the checks here and you can find them on any route.",
-    matrix: {
-      rows: [
-        [
-          "Stay in the platform you prototyped in",
-          "Replit or Lovable carry the prototype through hosting, sign-in, and a database",
-        ],
-        [
-          "Assemble the stack · today's route",
-          "Claude Code, Codex, or Cursor builds the tool on GitHub, Vercel, and Supabase, every layer visible",
-        ],
-        [
-          "Build on the cloud your company already runs",
-          "Microsoft, Google, or AWS, alongside your engineering team",
-        ],
-        ["Buy it", "A vendor's product, with uptime on their payroll"],
-      ],
-      highlight: 1,
-    },
-    rowBrands: [
-      [
-        { brand: "replit", href: "https://replit.com" },
-        { brand: "lovable", href: "https://lovable.dev" },
-      ],
-      [
-        { brand: "claude", href: "https://claude.com/claude-code" },
-        { brand: "openai", href: "https://developers.openai.com/codex" },
-        { brand: "cursor", href: "https://cursor.com" },
-        { brand: "github", href: "https://github.com" },
-        { brand: "vercel", href: "https://vercel.com" },
-        { brand: "supabase", href: "https://supabase.com" },
-      ],
-      [
-        { brand: "microsoft", href: "https://azure.microsoft.com" },
-        { brand: "google", href: "https://cloud.google.com" },
-        { brand: "aws", href: "https://aws.amazon.com" },
-      ],
-      [],
-    ],
-    kicker:
-      "On every route, the authorization rules, the final verification, and the named owner stay with your organization.",
-    deeper: {
-      claim: "The full route map:",
-      note: "the nine checks covered per route, and five questions that pick one. Verified August 2026.",
-      links: [{ label: "/kit", href: "/kit" }],
-    },
-    media: { image: genS31ThreeDoors, speed: -0.12 },
-  },
-
-  {
-    // Added in v9 as the closing slide; moved forward in v11. The premise that
-    // explains why the hour teaches checks instead of prompts belongs before
-    // the method it frames. Rebuilt in v13: the capability table and the photo
-    // are gone, and one figure draws the two movements a presenter stop at a
-    // time, with the warning as the final beat. No media on purpose — the
-    // chart layout renders no image backdrop, and a media block here would
-    // fail the backdrop check in tests/registry-integrity.spec.ts.
-    id: "evolution",
-    theme: "light",
-    layout: "chart",
-    chart: "divergence",
-    eyebrow: "Why this class teaches checks, not prompts",
-    title:
-      "Models require less instruction over time. Reliable systems require more explicit verification.",
-    accent: "more explicit verification.",
-    railLabel: "The premise",
-    kicker:
-      "An unverified multi-day agent run is the most expensive way to be wrong that exists today.",
-    deeper: {
-      claim: "Boris Cherny, who built Claude Code,",
-      note: "deleted instructions, plan mode, and prompts release by release and never walked back verification.",
-      links: [
-        {
-          label: "ycrootaccess.com",
-          href: "https://www.ycrootaccess.com/p/boris-cherny-building-claude-code",
-        },
-        {
-          label: "claude.com/blog",
-          href: "https://claude.com/blog/running-an-ai-native-engineering-org",
-          brand: "claude",
-        },
-      ],
-    },
-  },
-
-  {
     id: "three-kinds",
     theme: "dark",
     layout: "matrix",
@@ -618,6 +582,10 @@ export const sections: Section[] = [
         "What new risk appears when others depend on it?",
       ],
     },
+    // v15: the answer is printed. The slide implied it and Scott's arc for the
+    // hour states it as a beat: should everything be a production system? No.
+    kicker:
+      "Most of what you build should stay a prototype. No is the right answer at this gate more often than yes.",
     // A lateral drift past one person alone, then a pair, then a full room in
     // session. That is this table's three rows in order, despite the filename:
     // the clip is about who depends on the thing, not about deploy environments.
@@ -629,24 +597,83 @@ export const sections: Section[] = [
   },
 
   {
+    // The working set, laid out before anything is picked or specced. This is
+    // where the deal set stops appearing cold: it used to be first mentioned in
+    // the headline of the slide that asked the room to use it. The set is
+    // synthetic (Andy's Class 0 data) and the row says so; its defects are real
+    // CRM defects, which is the pedagogy, so "real data" is never claimed.
+    id: "ingredients",
+    theme: "light",
+    layout: "matrix",
+    eyebrow: "What you build with",
+    title: "Three ingredients: a deal set, your coding agent, and this deck",
+    accent: "a deal set, your coding agent, and this deck",
+    railLabel: "The ingredients",
+    matrix: {
+      rows: [
+        [
+          "The deal set",
+          "10,000 synthetic deals, 36 columns, courtesy of Andy from the Class 0 data set. Public bucket, no account and no key. An uncleaned working export whose defects are real CRM defects",
+        ],
+        [
+          "Your coding agent",
+          "Claude Code, Codex, or Cursor, the tool you set up in 101, driving GitHub, Vercel, and Supabase",
+        ],
+        [
+          "This deck",
+          "Built with the method it teaches. The repo is public, and every claim in the next hour is checkable there",
+        ],
+      ],
+      highlight: 1,
+    },
+    rowBrands: [
+      [],
+      [
+        { brand: "claude", href: "https://claude.com/claude-code" },
+        { brand: "openai", href: "https://developers.openai.com/codex" },
+        { brand: "cursor", href: "https://cursor.com" },
+        { brand: "github", href: "https://github.com" },
+        { brand: "vercel", href: "https://vercel.com" },
+        { brand: "supabase", href: "https://supabase.com" },
+      ],
+      [{ brand: "github", href: "https://github.com/skidubb/vibecoding-201" }],
+    ],
+    deeper: {
+      claim: "The schema and the 200-row sample.",
+      note: "Query the bucket read-only, or paste the sample into whatever assistant you have.",
+      links: [
+        {
+          label: "schema.md",
+          href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
+        },
+        { label: "/kit", href: "/kit" },
+      ],
+    },
+    media: { image: genS31ThreeDoors, speed: -0.12 },
+  },
+
+  {
     // The hinge of the hour, and what the fifteen-minute block used to spend
     // itself on. Every later beat operates on whichever of these the attendee
     // picks, so the choice is stored on their profile rather than held in a
     // component: it has to survive a reload and be readable from the page they
     // leave with.
     //
-    // Every string is quoted from ../data/kit/jobs.md. The Done is missing from
-    // all six on purpose. jobs.md prints "You write the Done" because that is
-    // the part being practised, and printing one here would answer the question
-    // the next forty minutes ask.
+    // The six jobs are quoted from ../data/kit/jobs.md. The Done is missing
+    // from all six on purpose: printing one here would answer the question the
+    // next forty minutes ask. The framing lines were rewritten in v15 — the
+    // v14 headline said "spec against the deal set" before either term was
+    // taught, "Starting points, not a menu" winked at a literal menu, and "You
+    // write the Done" used a word the Spec slide had not yet defined. The
+    // kicker now defines the idea in place instead of naming it.
     id: "pick-your-job",
     theme: "light",
     layout: "jobs",
     eyebrow: "Six jobs · pick one",
-    title: "Six jobs you can spec against the deal set",
-    accent: "pick one",
+    title: "Pick one job. Every exercise after this runs against it.",
+    accent: "Every exercise after this runs against it.",
     railLabel: "Pick your job",
-    lede: "Starting points, not a menu. If you brought your own job, build that one.",
+    lede: "If you brought your own job, build that one.",
     jobs: [
       {
         id: "identify",
@@ -685,21 +712,12 @@ export const sections: Section[] = [
         user: "A RevOps administrator who will run the correction after someone signs off.",
       },
     ],
-    kicker: "You write the Done. That is the part being practised, and the part that is hard.",
+    kicker:
+      "Each job gives you the work and the user. What counts as finished, you write yourself.",
     // No link out to the data here. Picking a job is the only thing this slide
-    // asks for, and the data reaches them in the prompt on the slide that needs
-    // it, already addressed to the job they chose.
-    deeper: {
-      claim: "10,000 deals, 36 columns, no account and no key.",
-      note: "Query it read-only, or paste the 200-row sample into whatever assistant you have.",
-      links: [
-        {
-          label: "schema.md",
-          href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
-        },
-        { label: "/kit", href: "/kit" },
-      ],
-    },
+    // asks for; the deal-set links live on the ingredients slide before this
+    // one, and the data reaches them in the prompt on the slide that needs it,
+    // already addressed to the job they chose.
     media: { image: genS14TheQuestion, speed: -0.12 },
   },
 
@@ -718,35 +736,23 @@ export const sections: Section[] = [
     accent: "Spec, Plan, Build, Test, Ship, Run",
     railLabel: "The development process",
     loopStages: [
-      {
-        name: "Spec",
-        produces: "The job, the user, and a checkable Done",
-        advances: "You can write the steps you will check",
-      },
+      { name: "Spec", produces: "The job, the user, and a checkable Done" },
       {
         name: "Plan",
         produces: "A reviewable proposal: data, permissions, tests, and files",
-        advances: "You approve it before anything changes",
       },
-      {
-        name: "Build",
-        produces: "The smallest working implementation",
-        advances: "It stays inside the rules you set",
-      },
+      { name: "Build", produces: "The smallest working implementation" },
       {
         name: "Test",
         produces: "Repeatable evidence the workflow and its failure cases behave",
-        advances: "Every check passes and you verify as a user",
       },
       {
         name: "Ship",
         produces: "The approved version, live where people depend on it",
-        advances: "A person promotes it, never a saved file",
       },
       {
         name: "Run",
         produces: "Monitoring, alerts, a named owner, a rollback path",
-        advances: "Evidence from use feeds the next spec",
       },
     ],
     kicker:
@@ -795,15 +801,14 @@ export const sections: Section[] = [
         ],
       ],
     },
-    strip: {
-      label: "Also specify",
-      items: ["source data", "access rules", "failure behavior", "non-goals"],
-    },
     kicker:
       "If you cannot write the steps, you do not yet know what you are asking for.",
+    // v15 moved "also specify: source data, access rules, failure behavior,
+    // non-goals" off the slide face and into the GO DEEPER note — five
+    // competing elements buried the one teach this slide exists for.
     deeper: {
       claim: "GitHub Spec Kit.",
-      note: "Spec-driven development as a full toolchain: each phase produces an artifact the next phase reads.",
+      note: "Spec-driven development as a full toolchain. A full spec also covers source data, access rules, failure behavior, and non-goals.",
       links: [
         {
           label: "github/spec-kit",
@@ -814,6 +819,116 @@ export const sections: Section[] = [
       ],
     },
     media: { image: genS11TwoSheets, speed: -0.12 },
+  },
+
+  {
+    // v15 split the fifteen-minute assignment: this block writes the spec, and
+    // firing the plan prompt is its own three-minute beat after the Plan slide.
+    // The exercise id stays `spec` — the submissions table predates the split.
+    id: "assignment",
+    theme: "light",
+    layout: "exercise",
+    eyebrow: "Hands on · 8 minutes",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Spec"],
+    },
+    title: "Write your three-line spec: Job, User, Done",
+    accent: "Job, User, Done",
+    railLabel: "Write your spec",
+    cards: [
+      {
+        title: "Job and User come from the job you picked",
+        body: "Copy them as given, or bring your own.",
+      },
+      {
+        title: "The Done is yours",
+        body: "Written as steps someone else could follow to check it.",
+      },
+      {
+        title: "Submit it",
+        body: "Share it if you want it in the mix.",
+      },
+    ],
+    exercise: {
+      id: "spec",
+      seconds: 480,
+      placeholder:
+        "Job.\nUser.\nDone, written as steps someone else could follow to check it.",
+    },
+    media: { image: genS12Timer, speed: -0.12 },
+  },
+
+  {
+    // The beat the hour turns on.
+    //
+    // 200 of the open deals carry no `last_activity_date` at all, so "no
+    // recorded activity since 5 May" returns 634 or 834 depending on whether a
+    // deal with no date counts as having no activity. Both readings are
+    // defensible English and both people think they are finished. The room
+    // submits its numbers and the histogram prints the disagreement, which is
+    // the argument of this class made by the room instead of by the presenter.
+    //
+    // Quoted from ../data/kit/jobs.md, which the room has open.
+    id: "done-count",
+    theme: "light",
+    layout: "exercise",
+    eyebrow: "Hands on · 2 minutes",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Spec"],
+    },
+    // v15 headline rewrite: "your Done and this one" pointed at the example
+    // Done printed on the Spec slide, which the room saw several slides ago —
+    // the cross-slide dependency rule 4 exists to catch. The comparison now
+    // lives in the kicker, self-contained.
+    title: "Run your Done and submit the rows it returns",
+    accent: "the rows it returns",
+    railLabel: "What your Done returns",
+    lede: "The prompt above the box is built for the job you picked and carries the Done you wrote.",
+    exercise: {
+      id: "done-count",
+      seconds: 120,
+      mode: "count",
+      question: "Rows your Done returns",
+      unit: "rows",
+    },
+    kicker:
+      "Different numbers mean two Dones asking different questions. That difference is the exercise, not a mistake.",
+    // The data arrives in the prompt above the box, built for the job this
+    // reader picked and carrying the Done they wrote.
+    //
+    // This slide briefly linked to the bucket instead. That file offers four
+    // ways to reach the deal set and asks the reader to choose between them,
+    // which is the decision jobs.md exists to remove, at the one beat the hour
+    // turns on. A link out is not an exercise.
+    jobPrompt: true,
+    deeper: {
+      claim: "The six jobs, each with the number one precise Done returns.",
+      links: [
+        {
+          label: "jobs.md",
+          href: "https://storage.googleapis.com/vibecoding-201-data/jobs.md",
+        },
+      ],
+    },
+    media: { image: genS11TwoSheets, speed: -0.12 },
+  },
+
+  {
+    id: "room-specs",
+    theme: "dark",
+    layout: "surfaced",
+    eyebrow: "What you wrote",
+    title: "Specs you just wrote, rewritten live on this screen",
+    accent: "rewritten live",
+    lede: "Submissions appear here as their authors share them.",
+    surfaced: {
+      exerciseId: "spec",
+      empty:
+        "Nothing on screen yet. Shared specs appear here when Scott puts one up.",
+    },
+    media: { image: genS36ThreeLines, speed: -0.15 },
   },
 
   {
@@ -866,146 +981,35 @@ export const sections: Section[] = [
   },
 
   {
-    id: "harness",
+    // Split out of the fifteen-minute assignment in v15 so Plan has its own
+    // hands-on beat. The prompt is printed a second time deliberately: the
+    // slide it teaches on cannot be two slides back when the room needs to
+    // paste it. No database exercise here; invented-count collects the return
+    // after the demo has covered generation time.
+    id: "plan-fire",
     theme: "dark",
-    layout: "matrix",
-    eyebrow: "Step 3 · Build",
+    layout: "prompt",
+    eyebrow: "Hands on · 3 minutes",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Build"],
+      current: ["Plan"],
     },
-    title: "Files to add to your folder / repo",
-    accent: "your folder / repo",
-    lede: "Create only the files this tool warrants. A one-screen tool does not need all six.",
-    matrix: {
-      rows: [
-        [
-          "PRODUCT.md",
-          "What this is, who it serves, what it deliberately does not do",
-        ],
-        [
-          "ARCHITECTURE.md",
-          "The decisions and why, so the next change does not quietly undo one",
-        ],
-        ["DATA_MODEL.md", "What is stored, and what each rule protects"],
-        ["SECURITY.md", "Who may read and change what, and how that is enforced"],
-        ["CLAUDE.md / AGENTS.md", "How your agent should work in this repository"],
-        [".env.example", "The names of every credential. Never the values"],
-      ],
-    },
-    kicker:
-      "The assistant you rent is the same one your competitors rent. The edge is what yours is grounded in.",
-    deeper: {
-      claim: "AGENTS.md is the open format for this file,",
-      note: "readable by most coding agents rather than one vendor's.",
-      links: [{ label: "agents.md", href: "https://agents.md" }],
-    },
-    media: { image: genS18SixBinders, speed: -0.12 },
-  },
-
-  {
-    id: "assignment",
-    theme: "light",
-    layout: "exercise",
-    eyebrow: "Hands on · 15 minutes",
-    title: "Build your spec, get a plan, review it",
-    accent: "review it",
-    railLabel: "The assignment",
-    cards: [
+    title: "Paste the plan prompt above your spec and fire it",
+    accent: "fire it",
+    railLabel: "Fire the plan prompt",
+    prompts: [
       {
-        title: "Write your three-line spec: Job, User, Done",
-        body: "Submit it. Share it if you want it in the mix.",
-      },
-      {
-        title: "Paste the plan prompt above your spec and fire it",
-        body: "Use your 101 Claude Project.",
-      },
-      {
-        title: "Count the assumptions the plan invented",
-        body: "A source system you never named. A field you never described. A permission rule you never gave it. Keep the number.",
-      },
-      {
-        title: "If you get there: ask it to write PRODUCT.md and SECURITY.md",
-        body: "Generated from your spec and plan.",
+        id: "plan-approval-fire",
+        label: "The plan prompt",
+        text: "Inspect the current project. Propose the smallest coherent implementation for this specification. Identify the data model, permissions, environment variables, failure states, tests, and files involved. Do not change anything until I approve the plan.",
+        caption: "Use your 101 Claude Project.",
       },
     ],
-    exercise: {
-      id: "spec",
-      seconds: 900,
-      placeholder:
-        "Job.\nUser.\nDone, written as steps someone else could follow to check it.",
-    },
+    kicker:
+      "Send it, then leave it generating: counting what it invented comes in a few minutes.",
     footnote: "No plan came back? Take the pre-generated one from the kit",
     footnoteHref: "/kit",
-    media: { image: genS12Timer, speed: -0.12 },
-  },
-
-  {
-    id: "room-specs",
-    theme: "dark",
-    layout: "surfaced",
-    eyebrow: "What you wrote",
-    title: "Specs you just wrote, rewritten live on this screen",
-    accent: "rewritten live",
-    lede: "Submissions appear here as their authors share them.",
-    surfaced: {
-      exerciseId: "spec",
-      empty:
-        "Nothing on screen yet. Shared specs appear here when Scott puts one up.",
-    },
-    media: { image: genS36ThreeLines, speed: -0.15 },
-  },
-
-  {
-    // The beat the hour turns on.
-    //
-    // 200 of the open deals carry no `last_activity_date` at all, so "no
-    // recorded activity since 5 May" returns 634 or 834 depending on whether a
-    // deal with no date counts as having no activity. Both readings are
-    // defensible English and both people think they are finished. The room
-    // submits its numbers and the histogram prints the disagreement, which is
-    // the argument of this class made by the room instead of by the presenter.
-    //
-    // Quoted from ../data/kit/jobs.md, which the room has open.
-    id: "done-count",
-    theme: "light",
-    layout: "exercise",
-    eyebrow: "Hands on · 2 minutes",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Spec"],
-    },
-    title:
-      "If your number is different, your Done and this one are not asking the same question",
-    accent: "not asking the same question",
-    railLabel: "What your Done returns",
-    lede: "Run your Done against the deal set and submit the number of rows it returns.",
-    exercise: {
-      id: "done-count",
-      seconds: 120,
-      mode: "count",
-      question: "Rows your Done returns",
-      unit: "rows",
-    },
-    kicker: "That difference is the exercise, not a mistake.",
-    // The data arrives in the prompt above the box, built for the job this
-    // reader picked and carrying the Done they wrote.
-    //
-    // This slide briefly linked to the bucket instead. That file offers four
-    // ways to reach the deal set and asks the reader to choose between them,
-    // which is the decision jobs.md exists to remove, at the one beat the hour
-    // turns on. A link out is not an exercise.
-    jobPrompt: true,
-    deeper: {
-      claim: "The six jobs, each with the number one precise Done returns.",
-      links: [
-        {
-          label: "jobs.md",
-          href: "https://storage.googleapis.com/vibecoding-201-data/jobs.md",
-        },
-      ],
-    },
-    media: { image: genS11TwoSheets, speed: -0.12 },
+    media: { image: genS12Timer, speed: -0.15 },
   },
 
   {
@@ -1048,10 +1052,12 @@ export const sections: Section[] = [
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Plan"],
     },
-    title: "The plan invented it, and that invention is now yours to own",
-    accent: "yours to own",
+    // v15 headline rewrite: "The plan invented it" had no referent until the
+    // lede. The headline now states the thing and the lede only enumerates.
+    title: "Your plan named things the schema does not contain. Count them.",
+    accent: "Count them.",
     railLabel: "What the plan invented",
-    lede: "A table, a column, a status or a permission your plan named that the schema does not contain. Submit how many.",
+    lede: "A table, a column, a status, or a permission. Submit how many you find.",
     exercise: {
       id: "invented-count",
       seconds: 120,
@@ -1074,72 +1080,41 @@ export const sections: Section[] = [
   },
 
   {
-    id: "poll-debugging",
+    id: "harness",
     theme: "dark",
-    layout: "poll",
-    eyebrow: "Poll 1 · single choice",
-    title: "What do you do when one error keeps coming back?",
-    accent: "one error keeps coming back?",
-    lede: "The build works except for one error that keeps happening.",
-    poll: {
-      slug: "debugging",
-      options: [
-        { id: "debugging:a", label: "A", body: "Rewrite the original prompt" },
-        {
-          id: "debugging:b",
-          label: "B",
-          body: "Regenerate it in another platform",
-        },
-        {
-          id: "debugging:c",
-          label: "C",
-          body: "Provide the error, reproduction steps, and expected behavior, then ask the agent to diagnose and test a fix",
-        },
-        { id: "debugging:d", label: "D", body: "Read every line of code" },
+    layout: "matrix",
+    eyebrow: "Step 3 · Build",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Build"],
+    },
+    title: "Files to add to your folder / repo",
+    accent: "your folder / repo",
+    lede: "Create only the files this tool warrants. A one-screen tool does not need all six.",
+    matrix: {
+      rows: [
+        [
+          "PRODUCT.md",
+          "What this is, who it serves, what it deliberately does not do",
+        ],
+        [
+          "ARCHITECTURE.md",
+          "The decisions and why, so the next change does not quietly undo one",
+        ],
+        ["DATA_MODEL.md", "What is stored, and what each rule protects"],
+        ["SECURITY.md", "Who may read and change what, and how that is enforced"],
+        ["CLAUDE.md / AGENTS.md", "How your agent should work in this repository"],
+        [".env.example", "The names of every credential. Never the values"],
       ],
     },
-    media: { image: genS19HandsUp, speed: -0.12 },
-  },
-
-  {
-    id: "breach-test",
-    theme: "dark",
-    layout: "claim",
-    eyebrow: "Hands on · 2 minutes",
-    title: "Ask my database for a record you have no right to",
-    accent: "no right to",
-    railLabel: "Run the security test",
-    // v11: the identity-versus-permission distinction is printed now. It was a
-    // spoken line after v9 cut its standalone slide, which left it nowhere a
-    // reader could find it.
     kicker:
-      "Signing in says who you are. The database decides what you may read. Hiding records in the interface is neither.",
-    strip: {
-      items: [
-        "Open the link. Sign in as a guest.",
-        "Button 1. Request a record from your organization.",
-        "Button 2. Request a record from Organization B.",
-      ],
-    },
-    footnote: "Live database. The policy is in the public repo",
-    footnoteHref:
-      "https://github.com/skidubb/vibecoding-201/blob/main/supabase/migrations/20260727000000_init.sql",
+      "The assistant you rent is the same one your competitors rent. The edge is what yours is grounded in.",
     deeper: {
-      claim: "The fifteen policies you just hit,",
-      note: "and the breach class they prevent: 170+ apps on one prototyping platform shipped without them.",
-      links: [
-        {
-          label: "authorization.sql",
-          href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
-          brand: "github",
-        },
-        {
-          label: "CVE-2025-48757",
-          href: "https://mattpalmer.io/posts/2025/05/CVE-2025-48757",
-        },
-      ],
+      claim: "AGENTS.md is the open format for this file,",
+      note: "readable by most coding agents rather than one vendor's.",
+      links: [{ label: "agents.md", href: "https://agents.md" }],
     },
-    media: { image: genS21WrongSide, speed: -0.15 },
+    media: { image: genS18SixBinders, speed: -0.12 },
   },
 
   // v9 removed the "Signing in and being allowed" section per Scott's comment
@@ -1181,6 +1156,34 @@ export const sections: Section[] = [
       ],
     },
     media: { image: genS22SealedEnvelope, speed: -0.15 },
+  },
+
+  {
+    id: "poll-debugging",
+    theme: "dark",
+    layout: "poll",
+    eyebrow: "Poll 1 · single choice",
+    title: "What do you do when one error keeps coming back?",
+    accent: "one error keeps coming back?",
+    lede: "The build works except for one error that keeps happening.",
+    poll: {
+      slug: "debugging",
+      options: [
+        { id: "debugging:a", label: "A", body: "Rewrite the original prompt" },
+        {
+          id: "debugging:b",
+          label: "B",
+          body: "Regenerate it in another platform",
+        },
+        {
+          id: "debugging:c",
+          label: "C",
+          body: "Provide the error, reproduction steps, and expected behavior, then ask the agent to diagnose and test a fix",
+        },
+        { id: "debugging:d", label: "D", body: "Read every line of code" },
+      ],
+    },
+    media: { image: genS19HandsUp, speed: -0.12 },
   },
 
   {
@@ -1254,38 +1257,6 @@ export const sections: Section[] = [
   },
 
   {
-    id: "idempotency",
-    theme: "dark",
-    layout: "claim",
-    eyebrow: "Build · idempotency",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Build"],
-    },
-    title: "What happens if this runs twice?",
-    accent: "runs twice?",
-    lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat, and the duplicate they create stays invisible until a customer finds it.",
-    strip: {
-      items: [
-        "An operation is idempotent when running it twice has the same effect as running it once.",
-        "The safe answer is an update to the existing record, never a second copy.",
-      ],
-    },
-    deeper: {
-      claim: "Stripe's idempotency key design",
-      note: "is the reference implementation, and the reason your card never gets charged twice.",
-      links: [
-        {
-          label: "docs.stripe.com",
-          href: "https://docs.stripe.com/api/idempotent_requests",
-          brand: "stripe",
-        },
-      ],
-    },
-    media: { image: genS25TwoParcels, speed: -0.15 },
-  },
-
-  {
     id: "poll-door",
     theme: "dark",
     layout: "poll",
@@ -1319,45 +1290,39 @@ export const sections: Section[] = [
   },
 
   {
-    id: "insight-rule",
-    theme: "light",
-    layout: "matrix",
-    eyebrow: "Build · win rate by contact count",
+    id: "idempotency",
+    theme: "dark",
+    layout: "claim",
+    eyebrow: "Build · idempotency",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Build"],
     },
-    title: "Code calculates, the model explains",
-    accent: "the model explains",
-    matrix: {
-      head: ["What the code does", "What the model does"],
-      rows: [
-        [
-          "Counts the deals, computes the win rate, and ranks them",
-          "Explains why a number moved and recommends the next action",
-        ],
-        [
-          "The same inputs produce the same number every run",
-          "Grounded in numbers the code already produced, never inventing them",
-        ],
-        [
-          "Can be audited and tested",
-          "Turns the numbers into language a sales manager can act on",
-        ],
+    title: "What happens if this runs twice?",
+    accent: "runs twice?",
+    lede: "Imports, webhooks, CRM writes, and scheduled jobs all repeat, and the duplicate they create stays invisible until a customer finds it.",
+    strip: {
+      items: [
+        "An operation is idempotent when running it twice has the same effect as running it once.",
+        "The safe answer is an update to the existing record, never a second copy.",
       ],
     },
-    // The trap, on real rows. Win rate climbs monotonically from one contact to
-    // seven, and the deals recorded with zero contacts sit above the whole
-    // trend, which is the shape that produces a confident wrong answer.
-    lede: "Win rate runs from 25.0% at one known contact to 90.4% at seven. The deals recorded with zero contacts win 59.2%.",
-    kicker:
-      "Zero is not a measurement, it is an absence wearing a number. A finding the model invented has nothing behind it to audit.",
-    media: { image: genS26LedgerAndNote, speed: -0.15 },
+    deeper: {
+      claim: "Stripe's idempotency key design",
+      note: "is the reference implementation, and the reason your card never gets charged twice.",
+      links: [
+        {
+          label: "docs.stripe.com",
+          href: "https://docs.stripe.com/api/idempotent_requests",
+          brand: "stripe",
+        },
+      ],
+    },
+    media: { image: genS25TwoParcels, speed: -0.15 },
   },
 
   // v9 removed the "Show people when the data is stale" section per Scott's
-  // comment; the Run section carries the observability lesson, and Jordan's
-  // Wednesday repair points there.
+  // comment; the Run section carries the observability lesson.
   {
     id: "test-and-ship",
     theme: "light",
@@ -1410,6 +1375,54 @@ export const sections: Section[] = [
       ],
     },
     media: { image: genS28GreenLights, speed: -0.15 },
+  },
+
+  {
+    id: "breach-test",
+    theme: "dark",
+    layout: "claim",
+    eyebrow: "Hands on · 2 minutes",
+    // v15: this is the Test step's hands-on — the room runs "a user without
+    // permission is refused" from the test-and-ship list against a live
+    // database. It sat untagged between a poll and the credentials slide.
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Test"],
+    },
+    title: "Ask my database for a record you have no right to",
+    accent: "no right to",
+    railLabel: "Run the security test",
+    // v11: the identity-versus-permission distinction is printed now. It was a
+    // spoken line after v9 cut its standalone slide, which left it nowhere a
+    // reader could find it.
+    kicker:
+      "Signing in says who you are. The database decides what you may read. Hiding records in the interface is neither.",
+    strip: {
+      items: [
+        "Open the link. Sign in as a guest.",
+        "Button 1. Request a record from your organization.",
+        "Button 2. Request a record from Organization B.",
+      ],
+    },
+    footnote: "Live database. The policy is in the public repo",
+    footnoteHref:
+      "https://github.com/skidubb/vibecoding-201/blob/main/supabase/migrations/20260727000000_init.sql",
+    deeper: {
+      claim: "The fifteen policies you just hit,",
+      note: "and the breach class they prevent: 170+ apps on one prototyping platform shipped without them.",
+      links: [
+        {
+          label: "authorization.sql",
+          href: "https://github.com/skidubb/vibecoding-201/blob/main/supabase/tests/authorization.sql",
+          brand: "github",
+        },
+        {
+          label: "CVE-2025-48757",
+          href: "https://mattpalmer.io/posts/2025/05/CVE-2025-48757",
+        },
+      ],
+    },
+    media: { image: genS21WrongSide, speed: -0.15 },
   },
 
   {
@@ -1470,6 +1483,46 @@ export const sections: Section[] = [
       poster: "/media/workflow-loop-poster.jpg",
       speed: -0.12,
     },
+  },
+
+  {
+    // v15: retagged Build → Run and moved beside the Run slide. The
+    // code-calculates governance rule applies to the analytics a running tool
+    // produces, not to the build phase it was previously filed under.
+    id: "insight-rule",
+    theme: "light",
+    layout: "matrix",
+    eyebrow: "Run · win rate by contact count",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Run"],
+    },
+    title: "Code calculates, the model explains",
+    accent: "the model explains",
+    matrix: {
+      head: ["What the code does", "What the model does"],
+      rows: [
+        [
+          "Counts the deals, computes the win rate, and ranks them",
+          "Explains why a number moved and recommends the next action",
+        ],
+        [
+          "The same inputs produce the same number every run",
+          "Grounded in numbers the code already produced, never inventing them",
+        ],
+        [
+          "Can be audited and tested",
+          "Turns the numbers into language a sales manager can act on",
+        ],
+      ],
+    },
+    // The trap, on real rows. Win rate climbs monotonically from one contact to
+    // seven, and the deals recorded with zero contacts sit above the whole
+    // trend, which is the shape that produces a confident wrong answer.
+    lede: "Win rate runs from 25.0% at one known contact to 90.4% at seven. The deals recorded with zero contacts win 59.2%.",
+    kicker:
+      "Zero is not a measurement, it is an absence wearing a number. A finding the model invented has nothing behind it to audit.",
+    media: { image: genS26LedgerAndNote, speed: -0.15 },
   },
 
   {
