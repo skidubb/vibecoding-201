@@ -1,7 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { CONTAINER, SectionHeader, SectionTail, type LayoutProps } from "./shared";
+import { Reveal } from "@/components/neu/Neu";
+import {
+  CONTAINER,
+  Deeper,
+  Footnote,
+  Kicker,
+  SectionHeader,
+  type LayoutProps,
+} from "./shared";
 
 /**
  * A portrait beside a column of type, never behind it. The photograph is
@@ -43,7 +51,7 @@ export function BioLayout({ section }: LayoutProps) {
         aria-hidden
         className="absolute inset-0"
         style={{
-          background: `linear-gradient(to right, rgba(${base},0.92) 0%, rgba(${base},0.62) 42%, transparent 64%)`,
+          background: `linear-gradient(to right, rgba(${base},0.97) 0%, rgba(${base},0.88) 44%, transparent 70%)`,
         }}
       />
       <div
@@ -57,7 +65,34 @@ export function BioLayout({ section }: LayoutProps) {
       <div className={CONTAINER}>
         <div className="w-full max-w-xl md:max-w-[46%]">
           <SectionHeader section={section} />
-          <SectionTail section={section} />
+          {/* The strip renders as bare stacked lines instead of through
+              `SectionTail`: `Strip`'s neu-inset panel is a second surface, and
+              over a photograph it reads as chrome laid on the picture. Same
+              precedent as ClaimLayout, which also renders its tail fields
+              directly. Kicker, footnote and deeper keep their shared
+              renderers. */}
+          {section.strip && (
+            <Reveal delay={0.2}>
+              <ul className="mt-9 flex flex-col gap-2.5">
+                {section.strip.items.map((item) => (
+                  <li
+                    key={item}
+                    className="text-[clamp(0.98rem,1.2vw,1.1rem)] leading-relaxed"
+                    style={{ color: "var(--text)" }}
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          )}
+          {section.kicker && <Kicker>{section.kicker}</Kicker>}
+          {section.footnote && (
+            <Footnote href={section.footnoteHref}>{section.footnote}</Footnote>
+          )}
+          {section.deeper && (
+            <Deeper deeper={section.deeper} sectionId={section.id} />
+          )}
         </div>
       </div>
     </>

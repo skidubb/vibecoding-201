@@ -439,13 +439,14 @@ export const sections: Section[] = [
     // Bio layout, not claim. Claim centred the headline over the subject's
     // face in the portrait; bio keeps the type in a left column and the
     // photograph's subject in the right third, so neither crosses the other.
-    // Light theme: the portrait's wall is light, and a dark section would put
-    // light type on it.
+    // Dark, like the rest of the deck — the layout's left scrim carries the
+    // type on midnight regardless of the photograph's own ground. Scott
+    // rejected the light-theme version on sight.
     //
-    // Scott's 2026-08-04 QA still applies: no cards — three raised cards for
-    // three lines of bio read as chrome, so the lines sit as one strip.
+    // Scott's 2026-08-04 QA still applies: no cards, no panels — the bio
+    // lines render as bare type.
     id: "why-me",
-    theme: "light",
+    theme: "dark",
     layout: "bio",
     eyebrow: "Your instructor",
     title: "About me",
