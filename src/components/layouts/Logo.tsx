@@ -2,8 +2,12 @@ import Image, { type StaticImageData } from "next/image";
 
 import anthropic from "@/assets/logos/anthropic.svg";
 import anthropicMono from "@/assets/logos/anthropic-mono.svg";
+import antigravity from "@/assets/logos/antigravity.svg";
+import antigravityMono from "@/assets/logos/antigravity-mono.svg";
 import aws from "@/assets/logos/aws.svg";
 import awsMono from "@/assets/logos/aws-mono.svg";
+import base44 from "@/assets/logos/base44.svg";
+import base44Mono from "@/assets/logos/base44-mono.svg";
 import claude from "@/assets/logos/claude.svg";
 import cursor from "@/assets/logos/cursor.svg";
 import cursorMono from "@/assets/logos/cursor-mono.svg";
@@ -32,6 +36,8 @@ import pavilionMono from "@/assets/logos/pavilion-mono.png";
 import postgresql from "@/assets/logos/postgresql.svg";
 import supabase from "@/assets/logos/supabase.svg";
 import supabaseMono from "@/assets/logos/supabase-mono.svg";
+import v0 from "@/assets/logos/v0.svg";
+import v0Mono from "@/assets/logos/v0-mono.svg";
 import vercel from "@/assets/logos/vercel.svg";
 import vercelMono from "@/assets/logos/vercel-mono.svg";
 
@@ -50,7 +56,9 @@ import vercelMono from "@/assets/logos/vercel-mono.svg";
  */
 const MARKS = {
   anthropic: { color: anthropic, mono: anthropicMono, name: "Anthropic" },
+  antigravity: { color: antigravity, mono: antigravityMono, name: "Google Antigravity" },
   aws: { color: aws, mono: awsMono, name: "AWS" },
+  base44: { color: base44, mono: base44Mono, name: "Base44" },
   claude: { color: claude, mono: claude, name: "Claude" },
   cursor: { color: cursor, mono: cursorMono, name: "Cursor" },
   github: { color: github, mono: githubMono, name: "GitHub" },
@@ -66,6 +74,7 @@ const MARKS = {
   replit: { color: replit, mono: replitMono, name: "Replit" },
   stripe: { color: stripe, mono: stripeMono, name: "Stripe" },
   supabase: { color: supabase, mono: supabaseMono, name: "Supabase" },
+  v0: { color: v0, mono: v0Mono, name: "v0" },
   vercel: { color: vercel, mono: vercelMono, name: "Vercel" },
 } satisfies Record<
   string,

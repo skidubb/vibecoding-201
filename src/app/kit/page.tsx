@@ -62,6 +62,11 @@ const DURING_CLASS: Entry[] = [
     use: "The app the hour works in: a working GTM dashboard with the CRM data baked into the file. Download it, double-click it, and it runs — no server, no account, no key.",
   },
   {
+    href: served("the-bar-prompt.md"),
+    title: "The evaluation prompt",
+    use: "The first hands-on: your agent reads a project you built and returns a verdict — prototype, tool, or system — with the evidence that decided it.",
+  },
+  {
     href: `${BUCKET}/schema.md`,
     title: "The column guide",
     use: "You need the 36 columns, the values they hold, and where the data lives.",
@@ -99,9 +104,19 @@ const HOMEWORK: Entry[] = [
     use: "You are directing an agent and want the request to produce something you can review.",
   },
   {
+    href: served("tdd-prompt.md"),
+    title: "The TDD prompt",
+    use: "You are about to build and want the tests written first, seen failing, and turned green one at a time.",
+  },
+  {
     href: served("agent-instructions.md"),
     title: "Agent instructions",
     use: "You are starting a repository and want the agent to know your rules from day one.",
+  },
+  {
+    href: served("example-context-files/README.md"),
+    title: "Example context files",
+    use: "Worked examples of the files the Build slide names — written for the starter app, with a generator prompt that produces the set for your own app.",
   },
   {
     href: served("production-readiness-checklist.md"),
@@ -132,6 +147,11 @@ const REFERENCE: Entry[] = [
     href: served("four-ways-to-cross-the-gap.md"),
     title: "Four ways to cross the Gap",
     use: "You are choosing a route to production, or making the case to buy instead of build.",
+  },
+  {
+    href: served("free-apis.md"),
+    title: "Free APIs for GTM tools",
+    use: "Your tool needs live data and you want an endpoint that costs nothing to start against.",
   },
 ];
 

@@ -57,7 +57,7 @@ export default function YoursPage() {
   const chosen = JOBS.find((j) => j.id === job);
   const row = (id: string) => rows.find((r) => r.exercise_id === id);
   const spec = row("spec");
-  const done = row("done-count");
+  const barEval = row("bar-eval");
   const invented = row("invented-count");
   const score = row("score");
 
@@ -117,8 +117,17 @@ export default function YoursPage() {
               </p>
             </NeuPanel>
 
+            <NeuPanel radius="rounded-[22px]" className="px-6 py-5">
+              <h2 className="font-sans text-[11px] uppercase tracking-[0.16em]" style={{ color: "var(--text-faint)" }}>
+                Your project&apos;s verdict
+              </h2>
+              <p className="mt-2 whitespace-pre-wrap text-[0.98rem] leading-relaxed">
+                {barEval?.body ??
+                  "Nothing saved. Run the evaluation prompt from the kit against something you have built."}
+              </p>
+            </NeuPanel>
+
             {[
-              { label: "Rows your Done returned", row: done, id: "done-count" },
               { label: "Things your plan invented", row: invented, id: "invented-count" },
             ].map((item) => {
               const c = company(item.id, item.row?.answer ?? null);

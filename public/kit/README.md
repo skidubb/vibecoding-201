@@ -12,9 +12,13 @@ invisible system, written down. It holds the artifacts rather than the theory.
 | File | Use it when |
 | --- | --- |
 | `monday-gtm-dashboard-standalone.html` | The starter app — the app the class hour works in unless you brought your own. Double-click it and it runs, with the CRM data inside it. |
+| `the-bar-prompt.md` | Your agent reads a project you built and returns a verdict — prototype, tool, or system — with evidence. The class hour opens with it. |
 | `no-account-path.md` | Nothing installed and no accounts — the whole class hour with a browser and whatever assistant you already use. |
 | `pregenerated-plan.md` | Your plan prompt returned nothing usable and the exercise clock is running. |
 | `prompt-pack.md` | You are directing an agent and want the request to produce something you can review. |
+| `tdd-prompt.md` | You are about to build and want the tests written first, seen failing, and turned green one at a time. |
+| `example-context-files/` | Worked examples of the context files the Build slide names, written for the starter app, with a generator prompt for your own app. |
+| `free-apis.md` | Your tool needs live data and you want an endpoint that costs nothing to start against. |
 | `agent-instructions.md` | You are starting a repository and want the agent to know your rules from day one. |
 | `production-readiness-checklist.md` | You are deciding whether a tool is safe for colleagues to depend on. |
 | `ownership-card.md` | A tool is about to go live and needs a human whose name is on it. |
@@ -50,7 +54,8 @@ when it works, because a command you cannot verify is a command you cannot trust
 
 ## A note on the tools named here
 
-Every URL, install command, and figure in this kit was checked on **27 July 2026**.
+Every URL, install command, and figure in this kit was checked on **27 July 2026**,
+and the evaluation, TDD, context-file, and free-API additions on **5 August 2026**.
 Tooling in this category changes monthly. If a command fails, check the linked
 documentation before assuming you did something wrong.
 
