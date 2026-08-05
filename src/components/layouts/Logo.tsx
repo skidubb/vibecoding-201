@@ -34,6 +34,12 @@ import stripeMono from "@/assets/logos/stripe-mono.svg";
 import pavilion from "@/assets/logos/pavilion.png";
 import pavilionMono from "@/assets/logos/pavilion-mono.png";
 import postgresql from "@/assets/logos/postgresql.svg";
+import posthog from "@/assets/logos/posthog.svg";
+import posthogMono from "@/assets/logos/posthog-mono.svg";
+import sentry from "@/assets/logos/sentry.svg";
+import sentryMono from "@/assets/logos/sentry-mono.svg";
+import umami from "@/assets/logos/umami.svg";
+import umamiMono from "@/assets/logos/umami-mono.svg";
 import supabase from "@/assets/logos/supabase.svg";
 import supabaseMono from "@/assets/logos/supabase-mono.svg";
 import v0 from "@/assets/logos/v0.svg";
@@ -71,6 +77,9 @@ const MARKS = {
   owasp: { color: owasp, mono: owaspMono, name: "OWASP" },
   pavilion: { color: pavilion, mono: pavilionMono, name: "Pavilion" },
   postgresql: { color: postgresql, mono: postgresql, name: "PostgreSQL" },
+  posthog: { color: posthog, mono: posthogMono, name: "PostHog" },
+  sentry: { color: sentry, mono: sentryMono, name: "Sentry" },
+  umami: { color: umami, mono: umamiMono, name: "Umami" },
   replit: { color: replit, mono: replitMono, name: "Replit" },
   stripe: { color: stripe, mono: stripeMono, name: "Stripe" },
   supabase: { color: supabase, mono: supabaseMono, name: "Supabase" },

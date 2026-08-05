@@ -1,9 +1,16 @@
 "use client";
 
-import { motion } from "motion/react";
 import { Glow } from "@/components/core/ParallaxLayer";
-import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
+import { Reveal } from "@/components/neu/Neu";
+import {
+  CONTAINER,
+  FlatCard,
+  IconChip,
+  SectionBackdrop,
+  SectionHeader,
+  SectionTail,
+  type LayoutProps,
+} from "./shared";
 import { EventFeed } from "@/components/interactive/EventFeed";
 import { Logo } from "@/components/layouts/Logo";
 import { PromptBlock } from "@/components/interactive/PromptBlock";
@@ -17,13 +24,18 @@ import { PromptBlock } from "@/components/interactive/PromptBlock";
 export function CardsLayout({ section }: LayoutProps) {
   const count = section.cards?.length ?? 0;
   const hasBrands = section.cards?.some((card) => card.brand) ?? false;
+  const hasIcons = section.cards?.some((card) => card.icon) ?? false;
   const cols =
     count === 2
       ? "md:grid-cols-2"
       : count === 3
         ? "md:grid-cols-3"
         : count === 4
-          ? "md:grid-cols-2"
+          ? // Icon cards read as one row of four (the workshop's set-the-table
+            // shape); plain fours stay a 2x2 block.
+            hasIcons
+            ? "md:grid-cols-2 lg:grid-cols-4"
+            : "md:grid-cols-2"
           : count === 5
             ? "md:grid-cols-3 lg:grid-cols-5"
             : "md:grid-cols-2 lg:grid-cols-3";
@@ -46,70 +58,73 @@ export function CardsLayout({ section }: LayoutProps) {
         <div className={`mt-8 grid gap-5 ${cols}`}>
           {section.cards?.map((card, i) => (
             <Reveal key={card.title} delay={0.08 + i * 0.07}>
-              <motion.div
-                whileHover={{ y: -5 }}
-                transition={{ type: "spring", stiffness: 320, damping: 26 }}
-                className="h-full"
-              >
-                <NeuPanel
-                  className="flex h-full flex-col p-6 md:p-7"
-                  radius="rounded-[24px]"
+              {/* Flat, not raised, and no hover lift: Scott's 2026-08-05 rule
+                  is that a card raises only when it is interactive, and these
+                  are read, not pressed. */}
+              <FlatCard tone={card.tone} className="flex h-full flex-col p-6 md:p-7">
+                {/* The mark row renders for every card in a section where
+                    any card names a product — min-height included — so a
+                    row where only some carry a brand still lines its
+                    headlines up. A layout that ignored `brand` would delete
+                    it from the deck with nothing failing anywhere — which
+                    is how Jordan's authorization rules once vanished. */}
+                {hasBrands && (
+                  <span className="flex min-h-[22px] items-center justify-end">
+                    {card.brand && <Logo brand={card.brand} height={22} />}
+                  </span>
+                )}
+                {card.icon && (
+                  <span className="mb-4">
+                    <IconChip icon={card.icon} />
+                  </span>
+                )}
+                <h3
+                  className={`${hasBrands ? "mt-4 " : ""}font-display text-[1.06rem] font-semibold leading-snug tracking-tight`}
+                  style={{ color: card.tone === "bad" ? "var(--accent)" : "var(--text)" }}
                 >
-                  {/* The mark row renders for every card in a section where
-                      any card names a product — min-height included — so a
-                      row where only some carry a brand still lines its
-                      headlines up. A layout that ignored `brand` would delete
-                      it from the deck with nothing failing anywhere — which
-                      is how Jordan's authorization rules once vanished. */}
-                  {hasBrands && (
-                    <span className="flex min-h-[22px] items-center justify-end">
-                      {card.brand && <Logo brand={card.brand} height={22} />}
-                    </span>
-                  )}
-                  <h3
-                    className={`${hasBrands ? "mt-4 " : ""}font-display text-[1.06rem] font-semibold leading-snug tracking-tight`}
-                    style={{ color: "var(--text)" }}
+                  {card.title}
+                </h3>
+                {card.body && (
+                  <p
+                    className="mt-3 text-[0.94rem] leading-relaxed"
+                    style={{ color: "var(--text-dim)" }}
                   >
-                    {card.title}
-                  </h3>
-                  {card.body && (
-                    <p
-                      className="mt-3 text-[0.94rem] leading-relaxed"
-                      style={{ color: "var(--text-dim)" }}
-                    >
-                      {card.body}
-                    </p>
-                  )}
-                  {/* 12px, not 10px: this line is the step that repairs each
-                      defect and the vocabulary of each layer — the answer to
-                      several of these slides' headlines, not a caption. */}
-                  {card.meta && (
-                    <p
-                      className="mt-3 font-sans text-[12px] uppercase tracking-[0.16em]"
-                      style={{ color: "var(--text-faint)" }}
-                    >
-                      {card.meta}
-                    </p>
-                  )}
+                    {card.body}
+                  </p>
+                )}
+                {/* 12px, not 10px: this line is the step that repairs each
+                    defect and the vocabulary of each layer — the answer to
+                    several of these slides' headlines, not a caption. */}
+                {card.meta && (
+                  <p
+                    className="mt-3 font-sans text-[12px] uppercase tracking-[0.16em]"
+                    style={{ color: "var(--text-faint)" }}
+                  >
+                    {card.meta}
+                  </p>
+                )}
 
-                  {/* Evidence, where a card makes a claim about this repository.
-                      Pushed to the bottom so cards in a row line up whether or
-                      not they carry one. */}
-                  {card.href && (
-                    <a
-                      href={card.href}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      data-deck-keys="off"
-                      className="mt-auto inline-flex items-baseline gap-2 pt-5 font-sans text-[11px] uppercase tracking-[0.14em] underline-offset-4 hover:underline"
-                      style={{ color: card.met === false ? "var(--text-faint)" : "var(--accent)" }}
-                    >
-                      {card.met === false ? "Not yet: see why" : "Evidence"}
-                      <span aria-hidden>↗</span>
-                    </a>
-                  )}
-                </NeuPanel>
-              </motion.div>
+                {/* The card's link — evidence, a download, a prompt. Pushed to
+                    the bottom so cards in a row line up whether or not they
+                    carry one. Kit downloads carry the `download` attribute the
+                    same way the /kit page does. */}
+                {card.href && (
+                  <a
+                    href={card.href}
+                    target={card.href.startsWith("/") ? undefined : "_blank"}
+                    rel={card.href.startsWith("/") ? undefined : "noreferrer noopener"}
+                    download={card.href.startsWith("/kit/") || undefined}
+                    data-deck-keys="off"
+                    className="mt-auto inline-flex items-baseline gap-2 pt-5 font-sans text-[11px] uppercase tracking-[0.14em] underline-offset-4 hover:underline"
+                    style={{ color: card.met === false ? "var(--text-faint)" : "var(--accent)" }}
+                  >
+                    {card.met === false
+                      ? "Not yet: see why"
+                      : (card.hrefLabel ?? "Evidence")}
+                    <span aria-hidden>{card.href.startsWith("/kit/") ? "↓" : "↗"}</span>
+                  </a>
+                )}
+              </FlatCard>
             </Reveal>
           ))}
         </div>

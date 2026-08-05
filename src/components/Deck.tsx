@@ -21,6 +21,11 @@ import { MatrixLayout } from "@/components/layouts/MatrixLayout";
 import { SurfacedLayout } from "@/components/layouts/SurfacedLayout";
 import { JobsLayout } from "@/components/layouts/JobsLayout";
 import { BioLayout } from "@/components/layouts/BioLayout";
+import { QuadrantLayout } from "@/components/layouts/QuadrantLayout";
+import { LadderLayout } from "@/components/layouts/LadderLayout";
+import { FrameLayout } from "@/components/layouts/FrameLayout";
+import { DuoLayout } from "@/components/layouts/DuoLayout";
+import { FlowLayout } from "@/components/layouts/FlowLayout";
 
 type LayoutComponent = (props: { section: Section; index: number }) => React.ReactNode;
 
@@ -41,6 +46,11 @@ const LAYOUTS: Record<LayoutKind, LayoutComponent> = {
   surfaced: SurfacedLayout,
   jobs: JobsLayout,
   bio: BioLayout,
+  quadrant: QuadrantLayout,
+  ladder: LadderLayout,
+  frame: FrameLayout,
+  duo: DuoLayout,
+  flow: FlowLayout,
 };
 
 /**

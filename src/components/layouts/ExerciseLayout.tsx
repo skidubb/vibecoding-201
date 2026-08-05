@@ -1,8 +1,15 @@
 "use client";
 
 import { Glow } from "@/components/core/ParallaxLayer";
-import { NeuPanel, Reveal } from "@/components/neu/Neu";
-import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
+import { Reveal } from "@/components/neu/Neu";
+import {
+  CONTAINER,
+  FlatCard,
+  SectionBackdrop,
+  SectionHeader,
+  SectionTail,
+  type LayoutProps,
+} from "./shared";
 import { ExerciseWidget } from "@/components/interactive/ExerciseWidget";
 import { AnswerWidget } from "@/components/interactive/AnswerWidget";
 import { JobPrompt } from "@/components/interactive/JobPrompt";
@@ -42,7 +49,7 @@ export function ExerciseLayout({ section }: LayoutProps) {
           >
             {section.cards.map((card, i) => (
               <Reveal key={card.title} delay={0.08 + i * 0.07}>
-                <NeuPanel radius="rounded-[24px]" className="flex h-full flex-col p-5 md:p-6">
+                <FlatCard className="flex h-full flex-col p-5 md:p-6">
                   <h3
                     className="font-display text-[1.02rem] font-semibold leading-snug tracking-tight"
                     style={{ color: "var(--text)" }}
@@ -80,11 +87,13 @@ export function ExerciseLayout({ section }: LayoutProps) {
                         color: card.met === false ? "var(--text-faint)" : "var(--accent)",
                       }}
                     >
-                      {card.met === false ? "Not yet: see why" : "Evidence"}{" "}
-                      <span aria-hidden>↗</span>
+                      {card.met === false
+                        ? "Not yet: see why"
+                        : (card.hrefLabel ?? "Evidence")}{" "}
+                      <span aria-hidden>{card.href.startsWith("/kit/") ? "↓" : "↗"}</span>
                     </a>
                   )}
-                </NeuPanel>
+                </FlatCard>
               </Reveal>
             ))}
           </div>

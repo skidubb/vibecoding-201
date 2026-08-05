@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { sections } from "@/content/sections";
 import { backendConfigured, supabase } from "@/lib/supabase/client";
 import { NeuBadge, NeuPanel } from "@/components/neu/Neu";
 
@@ -20,14 +19,11 @@ import { NeuBadge, NeuPanel } from "@/components/neu/Neu";
  * own number, and the aggregate names nobody.
  */
 
-const JOBS = sections.find((s) => s.jobs)?.jobs ?? [];
-
 type Row = { exercise_id: string; body: string; answer: number | null };
 type Tally = { exercise_id: string; answer: number; people: number };
 
 export default function YoursPage() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
-  const [job, setJob] = useState<string | null>(null);
   const [rows, setRows] = useState<Row[]>([]);
   const [tallies, setTallies] = useState<Tally[]>([]);
 
@@ -39,13 +35,11 @@ export default function YoursPage() {
     if (!session.session) return setSignedIn(false);
     setSignedIn(true);
 
-    const [{ data: profile }, { data: mine }, { data: all }] = await Promise.all([
-      client.from("profiles").select("job").eq("id", session.session.user.id).maybeSingle(),
+    const [{ data: mine }, { data: all }] = await Promise.all([
       client.from("submissions").select("exercise_id, body, answer"),
       client.from("answer_tallies").select("exercise_id, answer, people"),
     ]);
 
-    setJob((profile?.job as string | null) ?? null);
     setRows((mine as Row[] | null) ?? []);
     setTallies((all as Tally[] | null) ?? []);
   }, []);
@@ -54,22 +48,11 @@ export default function YoursPage() {
     void read();
   }, [read]);
 
-  const chosen = JOBS.find((j) => j.id === job);
   const row = (id: string) => rows.find((r) => r.exercise_id === id);
   const spec = row("spec");
   const barEval = row("bar-eval");
-  const invented = row("invented-count");
   const score = row("score");
 
-  /** How many people landed on the same number, and how many did not. */
-  function company(exerciseId: string, answer: number | null) {
-    if (answer === null) return null;
-    const forExercise = tallies.filter((t) => t.exercise_id === exerciseId);
-    const total = forExercise.reduce((n, t) => n + t.people, 0);
-    const same = forExercise.find((t) => t.answer === answer)?.people ?? 0;
-    if (total < 2) return null;
-    return { same, total };
-  }
 
   return (
     <main
@@ -96,20 +79,6 @@ export default function YoursPage() {
           <div className="mt-10 space-y-4">
             <NeuPanel radius="rounded-[22px]" className="px-6 py-5">
               <h2 className="font-sans text-[11px] uppercase tracking-[0.16em]" style={{ color: "var(--text-faint)" }}>
-                The app you worked in
-              </h2>
-              <p className="mt-2 text-[0.98rem] leading-relaxed">
-                {chosen ? chosen.job : "You did not choose one. The starter app is in the kit."}
-              </p>
-              {chosen && (
-                <p className="mt-2 text-[0.92rem]" style={{ color: "var(--text-dim)" }}>
-                  {chosen.user}
-                </p>
-              )}
-            </NeuPanel>
-
-            <NeuPanel radius="rounded-[22px]" className="px-6 py-5">
-              <h2 className="font-sans text-[11px] uppercase tracking-[0.16em]" style={{ color: "var(--text-faint)" }}>
                 The Done you wrote
               </h2>
               <p className="mt-2 whitespace-pre-wrap text-[0.98rem] leading-relaxed">
@@ -126,27 +95,6 @@ export default function YoursPage() {
                   "Nothing saved. Run the evaluation prompt from the kit against something you have built."}
               </p>
             </NeuPanel>
-
-            {[
-              { label: "Things your plan invented", row: invented, id: "invented-count" },
-            ].map((item) => {
-              const c = company(item.id, item.row?.answer ?? null);
-              return (
-                <NeuPanel key={item.id} radius="rounded-[22px]" className="px-6 py-5">
-                  <h2 className="font-sans text-[11px] uppercase tracking-[0.16em]" style={{ color: "var(--text-faint)" }}>
-                    {item.label}
-                  </h2>
-                  <p className="mt-2 font-display text-[1.6rem] font-semibold tabular-nums">
-                    {item.row?.answer ?? "not submitted"}
-                  </p>
-                  {c && (
-                    <p className="mt-1 text-[0.9rem]" style={{ color: "var(--text-dim)" }}>
-                      {c.same} of {c.total} in the room gave the same number.
-                    </p>
-                  )}
-                </NeuPanel>
-              );
-            })}
 
             <NeuPanel radius="rounded-[22px]" className="px-6 py-5">
               <h2 className="font-sans text-[11px] uppercase tracking-[0.16em]" style={{ color: "var(--text-faint)" }}>

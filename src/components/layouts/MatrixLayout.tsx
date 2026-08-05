@@ -1,9 +1,17 @@
 "use client";
 
 import { Glow } from "@/components/core/ParallaxLayer";
-import { NeuPanel, Reveal } from "@/components/neu/Neu";
+import { Reveal } from "@/components/neu/Neu";
 import { Logo } from "@/components/layouts/Logo";
-import { CONTAINER, SectionBackdrop, SectionHeader, SectionTail, type LayoutProps } from "./shared";
+import { EventFeed } from "@/components/interactive/EventFeed";
+import {
+  CONTAINER,
+  FlatCard,
+  SectionBackdrop,
+  SectionHeader,
+  SectionTail,
+  type LayoutProps,
+} from "./shared";
 
 /**
  * A comparison table.
@@ -52,7 +60,7 @@ export function MatrixLayout({ section }: LayoutProps) {
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {section.cards.map((card, i) => (
               <Reveal key={card.title} delay={0.06 + i * 0.06}>
-                <NeuPanel radius="rounded-[24px]" className="flex h-full flex-col p-5 md:p-6">
+                <FlatCard className="flex h-full flex-col p-5 md:p-6">
                   <h3
                     className="font-display text-[1.02rem] font-semibold leading-snug tracking-tight"
                     style={{ color: "var(--text)" }}
@@ -67,7 +75,7 @@ export function MatrixLayout({ section }: LayoutProps) {
                       {card.body}
                     </p>
                   )}
-                </NeuPanel>
+                </FlatCard>
               </Reveal>
             ))}
           </div>
@@ -75,16 +83,10 @@ export function MatrixLayout({ section }: LayoutProps) {
 
         {rows.length > 0 && (
           <Reveal delay={0.12}>
-            {/* `plain` drops the inset panel: on slides whose rows are the
-                content itself, the box read as chrome (Scott's 2026-08-04 QA
-                on the ingredients slide). */}
-            <div
-              className={
-                matrix?.plain
-                  ? "mt-10"
-                  : "neu-inset neu-edge mt-10 rounded-[24px] px-4 py-3 md:px-7 md:py-5"
-              }
-            >
+            {/* No inset panel on any table now — Scott's 2026-08-05 rule keeps
+                the inset treatment for copyable text and inputs only. `plain`
+                is still accepted by the type so old registry entries parse. */}
+            <div className="mt-10">
               <table className="w-full border-collapse">
                 {head && (
                   // Hidden on mobile: each cell repeats its own header below, so a
@@ -185,6 +187,11 @@ export function MatrixLayout({ section }: LayoutProps) {
             </div>
           </Reveal>
         )}
+
+        {/* The Run section argues that a tool needs a log. Rather than say so
+            and move on, it shows this page's own. Moved here with the section
+            when Run became a table of named tools. */}
+        {section.id === "run" && <EventFeed />}
 
         <SectionTail section={section} />
       </div>

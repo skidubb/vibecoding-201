@@ -370,3 +370,97 @@ export function Kicker({ children }: { children: React.ReactNode }) {
 }
 
 export const CONTAINER = "relative z-10 mx-auto w-full max-w-[1200px] px-6 md:px-12";
+
+/**
+ * A flat card: hairline border, no extrusion.
+ *
+ * Scott's 2026-08-05 design rule: a card raises and drops a shadow only when it
+ * is interactive, and gets the inset treatment only when it holds text to copy
+ * or a control to type into. Everything else — the enumerated lists, the
+ * quadrant cells, the reach steps — is a flat outlined box.
+ *
+ * `tone="bad"` is the named-failure treatment from the quadrant's red boxes:
+ * accent border and accent title, fill barely tinted.
+ */
+export function FlatCard({
+  children,
+  tone,
+  className = "",
+}: {
+  children: React.ReactNode;
+  tone?: "bad";
+  className?: string;
+}) {
+  return (
+    <div
+      className={`rounded-[20px] border ${className}`}
+      style={{
+        borderColor: tone === "bad" ? "var(--accent)" : "var(--edge)",
+        background:
+          tone === "bad"
+            ? "color-mix(in srgb, var(--accent) 7%, transparent)"
+            : "color-mix(in srgb, var(--surface) 55%, transparent)",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * The small tinted icon chip on a flat icon card. Inline paths, stroke set to
+ * the accent: an icon library for four marks is a dependency the page does not
+ * need.
+ */
+export function IconChip({ icon }: { icon: NonNullable<import("@/content/sections").Card["icon"]> }) {
+  const paths: Record<string, React.ReactNode> = {
+    grid: (
+      <>
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      </>
+    ),
+    database: (
+      <>
+        <ellipse cx="12" cy="5.5" rx="8" ry="3" />
+        <path d="M4 5.5v13c0 1.66 3.58 3 8 3s8-1.34 8-3v-13" />
+        <path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3" />
+      </>
+    ),
+    terminal: (
+      <>
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="m7 9 3 3-3 3" />
+        <path d="M13 15h4" />
+      </>
+    ),
+    book: (
+      <>
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      </>
+    ),
+  };
+  return (
+    <span
+      aria-hidden
+      className="inline-flex h-11 w-11 items-center justify-center rounded-xl"
+      style={{ background: "color-mix(in srgb, var(--accent) 12%, transparent)" }}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="var(--accent)"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {paths[icon]}
+      </svg>
+    </span>
+  );
+}

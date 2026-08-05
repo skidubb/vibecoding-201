@@ -35,10 +35,15 @@ operational rules that don't belong in it.
   engineering the spine of the class — the model plus its context, tools, sandbox, and
   verification — so the word appears in slide copy as the thing's real name. The
   no-metaphor rule still bans rungs, climbing, doors, and crossing as teaching terms.
-- **The v15-only sections were cut on Scott's 2026-08-05 ruling and stay cut.** The two
+- **The v15-only sections were cut on Scott's 2026-08-05 rulings and stay cut.** The two
   mid-deck polls, idempotency, the breach test, the credentials slide, done-count, the
-  demo, insight-rule, homework, and the Q&A poll. Do not restore them from git to match
-  an older deck file; `invented-count` survives because Edit1's plan slide promises it.
+  demo, insight-rule, homework, the Q&A poll — and, from the same evening's design
+  pass, invented-count ("I FUCKING HATE THIS SLIDE"), pick-your-job, test-and-ship,
+  and nine-steps. Do not restore any of them from git to match an older deck file.
+- **Cards raise and drop a shadow only when interactive; the inset treatment is for
+  copyable text and inputs only** (Scott's 2026-08-05 design rule). Non-interactive
+  lists are FlatCard hairline boxes; the new quadrant/ladder/frame/duo/flow layouts
+  replicate the gtm-workshop cut's shapes.
 - **The registry follows the deck's four rules:** the deck teaches on its own, so anything
   the audience must learn is printed (inverted in v11 — v10 and earlier kept spoken lines
   off the slide, and NOTES blocks are commentary Scott does not present from); no sentence

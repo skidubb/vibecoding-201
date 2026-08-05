@@ -111,7 +111,7 @@ test("an answering exercise keeps its clock and stores no prose", async ({ page 
   // What still has to hold is that they take a number and not an essay. `body`
   // on these rows is generated from the answer, never typed, so a textarea here
   // would mean free text was reaching a column the room's histogram groups on.
-  for (const id of ["invented-count", "the-bar"]) {
+  for (const id of ["the-bar"]) {
     await page.goto(`/#${id}`);
     await ready(page);
     await settle(page);
@@ -129,11 +129,11 @@ test("the room's distribution names nobody", async ({ page }) => {
   // many people chose a number and not which people. The section renders that
   // table directly, so anything identifying reaching the page would be visible
   // here before it was visible anywhere else.
-  await page.goto("/#invented-count");
+  await page.goto("/#the-bar");
   await ready(page);
   await settle(page);
 
-  const section = page.locator("#invented-count");
+  const section = page.locator("#the-bar");
   await expect(section).not.toContainText("@");
   await expect(section.locator("[data-author]")).toHaveCount(0);
 });

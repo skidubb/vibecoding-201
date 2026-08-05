@@ -13,17 +13,14 @@ import genS02TwoLaptops from "@/assets/generated/s02-two-laptops.webp";
 import genS10PagePassed from "@/assets/generated/s10-page-passed.webp";
 import genS11TwoSheets from "@/assets/generated/s11-two-sheets.webp";
 import genS12Timer from "@/assets/generated/s12-timer.webp";
-import genS14TheQuestion from "@/assets/generated/s14-the-question.webp";
 import genS17OverShoulder from "@/assets/generated/s17-over-shoulder.webp";
 import genS18SixBinders from "@/assets/generated/s18-six-binders.webp";
 import genS19HandsUp from "@/assets/generated/s19-hands-up.webp";
-import genS21WrongSide from "@/assets/generated/s21-wrong-side.webp";
 import genS22SealedEnvelope from "@/assets/generated/s22-sealed-envelope.webp";
 import genS23FiveEntrances from "@/assets/generated/s23-five-entrances.webp";
 import genS25TwoParcels from "@/assets/generated/s25-two-parcels.webp";
 import genS26LedgerAndNote from "@/assets/generated/s26-ledger-and-note.webp";
 import genS27HandsUp2 from "@/assets/generated/s27-hands-up-2.webp";
-import genS28GreenLights from "@/assets/generated/s28-green-lights.webp";
 import genS36ThreeLines from "@/assets/generated/s36-three-lines.webp";
 import genS38AboutToSend from "@/assets/generated/s38-about-to-send.webp";
 import genS40Council from "@/assets/generated/s40-council.webp";
@@ -45,7 +42,15 @@ export type LayoutKind =
   | "matrix"
   | "surfaced"
   | "jobs"
-  | "bio";
+  | "bio"
+  // Scott's 2026-08-05 design pass, each replicating a slide of the
+  // gtm-workshop cut: the stakes/verification 2x2, the reach staircase, the
+  // harness container, the closed/open panel pair, and the connection pipeline.
+  | "quadrant"
+  | "ladder"
+  | "frame"
+  | "duo"
+  | "flow";
 
 export type Media = {
   image?: StaticImageData;
@@ -72,6 +77,48 @@ export type Card = {
   met?: boolean;
   /** A brand mark for the card, where the deck names a product. */
   brand?: BrandKey;
+  /**
+   * What the card's link is called on screen. Defaults to "Evidence" — the
+   * label the Bar's cards established — but a download card says "Download"
+   * and a prompt card says "Open the prompt".
+   */
+  hrefLabel?: string;
+  /**
+   * A small line icon in a tinted chip above the title. Only the flat icon
+   * cards use it; the keys are the ones IconChip knows how to draw.
+   */
+  icon?: "grid" | "database" | "terminal" | "book";
+  /**
+   * "bad" renders the card as a named failure mode: accent border, accent
+   * title. The quadrant's two red boxes are the reason this exists.
+   */
+  tone?: "bad";
+};
+
+/** Axis labels for the quadrant layout. Cards fill the grid in reading order. */
+export type Quadrant = {
+  /** Left column, right column. */
+  colLabels: [string, string];
+  /** Top row, bottom row. */
+  rowLabels: [string, string];
+};
+
+/** The labelled container the frame layout draws around its cards. */
+export type Frame = {
+  /** Top-left corner label, accent smallcaps. */
+  label: string;
+  /** Top-right corner note, faint smallcaps. */
+  note?: string;
+};
+
+/** One side of the duo layout's panel pair. */
+export type DuoPanel = {
+  name: string;
+  /** The badge beside the name — the panel's one-line character. */
+  badge?: string;
+  rows: { label: string; value: string }[];
+  /** Marks under the first row's value, linked to each platform. */
+  brands?: { brand: BrandKey; href: string }[];
 };
 
 export type TimelineStop = {
@@ -361,6 +408,9 @@ export type Section = {
   exercise?: Exercise;
   surfaced?: Surfaced;
   jobs?: Job[];
+  quadrant?: Quadrant;
+  frame?: Frame;
+  duo?: DuoPanel[];
   /**
    * Render the prompt for whichever job this reader picked, above the exercise.
    *
@@ -381,8 +431,8 @@ export type Section = {
  * v15/v16 deck files disagree, Edit1 wins. Scott's 2026-08-05 ruling on the
  * v15-only sections (the two mid-deck polls, idempotency, the breach test, the
  * credentials slide, done-count, the demo, insight-rule, homework, and the Q&A
- * poll) was to cut them and not restore them. `invented-count` stays because
- * Edit1's plan slide promises the count.
+ * poll) was to cut them and not restore them; his design pass the same evening
+ * also cut invented-count, pick-your-job, test-and-ship, and nine-steps.
  *
  * The class produces the spec, the plan, and the project context files live;
  * Test, Ship, and Run are taught but not exercised. Job and schema strings are
@@ -503,33 +553,33 @@ export const sections: Section[] = [
     // hard it was to build.
     id: "reach",
     theme: "light",
-    layout: "matrix",
+    layout: "ladder",
     eyebrow: "More levels, more devils",
     title: "Surface area determines how much rigor you owe.",
     accent: "how much rigor you owe.",
     railLabel: "Surface area",
     lede: "Use one question: can you silently fix this after it is wrong? If the answer is no, the work needs explicit checks and a release gate.",
-    matrix: {
-      head: ["Reach", "Minimum verification", "If it is wrong"],
-      rows: [
-        ["Just me", "Eyeball the output", "Correct or discard it quietly"],
-        [
-          "My team",
-          "Someone else reviews the result",
-          "Explain the correction to a small group",
-        ],
-        [
-          "Whole org",
-          "Written rules plus test data",
-          "Correct an operating decision and notify users",
-        ],
-        [
-          "External facing",
-          "Evals, release gates, monitoring, and rollback",
-          "Repair customer or partner trust",
-        ],
-      ],
-    },
+    // Bottom step first: the ladder draws them climbing up and to the right,
+    // and the top step carries the accent border — the floor at its highest.
+    cards: [
+      {
+        title: "Just me",
+        body: "Eyeball the output. Correct or discard it quietly.",
+      },
+      {
+        title: "My team",
+        body: "Someone else reviews the result. Explain the correction to a small group.",
+      },
+      {
+        title: "Whole org",
+        body: "Written rules plus test data. Correct an operating decision and notify users.",
+      },
+      {
+        title: "External facing",
+        body: "Evals, release gates, monitoring, and rollback. Repair customer or partner trust.",
+        tone: "bad",
+      },
+    ],
     footnote:
       "Enterprise is a multiplier: procurement and security review add obligations on top of the reach floor.",
     media: { image: genS19HandsUp, speed: -0.12 },
@@ -541,31 +591,37 @@ export const sections: Section[] = [
     // stakes/verification position so the axes survive the flattening.
     id: "sort-the-work",
     theme: "dark",
-    layout: "cards",
+    layout: "quadrant",
     eyebrow: "Sort the work · evolution of Vibecoding",
     title:
       "Start with low-stakes individual work. Add verification as reach and consequence grow.",
     accent: "as reach and consequence grow.",
     railLabel: "Sort the work",
+    lede: "The red boxes are the two failure modes.",
+    quadrant: {
+      colLabels: ["Low verification", "High verification"],
+      rowLabels: ["High stakes", "Low stakes"],
+    },
+    // Reading order fills the grid: top-left, top-right, bottom-left,
+    // bottom-right. The axes carry stakes and verification, so the cards do
+    // not restate them.
     cards: [
       {
-        title: "Vibe coding",
-        meta: "Low stakes · low verification",
-        body: "A win/loss theme explorer, a one-off QBR chart, a rep's private deal view.",
-      },
-      {
-        title: "Agentic engineering",
-        meta: "High stakes · high verification",
-        body: "Pipeline health scoring, territory and quota models, rep-versus-buyer loss reconciliation.",
-      },
-      {
         title: "Danger zone",
-        meta: "High stakes · low verification",
+        tone: "bad",
         body: "Lead scores written to CRM, a forecast rollup for the board, automated outbound sequences.",
       },
       {
+        title: "Agentic engineering",
+        body: "Pipeline health scoring, territory and quota models, rep-versus-buyer loss reconciliation.",
+      },
+      {
+        title: "Vibe coding",
+        body: "A win/loss theme explorer, a one-off QBR chart, a rep's private deal view.",
+      },
+      {
         title: "Over-engineered",
-        meta: "Low stakes · high verification",
+        tone: "bad",
         body: "A full eval suite for one chart, CI for a throwaway pull, a formal spec for a scratch script.",
       },
     ],
@@ -580,16 +636,20 @@ export const sections: Section[] = [
     // spine of the class, and the choose-environment table depends on it.
     id: "harness-engineering",
     theme: "light",
-    layout: "cards",
+    layout: "frame",
     eyebrow: "Harness engineering",
     title: "Beyond prompting. The harness is the system.",
     accent: "The harness is the system.",
     railLabel: "Harness engineering",
     lede: "The model is only a small part of getting quality outputs. The harness is everything that makes the model useful, constrained, and verifiable.",
+    frame: {
+      label: "Coding harness",
+      note: "~90% of the working system",
+    },
     cards: [
       {
         title: "Model",
-        meta: "~10% of the outcome",
+        meta: "~10%",
         body: "Generates and reasons. It may be swapped without changing the workflow.",
       },
       {
@@ -630,45 +690,58 @@ export const sections: Section[] = [
     // platforms it names. Base44 sponsors the class and sits with its peers.
     id: "choose-environment",
     theme: "dark",
-    layout: "matrix",
+    layout: "duo",
     eyebrow: "Choose your working environment",
     title: "Open or closed: use the harness you already trust.",
     accent: "the harness you already trust.",
     railLabel: "Your working environment",
     lede: "Both groups will use the same source data and assignment. The comparison is what each harness exposes, automates, and makes easy to verify.",
-    matrix: {
-      head: ["", "Closed harness", "Open harness"],
-      rows: [
-        [
-          "Examples",
-          "Lovable, v0, Replit Agent, Base44",
-          "Claude Code, Codex, Antigravity, Cursor",
+    duo: [
+      {
+        name: "Closed harness",
+        badge: "Fast, guided start",
+        rows: [
+          { label: "Examples", value: "Lovable, v0, Replit Agent, Base44" },
+          {
+            label: "Who configures it",
+            value:
+              "The vendor chooses context strategy, tools, deployment, and recovery",
+          },
+          {
+            label: "Best fit",
+            value: "Fast starts and guided workflows",
+          },
         ],
-        [
-          "Who configures it",
-          "The vendor chooses context strategy, tools, deployment, and recovery",
-          "Your team configures context, tools, permissions, deployment, and verification",
+        brands: [
+          { brand: "lovable", href: "https://lovable.dev" },
+          { brand: "v0", href: "https://v0.app" },
+          { brand: "replit", href: "https://replit.com" },
+          { brand: "base44", href: "https://base44.com" },
         ],
-        [
-          "Best fit",
-          "Fast starts and guided workflows",
-          "Multi-file work, direct data access, commands, and reusable automation",
+      },
+      {
+        name: "Open harness",
+        badge: "Direct, configurable work",
+        rows: [
+          { label: "Examples", value: "Claude Code, Codex, Antigravity, Cursor" },
+          {
+            label: "Who configures it",
+            value:
+              "Your team configures context, tools, permissions, deployment, and verification",
+          },
+          {
+            label: "Best fit",
+            value:
+              "Multi-file work, direct data access, commands, and reusable automation",
+          },
         ],
-      ],
-    },
-    rowBrands: [
-      [
-        { brand: "lovable", href: "https://lovable.dev" },
-        { brand: "v0", href: "https://v0.app" },
-        { brand: "replit", href: "https://replit.com" },
-        { brand: "base44", href: "https://base44.com" },
-        { brand: "claude", href: "https://claude.com/product/claude-code" },
-        { brand: "openai", href: "https://learn.chatgpt.com/docs" },
-        { brand: "antigravity", href: "https://antigravity.google" },
-        { brand: "cursor", href: "https://cursor.com" },
-      ],
-      [],
-      [],
+        brands: [
+          { brand: "claude", href: "https://claude.com/product/claude-code" },
+          { brand: "openai", href: "https://learn.chatgpt.com/docs" },
+          { brand: "antigravity", href: "https://antigravity.google" },
+          { brand: "cursor", href: "https://cursor.com" },
+        ],
+      },
     ],
     kicker:
       "Choose one now. We will compare correctness, evidence, repeatability, and recovery at the end.",
@@ -690,10 +763,14 @@ export const sections: Section[] = [
       {
         title: "Open your coding agent",
         body: "In the folder of something you have already built. Nothing to evaluate? Use the starter app from the kit.",
+        href: "/kit/monday-gtm-dashboard-standalone.html",
+        hrefLabel: "Download the starter app",
       },
       {
         title: "Run the evaluation prompt",
-        body: "It is in the kit. The agent reads the project and returns a verdict with the evidence that decided it.",
+        body: "The agent reads the project and returns a verdict with the evidence that decided it.",
+        href: "/kit/the-bar-prompt.md",
+        hrefLabel: "Open the evaluation prompt",
       },
       {
         title: "Share the verdict",
@@ -709,6 +786,71 @@ export const sections: Section[] = [
     footnote: "The evaluation prompt is in the kit",
     footnoteHref: "/kit",
     media: { image: genS17OverShoulder, speed: -0.12 },
+  },
+
+  {
+    // The working set, laid out before anything is picked or specced. This is
+    // where the deal set stops appearing cold: it used to be first mentioned in
+    // the headline of the slide that asked the room to use it. The set is
+    // synthetic (Andy's Class 0 data) and the row says so; its defects are real
+    // CRM defects, which is the pedagogy, so "real data" is never claimed.
+    id: "ingredients",
+    theme: "light",
+    layout: "cards",
+    // Scott's 2026-08-04 QA: never count the items ("three ingredients"), the
+    // data is called CRM data rather than "the deal set", no row highlight,
+    // and the table renders without its inset box (`plain`). His later ruling
+    // the same day: the starter app is the thing you build with, and the CRM
+    // data rides inside it.
+    eyebrow: "Hands on starts now",
+    title: "No app, no problem — use this",
+    accent: "use this",
+    railLabel: "The shared starting line",
+    lede: "The PromptKit is the shared starting line. It gives every harness the same source, working interface, reference material, and verification baseline.",
+    cards: [
+      {
+        icon: "grid",
+        title: "The starter app",
+        body: "A working GTM dashboard with the CRM data inside it. Download it, double-click the file, and it runs — no server, no account, no key.",
+        href: "/kit/monday-gtm-dashboard-standalone.html",
+        hrefLabel: "Download the app",
+      },
+      {
+        icon: "database",
+        title: "The CRM data",
+        body: "10,000 deals across 36 columns, dated 4 August 2026, riding inside the starter app. Preserve it as the immutable source.",
+        href: "https://storage.googleapis.com/vibecoding-201-data/deals-10k.csv",
+        hrefLabel: "Open the full CSV",
+      },
+      {
+        icon: "terminal",
+        title: "Your coding harness",
+        body: "The open or closed harness you chose. Point it at a copied workspace and keep its connection and evidence visible.",
+      },
+      {
+        icon: "book",
+        title: "PromptKit references",
+        body: "Keep the prompt pack, the CLI reference, and the production readiness checklist open. Use the relevant guidance when the work reaches it.",
+        href: "/kit",
+        hrefLabel: "Open the kit",
+      },
+    ],
+    kicker:
+      "No one starts from a blank page — and no exercise writes back to the source.",
+    // Scott's 2026-08-04 QA: no "schema", "bucket" or "read-only" without
+    // saying what they mean. The links say what a reader gets when they click.
+    deeper: {
+      claim: "The starter app and its CRM data, explained.",
+      note: "The app download, a guide to what every column means, and a 200-row sample you can paste straight into any AI assistant. No account needed for any of them.",
+      links: [
+        {
+          label: "The column guide",
+          href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
+        },
+        { label: "/kit", href: "/kit" },
+      ],
+    },
+    media: { image: genS31ThreeDoors, speed: -0.12 },
   },
 
   {
@@ -747,114 +889,6 @@ export const sections: Section[] = [
       ],
     },
     media: { image: genS27HandsUp2, speed: -0.12 },
-  },
-
-  {
-    // The working set, laid out before anything is picked or specced. This is
-    // where the deal set stops appearing cold: it used to be first mentioned in
-    // the headline of the slide that asked the room to use it. The set is
-    // synthetic (Andy's Class 0 data) and the row says so; its defects are real
-    // CRM defects, which is the pedagogy, so "real data" is never claimed.
-    id: "ingredients",
-    theme: "light",
-    layout: "matrix",
-    // Scott's 2026-08-04 QA: never count the items ("three ingredients"), the
-    // data is called CRM data rather than "the deal set", no row highlight,
-    // and the table renders without its inset box (`plain`). His later ruling
-    // the same day: the starter app is the thing you build with, and the CRM
-    // data rides inside it.
-    eyebrow: "Hands on starts now",
-    title: "No app, no problem — use this",
-    accent: "use this",
-    railLabel: "The shared starting line",
-    lede: "The PromptKit is the shared starting line. It gives every harness the same source, working interface, reference material, and verification baseline.",
-    matrix: {
-      plain: true,
-      rows: [
-        [
-          "The starter app",
-          "A working GTM dashboard from the kit, with the CRM data inside it, every number checked against an independent calculation. Download it below, double-click the file, and it runs — no server, no account, no key",
-        ],
-        [
-          "The CRM data",
-          "10,000 deals across 36 columns, dated 4 August 2026, riding inside the starter app. Preserve it as the immutable source",
-        ],
-        [
-          "Your coding harness",
-          "The open or closed harness you chose. Point it at a copied workspace and keep its connection and evidence visible",
-        ],
-        [
-          "PromptKit references",
-          "Keep the prompt pack, the CLI reference, and the production readiness checklist open. Use the relevant guidance when the work reaches it",
-        ],
-      ],
-    },
-    rowBrands: [
-      [],
-      [],
-      [
-        { brand: "claude", href: "https://claude.com/product/claude-code" },
-        { brand: "openai", href: "https://learn.chatgpt.com/docs" },
-        { brand: "cursor", href: "https://cursor.com" },
-        { brand: "github", href: "https://github.com" },
-        { brand: "vercel", href: "https://vercel.com" },
-        { brand: "supabase", href: "https://supabase.com" },
-      ],
-      [],
-    ],
-    kicker:
-      "No one starts from a blank page — and no exercise writes back to the source.",
-    // Scott's 2026-08-04 QA: no "schema", "bucket" or "read-only" without
-    // saying what they mean. The links say what a reader gets when they click.
-    deeper: {
-      claim: "The starter app and its CRM data, explained.",
-      note: "The app download, a guide to what every column means, and a 200-row sample you can paste straight into any AI assistant. No account needed for any of them.",
-      links: [
-        {
-          label: "The column guide",
-          href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
-        },
-        { label: "/kit", href: "/kit" },
-      ],
-    },
-    media: { image: genS31ThreeDoors, speed: -0.12 },
-  },
-
-  {
-    // The hinge of the hour. Every later beat operates on whichever of these
-    // the attendee picks, so the choice is stored on their profile rather than
-    // held in a component: it has to survive a reload and be readable from the
-    // page they leave with.
-    //
-    // Scott's 2026-08-04 ruling replaced the six-job menu: people are either
-    // working with the starter app or with their own, and the exercises
-    // downstream run from the starter app. The id stays `pick-your-job`
-    // because tests and analytics anchor on it.
-    id: "pick-your-job",
-    theme: "light",
-    layout: "jobs",
-    eyebrow: "Choose your adventure",
-    title:
-      "Work with the starter app, or the app you brought. The exercises downstream flow from it.",
-    accent: "The exercises downstream flow from it.",
-    railLabel: "Choose your adventure",
-    jobs: [
-      {
-        id: "starter",
-        verb: "The starter app",
-        job: "A working GTM dashboard from the kit, with the CRM data already inside it. Double-click the file and it runs — no server, no account, no key.",
-        user: "It is a working screen with nothing underneath: no sign-in, no access rules, no logs, no owner. Everything this hour builds is the system it is missing.",
-      },
-      {
-        id: "own",
-        verb: "Your own app",
-        job: "The app you already built. Every exercise from here runs against it instead of the starter app.",
-        user: "Sign in and share what you are learning: submit what each exercise returns, so your numbers land in the room's distribution next to everyone else's.",
-      },
-    ],
-    footnote: "The starter app is in the kit — download it, double-click, it runs",
-    footnoteHref: "/kit",
-    media: { image: genS14TheQuestion, speed: -0.12 },
   },
 
   {
@@ -1091,57 +1125,10 @@ export const sections: Section[] = [
       },
     ],
     kicker:
-      "Send it, then leave it generating: counting what it invented comes in a few minutes.",
+      "Send it, then leave it generating. Read what comes back before you approve any of it.",
     footnote: "No plan came back? Take the pre-generated one from the kit",
     footnoteHref: "/kit",
     media: { image: genS12Timer, speed: -0.15 },
-  },
-
-  {
-    // The count the assignment asked the room to keep, now collected.
-    //
-    // The User line does the work: the spec sends the went-quiet list to sales
-    // managers and the CRM data has no manager column, so nearly every plan
-    // invents the routing target. That makes the distribution a fact about the
-    // plans rather than an opinion about the people.
-    //
-    // The schema is the contract this counts against, quoted from
-    // ../data/kit/schema.md.
-    id: "invented-count",
-    theme: "dark",
-    layout: "exercise",
-    eyebrow: "Hands on · 2 minutes",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Plan"],
-    },
-    // v15 headline rewrite: "The plan invented it" had no referent until the
-    // lede. The headline now states the thing and the lede only enumerates.
-    title: "Your plan named things the schema does not contain. Count them.",
-    accent: "Count them.",
-    railLabel: "What the plan invented",
-    lede: "A table, a column, a status, or a permission. Submit how many you find.",
-    exercise: {
-      id: "invented-count",
-      seconds: 120,
-      mode: "count",
-      question: "Things your plan invented",
-      unit: "assumptions",
-    },
-    kicker:
-      "A zero usually means you did not look hard enough. The schema is the whole contract.",
-    footnote:
-      "Building behind your own app? Your contract is your own schema: ask the agent to print every table, column, and permission the app actually has, then count against that",
-    deeper: {
-      claim: "The 36 columns, and the values each one holds.",
-      links: [
-        {
-          label: "schema.md",
-          href: "https://storage.googleapis.com/vibecoding-201-data/schema.md",
-        },
-      ],
-    },
-    media: { image: genS18SixBinders, speed: -0.15 },
   },
 
   {
@@ -1188,7 +1175,7 @@ export const sections: Section[] = [
   {
     id: "data-doors",
     theme: "dark",
-    layout: "matrix",
+    layout: "flow",
     eyebrow: "Build · connections",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
@@ -1196,36 +1183,35 @@ export const sections: Section[] = [
     },
     title: "Choose how your tool connects to its data",
     accent: "connects to its data",
-    matrix: {
-      head: ["", "Use when", "Costs you"],
-      rows: [
-        [
-          "Manual",
-          "Rare, ambiguous, or judgment-heavy work",
-          "Stale data and human effort",
-        ],
-        [
-          "Computer use",
-          "Stable interface, no usable integration",
-          "Fragility and terms-of-service limits",
-        ],
-        [
-          "API",
-          "App-to-app work at runtime",
-          "Auth, rate limits, engineering overhead",
-        ],
-        [
-          "MCP",
-          "Governed agent access to tools and context",
-          "Connector quality and permissions",
-        ],
-        [
-          "CLI",
-          "The agent driving GitHub, Vercel, Supabase, tests, logs",
-          "Powerful access needs guardrails",
-        ],
-      ],
-    },
+    // The five methods as a pipeline of icon nodes: `body` is when to use one,
+    // `meta` is what it costs you — the accent caution under each column.
+    cards: [
+      {
+        title: "Manual",
+        body: "Rare, ambiguous, or judgment-heavy work.",
+        meta: "Costs you: stale data and human effort",
+      },
+      {
+        title: "Computer use",
+        body: "Stable interface, no usable integration.",
+        meta: "Costs you: fragility and terms-of-service limits",
+      },
+      {
+        title: "API",
+        body: "App-to-app work at runtime.",
+        meta: "Costs you: auth, rate limits, engineering overhead",
+      },
+      {
+        title: "MCP",
+        body: "Governed agent access to tools and context.",
+        meta: "Costs you: connector quality and permissions",
+      },
+      {
+        title: "CLI",
+        body: "The agent driving GitHub, Vercel, Supabase, tests, logs.",
+        meta: "Costs you: powerful access needs guardrails",
+      },
+    ],
     strip: {
       label: "Choose on",
       items: [
@@ -1254,60 +1240,6 @@ export const sections: Section[] = [
       ],
     },
     media: { image: genS23FiveEntrances, speed: -0.12 },
-  },
-
-  {
-    id: "test-and-ship",
-    theme: "light",
-    layout: "matrix",
-    eyebrow: "Steps 4 and 5 · Test and ship",
-    steps: {
-      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
-      current: ["Test", "Ship"],
-    },
-    title: "The agent writes the tests. You decide when it ships.",
-    accent: "You decide when it ships.",
-    matrix: {
-      rows: [
-        ["You", "Define the behavior, then verify the finished work as a user"],
-        [
-          "The agent",
-          "Writes the test, watches it fail, implements, and runs it until green",
-        ],
-      ],
-    },
-    lede:
-      "Break things in a local copy and prove the fix on a preview link. Production is the version other people depend on.",
-    strip: {
-      label: "Tests to pass before anyone depends on it",
-      items: [
-        "the workflow completes",
-        "a user without permission is refused",
-        "malformed input is rejected",
-        "a double submission stays one record",
-        "a dead data source is handled",
-        "a saved change survives a refresh",
-      ],
-    },
-    kicker:
-      "Promotion is a decision someone makes, never a side effect of saving a file.",
-    deeper: {
-      claim: "Agents now run these tests themselves:",
-      note: "promoting a preview as an explicit step, and an agent that tests apps in a real browser.",
-      links: [
-        {
-          label: "vercel.com/docs",
-          href: "https://vercel.com/docs/deployments/promote-preview-to-production",
-          brand: "vercel",
-        },
-        {
-          label: "replit.com/blog",
-          href: "https://replit.com/blog/introducing-agent-3-our-most-autonomous-agent-yet",
-          brand: "replit",
-        },
-      ],
-    },
-    media: { image: genS28GreenLights, speed: -0.15 },
   },
 
   {
@@ -1351,7 +1283,7 @@ export const sections: Section[] = [
     // difference between teaching analytics and having them.
     id: "run",
     theme: "light",
-    layout: "cards",
+    layout: "matrix",
     eyebrow: "Step 6 · Run",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
@@ -1359,23 +1291,41 @@ export const sections: Section[] = [
     },
     title: "Watch it, log it, and name who fixes it",
     accent: "name who fixes it",
-    cards: [
-      {
-        title: "Analytics",
-        body: "Is it being used, and is it creating value?",
-        // Scott's 2026-08-05 addition: name the options so "add analytics"
-        // is a menu, not a research project.
-        meta: "Vercel Analytics is one toggle on this stack. PostHog, Umami, and Google Analytics all have free tiers that cover an internal tool.",
-      },
-      {
-        title: "Logs",
-        body: "A record of what happened on every run, for the day something looks wrong.",
-        meta: "Your platform's built-in logs first — knowing that Vercel's free plan forgets them after an hour. Sentry's free tier catches the errors you did not log.",
-      },
-      {
-        title: "Alerts",
-        body: "When it fails, a named human finds out. A log entry nobody reads is not an alert.",
-      },
+    // Scott's 2026-08-05 reformat: the three jobs as a table, each row naming
+    // the tools that do it, with their marks linked. Free-tier claims verified
+    // live the same day.
+    matrix: {
+      head: ["", "What it answers", "Tools you can use"],
+      rows: [
+        [
+          "Analytics",
+          "Is it being used, and is it creating value?",
+          "Vercel Analytics is one toggle on this stack. PostHog, Umami, and Google Analytics all have free tiers that cover an internal tool",
+        ],
+        [
+          "Logs",
+          "What happened on every run, for the day something looks wrong.",
+          "Your platform's built-in logs first — Vercel's free plan forgets them after an hour. Sentry's free tier catches the errors you did not log",
+        ],
+        [
+          "Alerts",
+          "When it fails, a named human finds out. A log entry nobody reads is not an alert.",
+          "Sentry alert rules, or your platform's uptime checks, pointed at a channel someone actually reads",
+        ],
+      ],
+    },
+    rowBrands: [
+      [
+        { brand: "vercel", href: "https://vercel.com/docs/analytics" },
+        { brand: "posthog", href: "https://posthog.com" },
+        { brand: "umami", href: "https://umami.is" },
+        { brand: "google", href: "https://marketingplatform.google.com/about/analytics/" },
+      ],
+      [
+        { brand: "sentry", href: "https://sentry.io" },
+        { brand: "supabase", href: "https://supabase.com/docs/guides/telemetry/logs" },
+      ],
+      [{ brand: "sentry", href: "https://docs.sentry.io/product/alerts/" }],
     ],
     strip: {
       label: "Ownership, written down",
@@ -1410,72 +1360,6 @@ export const sections: Section[] = [
       poster: "/media/workflow-loop-poster.jpg",
       speed: -0.12,
     },
-  },
-
-  {
-    // Scott's 2026-08-05 addition, built from the Bar: the same standard as
-    // the checklist that follows, written as the contrast between a project
-    // nobody hardened and one people can depend on. The system column quotes
-    // the Bar's own card bodies; the vibe-coded column is what the absence of
-    // each check looks like in practice.
-    id: "nine-steps",
-    theme: "light",
-    layout: "matrix",
-    eyebrow: "The production standard",
-    title: "What separates a vibe-coded project from a production system",
-    accent: "a production system",
-    railLabel: "Vibe-coded vs system",
-    matrix: {
-      head: ["", "A vibe-coded project", "A production system"],
-      rows: [
-        [
-          "Persistent data",
-          "A refresh resets it",
-          "Records survive a refresh because they live in a real database",
-        ],
-        [
-          "Sign-in",
-          "Anyone with the link is everyone",
-          "The tool knows who each user is",
-        ],
-        [
-          "Enforced authorization",
-          "Records are hidden in the interface",
-          "The database decides what each user may see",
-        ],
-        [
-          "Server-side secrets",
-          "Keys pasted into the code",
-          "The repository holds references to a vault, never values",
-        ],
-        [
-          "A tested critical workflow",
-          "It worked when the builder tried it",
-          "The main workflow runs under an automated test on every change",
-        ],
-        [
-          "Visible error states",
-          "A blank screen or a spinner",
-          "Every failure says what happened in words",
-        ],
-        [
-          "Logs and analytics",
-          "No record of any run",
-          "Every run leaves a record someone can read back",
-        ],
-        [
-          "Preview before production",
-          "Saving a file is shipping",
-          "A person promotes each change",
-        ],
-        [
-          "A named owner",
-          "Whoever built it, until they leave",
-          "Someone answers when it breaks, and can roll it back",
-        ],
-      ],
-    },
-    media: { image: genS21WrongSide, speed: -0.15 },
   },
 
   {
