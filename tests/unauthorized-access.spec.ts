@@ -45,13 +45,14 @@ test("the kit is served without an account, and the files are real", async ({
   await page.goto("/kit");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
-  // Every served kit file: the starter app, the two class-day fallbacks, the
-  // four homework artifacts, the two reference files, and the README in the
-  // footer. Bucket entries are absent deliberately — a cross-origin `download`
-  // attribute is ignored, so those render as Open links and are not counted
-  // here.
+  // Every served kit file: the starter app, the evaluation prompt, the
+  // class-day fallbacks, the homework artifacts (now including the TDD prompt
+  // and the example context files), the reference files with the free-API
+  // list, and the README in the footer. Bucket entries are absent deliberately
+  // — a cross-origin `download` attribute is ignored, so those render as Open
+  // links and are not counted here.
   const links = page.locator("a[download]");
-  await expect(links).toHaveCount(10);
+  await expect(links).toHaveCount(14);
 
   // Every listed file resolves and carries content. A kit page that 404s on
   // the download is worse than no kit page: the room leaves believing they
@@ -66,17 +67,17 @@ test("the kit is served without an account, and the files are real", async ({
   }
 });
 
-test("the deck points at the kit from the homework slide", async ({ page }) => {
-  // The closing `cta` section was folded into homework when the deck was re-cut,
+test("the deck points at the kit from the closing slide", async ({ page }) => {
+  // The Edit1 re-cut replaced the homework slide with the keep-building close,
   // so this moved with it. The claim is unchanged and is the reason the test
   // exists: the room is told where to get the kit once, near the end, and that
   // makes it the link most likely to go silently missing.
-  await page.goto("/#homework");
+  await page.goto("/#keep-building");
   await ready(page);
   await settle(page);
 
   await expect(
-    page.locator("#homework").getByRole("link", { name: /kit/i }).first(),
+    page.locator("#keep-building").getByRole("link", { name: /kit/i }).first(),
   ).toHaveAttribute("href", "/kit");
 });
 
@@ -110,7 +111,7 @@ test("an answering exercise keeps its clock and stores no prose", async ({ page 
   // What still has to hold is that they take a number and not an essay. `body`
   // on these rows is generated from the answer, never typed, so a textarea here
   // would mean free text was reaching a column the room's histogram groups on.
-  for (const id of ["done-count", "invented-count", "the-bar"]) {
+  for (const id of ["invented-count", "the-bar"]) {
     await page.goto(`/#${id}`);
     await ready(page);
     await settle(page);
@@ -128,11 +129,11 @@ test("the room's distribution names nobody", async ({ page }) => {
   // many people chose a number and not which people. The section renders that
   // table directly, so anything identifying reaching the page would be visible
   // here before it was visible anywhere else.
-  await page.goto("/#done-count");
+  await page.goto("/#invented-count");
   await ready(page);
   await settle(page);
 
-  const section = page.locator("#done-count");
+  const section = page.locator("#invented-count");
   await expect(section).not.toContainText("@");
   await expect(section.locator("[data-author]")).toHaveCount(0);
 });

@@ -28,11 +28,17 @@ operational rules that don't belong in it.
   yourself writing a title, stop —
   you are decorating, and it reads as hiding the point. Every eyebrow, headline, body
   line, table cell and kicker in `src/content/sections.ts` is quoted from
-  `../deck/deck-content-v15.md` (30 sections; v7 through v14 and the earlier 40-section
-  `../Vibecoding-201-Production-GTM-Tools-v6.pptx` cut are superseded). The one standing
-  exception is the `why-me` section, whose bracketed `[SCOTT: …]` lines are placeholders
-  Scott fills before the branch merges. The deck's slide
+  `Vibecoding-201-Edit1.pptx`, Scott's 2026-08-05 re-cut (it supersedes
+  `../deck/deck-content-v15.md`, v16, and every earlier deck file). The deck's slide
   numbering and speaker notes are noise and are deliberately not mirrored anywhere on the site.
+- **"Harness" is a technical term now, not a banned metaphor.** Edit1 made harness
+  engineering the spine of the class — the model plus its context, tools, sandbox, and
+  verification — so the word appears in slide copy as the thing's real name. The
+  no-metaphor rule still bans rungs, climbing, doors, and crossing as teaching terms.
+- **The v15-only sections were cut on Scott's 2026-08-05 ruling and stay cut.** The two
+  mid-deck polls, idempotency, the breach test, the credentials slide, done-count, the
+  demo, insight-rule, homework, and the Q&A poll. Do not restore them from git to match
+  an older deck file; `invented-count` survives because Edit1's plan slide promises it.
 - **The registry follows the deck's four rules:** the deck teaches on its own, so anything
   the audience must learn is printed (inverted in v11 — v10 and earlier kept spoken lines
   off the slide, and NOTES blocks are commentary Scott does not present from); no sentence
@@ -51,9 +57,9 @@ operational rules that don't belong in it.
   - **Never verb an artifact that cannot take the verb.** "Run your Done" is the canonical
     offence; the instruction is to run the prompt. A "Done" may be named as the taught
     term (slides 10–11 define it) but never used in constructions like "two Dones".
-- **The GO DEEPER strip is on 17 of the 29 sections.** The other 12 are the polls, the
-  exercises and the demo, where the room is talking or typing rather than reading. Do not
-  add strips to complete the set.
+- **The GO DEEPER strip is deliberately absent from the polls and most exercises**,
+  where the room is talking or typing rather than reading. Do not add strips to
+  complete the set.
 - **`SectionTail` renders `strip`, `kicker`, `footnote` and `deeper`** so each layout has one
   call site instead of four. Five registry fields have been dropped by layouts that did not
   handle them. Add any new tier there rather than in twelve components, and extend

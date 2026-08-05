@@ -58,15 +58,15 @@ test("a poll renders and says so when there is no backend", async ({ page }) => 
   // No Supabase environment is configured in this run, which is the same state
   // the site is in if the project is paused, the keys are pulled, or
   // NEXT_PUBLIC_BACKEND_DISABLED is set to kill the backend mid-class.
-  await page.goto("/#poll-debugging");
-  const section = page.locator("#poll-debugging");
+  await page.goto("/#evaluate-poll");
+  const section = page.locator("#evaluate-poll");
 
   // The question and every option still read. A visitor months later, and the
   // room if the backend dies, both still get the teaching content.
-  await expect(section).toContainText("The build works except for one error that keeps happening.");
-  await expect(section.locator("button[data-option]")).toHaveCount(4);
+  await expect(section).toContainText("Vote what your agent came back with.");
+  await expect(section.locator("button[data-option]")).toHaveCount(3);
   await expect(section).toContainText(
-    "Provide the error, reproduction steps, and expected behavior",
+    "A defined group reliably completes a real workflow",
   );
 
   // And it says what is wrong rather than offering a button that does nothing.
@@ -79,12 +79,11 @@ test("the correct answer is not in the page when no poll is revealed", async ({ 
   // browser. Correct answers and debriefs live in Postgres behind a column
   // grant for this reason — on a page that tells the room hiding records in
   // the interface is not security, shipping the answer would be an own goal.
-  await page.goto("/#poll-debugging");
+  await page.goto("/#cold-open");
   const html = await page.content();
 
   expect(html).not.toContain("correct_option_id");
-  expect(html).not.toContain("Debugging is delegation with evidence attached.");
-  expect(html).not.toContain("planted distractor");
+  expect(html).not.toContain("debrief");
 });
 
 test("the vote page says what is happening when there is no backend", async ({

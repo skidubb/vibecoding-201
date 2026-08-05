@@ -3,21 +3,21 @@
 A neumorphic, parallax-scrolling presentation of *Vibecoding 201: Building Production
 GTM Tools* (Pavilion AI in GTM School) — the polls, the copyable prompts, and the tool
 the class is about, deployed for real. The site is the presentation surface, not a
-companion: 29 sections are on the page, quoted from `deck-content-v15.md` as revised
-by Scott's 2026-08-04 student-QA pass (see CLAUDE.md — the QA wording outranks the
-deck file until the next deck version absorbs it). See `SPEC.md` for what this is
-meant to do and `ARCHITECTURE.md` for why it is built this way.
+companion: 27 sections are on the page, quoted from `Vibecoding-201-Edit1.pptx`,
+Scott's 2026-08-05 re-cut of the class (see CLAUDE.md — Edit1 outranks every older
+deck file, and the v15-only sections were cut on his ruling, not lost). See `SPEC.md`
+for what this is meant to do and `ARCHITECTURE.md` for why it is built this way.
 
-**The class runs against a shared deal set.** `../data/kit/` publishes a 10,000-row deal
-set (synthetic, courtesy of Andy's Class 0 data, deliberately uncleaned) to a
-public bucket, and `../data/kit/jobs.md` gives six jobs with the exact row count one
-precise Done returns. Attendees pick a job at `#pick-your-job`, and it is stored on their
-profile so every later exercise runs against it. Two exercises submit a number rather than
-a private tick: what your Done returned, and what your plan invented. Those go to
-`answer_tallies` by trigger and come back as the room's distribution, which is how the
-class shows that "no recorded activity since 5 May" returns 634 or 834 depending on who is
-reading. `/yours` is where one attendee's own job, Done, numbers and unchecked items live;
-it needs a session, which is exactly what `/report` does not.
+**The class runs against shared CRM data.** `../data/kit/` publishes a 10,000-row
+synthetic CRM data set (courtesy of Andy's Class 0 data, deliberately uncleaned) to a
+public bucket, and it rides pre-baked inside the starter app in `/kit`. Attendees
+choose the starter app or their own app at `#pick-your-job`, and the choice is stored
+on their profile so every later exercise runs against it. Two exercises store text an
+author can share to the room's screen — the three-line spec, and the verdict their
+agent returned on their own project — and one submits a number: what your plan
+invented, aggregated into `answer_tallies` by trigger and shown back as the room's
+distribution. `/yours` is where one attendee's own choices, submissions, numbers and
+unchecked items live; it needs a session, which is exactly what `/report` does not.
 
 **Live:** https://crossing-the-gap-site.vercel.app
 
