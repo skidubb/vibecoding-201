@@ -15,9 +15,11 @@ import genS11TwoSheets from "@/assets/generated/s11-two-sheets.webp";
 import genS12Timer from "@/assets/generated/s12-timer.webp";
 import genS14TheQuestion from "@/assets/generated/s14-the-question.webp";
 import genS17OverShoulder from "@/assets/generated/s17-over-shoulder.webp";
-// Hand-made asset (a photo of Scott keynoting), not pipeline output, so it
-// lives at the assets root where `npm run assets` never writes.
-import whyMeKeynote from "@/assets/why-me-keynote.webp";
+// Hand-made asset (Scott's headshot, AI-recomposed to put the subject in the
+// right third with empty wall on the left for the bio layout's text column),
+// not pipeline output, so it lives at the assets root where `npm run assets`
+// never writes.
+import whyMePortrait from "@/assets/why-me-portrait.webp";
 import genS18SixBinders from "@/assets/generated/s18-six-binders.webp";
 import genS19HandsUp from "@/assets/generated/s19-hands-up.webp";
 import genS21WrongSide from "@/assets/generated/s21-wrong-side.webp";
@@ -47,7 +49,8 @@ export type LayoutKind =
   | "exercise"
   | "matrix"
   | "surfaced"
-  | "jobs";
+  | "jobs"
+  | "bio";
 
 export type Media = {
   image?: StaticImageData;
@@ -433,16 +436,17 @@ export const sections: Section[] = [
   },
 
   {
-    // A placeholder until Scott writes it: the deck previously had no
-    // credibility beat at all. The bracketed lines are a deliberate merge
-    // blocker; this section must not reach production unfilled.
+    // Bio layout, not claim. Claim centred the headline over the subject's
+    // face in the portrait; bio keeps the type in a left column and the
+    // photograph's subject in the right third, so neither crosses the other.
+    // Light theme: the portrait's wall is light, and a dark section would put
+    // light type on it.
     //
-    // Claim layout, not cards. Scott's 2026-08-04 QA: three raised cards for
-    // three lines of bio read as chrome, so the lines sit in the page as one
-    // strip instead. Cards stay only where they are useful.
+    // Scott's 2026-08-04 QA still applies: no cards — three raised cards for
+    // three lines of bio read as chrome, so the lines sit as one strip.
     id: "why-me",
-    theme: "dark",
-    layout: "claim",
+    theme: "light",
+    layout: "bio",
     eyebrow: "Your instructor",
     title: "About me",
     railLabel: "Why me",
@@ -457,7 +461,7 @@ export const sections: Section[] = [
     },
     kicker:
       "This deck is built with the method it teaches, and its repo is public.",
-    media: { image: whyMeKeynote, speed: -0.12 },
+    media: { image: whyMePortrait },
   },
 
   {
