@@ -727,13 +727,13 @@ export const sections: Section[] = [
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Spec"],
     },
-    title: "Write down the job, the user, and how you will check it",
-    accent: "how you will check it",
+    title: "Let's start with the spec",
+    accent: "the spec",
     // The spec the hour works, grounded in the starter app: its went-quiet
     // panel already draws this list without stating a definition, and writing
     // the definition is the exercise. The Done below is the worked example the
     // deck teaches from; the room writes its own in the next block.
-    lede: "The starter app already draws this list — the panel named Went quiet. The definition the panel never states is what the Done supplies.",
+    lede: "Here's an example of components of a spec. Write down the job, the user, and the definition of done.",
     cards: [
       {
         title: "Job",
@@ -760,11 +760,6 @@ export const sections: Section[] = [
         ],
       ],
     },
-    kicker:
-      "If you cannot write the steps, you do not yet know what you are asking for.",
-    // v15 moved "also specify: source data, access rules, failure behavior,
-    // non-goals" off the slide face and into the GO DEEPER note — five
-    // competing elements buried the one teach this slide exists for.
     deeper: {
       claim: "GitHub Spec Kit.",
       note: "Spec-driven development as a full toolchain. A full spec also covers source data, access rules, failure behavior, and non-goals.",
