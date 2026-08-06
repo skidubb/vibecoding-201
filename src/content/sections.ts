@@ -232,6 +232,13 @@ export type Exercise =
 export type Matrix = {
   head?: string[];
   rows: string[][];
+  /**
+   * Rows in labelled groups instead of one flat run — the context-files table
+   * splits Always from Earned. When set, `rows` stays empty and the grouped
+   * rows render in one table so the columns align across groups. Group rows
+   * carry no highlight and no rowBrands.
+   */
+  groups?: { label: string; rows: string[][] }[];
   /** Per column, defaulting to left. Only the slide with a time column sets it. */
   align?: ("left" | "right")[];
   /**
@@ -1141,11 +1148,13 @@ First gap: <the unmet item that matters most, and the smallest change that would
     // Split out of the fifteen-minute assignment in v15 so Plan has its own
     // hands-on beat. The prompt is printed a second time deliberately: the
     // slide it teaches on cannot be two slides back when the room needs to
-    // paste it. No database exercise here; invented-count collects the return
-    // after the demo has covered generation time.
+    // paste it. Scott's 2026-08-05 late fix: the plan is shareable — the
+    // exercise stores what came back so an author can put it in the mix and
+    // find it again on /yours. No migration needed: exercise_id is free text
+    // and the write/submit/share path is the same one the spec uses.
     id: "plan-fire",
     theme: "dark",
-    layout: "prompt",
+    layout: "exercise",
     eyebrow: "Hands on · 3 minutes",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
@@ -1163,6 +1172,12 @@ First gap: <the unmet item that matters most, and the smallest change that would
           "Open your agent in the starter app folder from the kit — the project it inspects is one screen, the CRM data inside it, and a verification harness. Working on your own app, fire it in your own repository.",
       },
     ],
+    exercise: {
+      id: "plan",
+      seconds: 180,
+      placeholder:
+        "Paste the plan that came back — or the part worth reading aloud: what it proposed, and what it invented.",
+    },
     // Scott's 2026-08-05 punch list: the plan needs a place. Saving it as a
     // file in the project is that place, and Build starts from it.
     kicker:
@@ -1181,39 +1196,63 @@ First gap: <the unmet item that matters most, and the smallest change that would
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Build"],
     },
-    title: "Files to add to your folder / repo",
-    accent: "your folder / repo",
-    lede: "Create only the files this tool warrants. A one-screen tool does not need all six.",
+    // Scott's 2026-08-05 late dictation, verbatim: the slide argues from the
+    // agent's amnesia, the table splits the two files every project needs from
+    // the four a project has to earn, and every row names what breaks without
+    // it. The prompt writes CLAUDE.md first and justifies (or argues against)
+    // the rest. The old kicker was not in his spec and was cut with it.
+    title: "Your agent starts every session knowing nothing about this project",
+    accent: "knowing nothing about this project",
+    railLabel: "Context files",
+    lede: "Context files are the memory it lacks. Add one only when you can name what breaks without it.",
     matrix: {
-      rows: [
-        [
-          "PRODUCT.md",
-          "What this is, who it serves, what it deliberately does not do",
-        ],
-        [
-          "ARCHITECTURE.md",
-          "The decisions and why, so the next change does not quietly undo one",
-        ],
-        ["DATA_MODEL.md", "What is stored, and what each rule protects"],
-        ["SECURITY.md", "Who may read and change what, and how that is enforced"],
-        ["CLAUDE.md / AGENTS.md", "How your agent should work in this repository"],
-        [".env.example", "The names of every credential. Never the values"],
+      rows: [],
+      groups: [
+        {
+          label: "Always",
+          rows: [
+            [
+              "CLAUDE.md / AGENTS.md",
+              "Commands, conventions, what not to touch. Without it, the agent guesses.",
+            ],
+            [
+              ".env.example",
+              "Credential names, never values. Without it, invented names and secrets in chat.",
+            ],
+          ],
+        },
+        {
+          label: "Earned",
+          rows: [
+            [
+              "SECURITY.md",
+              "Who may read and change what. Without it, routes ship with no auth check.",
+            ],
+            [
+              "DATA_MODEL.md",
+              "What is stored and what each rule protects. Without it, silent constraint breaks.",
+            ],
+            [
+              "ARCHITECTURE.md",
+              "The decisions and why. Without it, the agent reverses one as a courtesy.",
+            ],
+            [
+              "PRODUCT.md",
+              "Who it serves and what it will not do. Without it, features nobody asked for.",
+            ],
+          ],
+        },
       ],
     },
-    // Scott's 2026-08-05 punch list: how these files get into a folder was
-    // unclear, especially for a project that already exists. The prompt makes
-    // the agent create them from what is already there.
     prompts: [
       {
         id: "context-files",
         label: "The context files prompt",
-        text: "Read this project. Create the files above that this tool warrants — PRODUCT.md, ARCHITECTURE.md, DATA_MODEL.md, SECURITY.md, CLAUDE.md or AGENTS.md, and .env.example — describing what is actually here today: the decisions, the data, and who may access what. Do not change any code. If a file is not warranted, say why instead of creating it.",
+        text: "Read this project. Write CLAUDE.md describing what is here today: how to run it, how to test it, the conventions, what not to touch. Under 60 lines.\n\nThen list any other context file this project warrants and name what goes wrong without it. Recommend against any file you cannot justify that way. Create nothing else. Change no code.",
         caption:
           "Works on a project you have already built — the agent documents what exists rather than inventing anything. The kit carries a worked example of every file, written for the starter app.",
       },
     ],
-    kicker:
-      "The assistant you rent is the same one your competitors rent. The edge is what yours is grounded in.",
     deeper: {
       claim: "AGENTS.md is the open format for this file,",
       note: "readable by most coding agents rather than one vendor's. The kit carries a worked example of every file above, written for the starter app.",

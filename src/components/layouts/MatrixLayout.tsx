@@ -35,6 +35,7 @@ export function MatrixLayout({ section }: LayoutProps) {
   const matrix = section.matrix;
   const head = matrix?.head;
   const rows = matrix?.rows ?? [];
+  const groups = matrix?.groups ?? [];
 
   // The emphasized row keeps full text strength on a raised surface with an
   // accent bar in its label cell; every other row's label steps from --text to
@@ -82,7 +83,7 @@ export function MatrixLayout({ section }: LayoutProps) {
           </div>
         )}
 
-        {rows.length > 0 && (
+        {(rows.length > 0 || groups.length > 0) && (
           <Reveal delay={0.12}>
             {/* No inset panel on any table now — Scott's 2026-08-05 rule keeps
                 the inset treatment for copyable text and inputs only. `plain`
@@ -110,6 +111,52 @@ export function MatrixLayout({ section }: LayoutProps) {
                     </tr>
                   </thead>
                 )}
+                {/* Grouped rows: one table so the columns align across the
+                    groups, each group opened by an accent smallcaps label row.
+                    Group rows carry no highlight and no rowBrands. */}
+                {groups.map((group) => (
+                  <tbody key={group.label}>
+                    <tr className="block md:table-row">
+                      <th
+                        colSpan={2}
+                        scope="rowgroup"
+                        className="block px-3 pb-2 pt-6 text-left font-sans text-[11px] font-medium uppercase tracking-[0.2em] md:table-cell"
+                        style={{ color: "var(--accent)" }}
+                      >
+                        {group.label}
+                      </th>
+                    </tr>
+                    {group.rows.map((cells, r) => (
+                      <tr
+                        key={`${group.label}-${r}`}
+                        className="block border-b py-3 last:border-b-0 md:table-row md:py-0"
+                        style={{ borderColor: "var(--edge)" }}
+                      >
+                        {cells.map((cell, c) =>
+                          c === 0 ? (
+                            <th
+                              key={`c-${c}`}
+                              scope="row"
+                              className={`block px-3 py-1 font-display text-[0.98rem] font-semibold leading-snug md:table-cell md:w-[240px] md:py-3.5 ${cellAlign(c)}`}
+                              style={{ color: "var(--text)" }}
+                            >
+                              {cell}
+                            </th>
+                          ) : (
+                            <td
+                              key={`c-${c}`}
+                              className={`block px-3 py-1 text-[0.94rem] leading-relaxed md:table-cell md:py-3.5 ${cellAlign(c)}`}
+                              style={{ color: "var(--text-dim)" }}
+                            >
+                              {cell}
+                            </td>
+                          ),
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                ))}
+
                 <tbody>
                   {rows.map((cells, r) => (
                     <tr
