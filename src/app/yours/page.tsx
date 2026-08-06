@@ -50,6 +50,7 @@ export default function YoursPage() {
 
   const row = (id: string) => rows.find((r) => r.exercise_id === id);
   const spec = row("spec");
+  const plan = row("plan");
   const barEval = row("bar-eval");
   const score = row("score");
 
@@ -83,6 +84,16 @@ export default function YoursPage() {
               </h2>
               <p className="mt-2 whitespace-pre-wrap text-[0.98rem] leading-relaxed">
                 {spec?.body ?? "Nothing saved. The three lines are still the exercise."}
+              </p>
+            </NeuPanel>
+
+            <NeuPanel radius="rounded-[22px]" className="px-6 py-5">
+              <h2 className="font-sans text-[11px] uppercase tracking-[0.16em]" style={{ color: "var(--text-faint)" }}>
+                The plan that came back
+              </h2>
+              <p className="mt-2 whitespace-pre-wrap text-[0.98rem] leading-relaxed">
+                {plan?.body ??
+                  "Nothing saved. Fire the plan prompt and paste what came back."}
               </p>
             </NeuPanel>
 

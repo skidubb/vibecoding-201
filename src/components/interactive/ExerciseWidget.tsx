@@ -313,7 +313,11 @@ export function ExerciseWidget({
             className="font-sans text-[11px] font-medium uppercase tracking-[0.2em]"
             style={{ color: "var(--text-faint)" }}
           >
-            Your spec
+            {/* The box holds a different artifact per exercise; a hardcoded
+                "Your spec" sat over the verdict and the plan too. */}
+            {{ spec: "Your spec", "bar-eval": "Your verdict", plan: "Your plan" }[
+              exercise.id
+            ] ?? "What you wrote"}
           </label>
           <textarea
             id={`${sectionId}-body`}
