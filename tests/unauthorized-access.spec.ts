@@ -45,14 +45,15 @@ test("the kit is served without an account, and the files are real", async ({
   await page.goto("/kit");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
-  // Every served kit file: the starter app, the evaluation prompt, the
-  // class-day fallbacks, the homework artifacts (now including the TDD prompt
-  // and the example context files), the reference files with the free-API
-  // list, and the README in the footer. Bucket entries are absent deliberately
-  // — a cross-origin `download` attribute is ignored, so those render as Open
-  // links and are not counted here.
+  // Every served kit file: the starter app, the evaluation prompt, the spec
+  // prompt that follows it, the class-day fallbacks, the homework artifacts
+  // (now including the TDD prompt and the example context files), the
+  // reference files with the free-API list, and the README in the footer.
+  // Bucket entries are absent deliberately — a cross-origin `download`
+  // attribute is ignored, so those render as Open links and are not counted
+  // here.
   const links = page.locator("a[download]");
-  await expect(links).toHaveCount(14);
+  await expect(links).toHaveCount(15);
 
   // Every listed file resolves and carries content. A kit page that 404s on
   // the download is worse than no kit page: the room leaves believing they

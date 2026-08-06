@@ -1052,22 +1052,65 @@ First gap: <the unmet item that matters most, and the smallest change that would
     title: "Write your three-line spec: Job, User, Done",
     accent: "Job, User, Done",
     railLabel: "Write your spec",
-    // Scott's 2026-08-05 punch list: the spec follows from the evaluation the
-    // room already ran — pick a piece of the project the agent evaluated and
-    // spec that. The starter-app example stays as the given path, with Job and
-    // User in the card so nothing depends on an earlier slide.
+    // Scott's 2026-08-06 post-class ruling: the spec step must be copy, paste,
+    // go — in any project, on this slide, never behind a link. On class day the
+    // only worked spec was one starter-app feature, and attendees on their own
+    // apps had no path from their evaluation to a spec. The prompt below is
+    // that path; the earlier card telling the room to spec a piece of the
+    // evaluated project gave the instruction without the artifact.
     cards: [
       {
         title: "Start from your evaluation",
-        body: "Spec one piece of the project your agent evaluated this hour — the first gap it returned is a good candidate. On the starter app, use the worked example: identify open deals that have gone quiet, listed by the rep who owns them, for a RevOps analyst who sends the list to sales managers on Monday morning.",
+        body: "Copy the prompt below into your coding agent, in the folder of the project it evaluated — your own app or the starter app. Fill in the lines your evaluation returned, and pick one of the features the agent proposes.",
       },
       {
         title: "The Done is yours",
-        body: "Written as steps someone else could follow to check it.",
+        body: "The spec comes back as Job, User, Done. Rewrite the Done as steps someone else could follow to check it.",
       },
       {
         title: "Submit it",
         body: "Share it if you want it in the mix.",
+      },
+    ],
+    // Quoted verbatim from kit/the-spec-prompt.md — an edit there lands here
+    // too, or the room runs a different prompt than the kit carries.
+    prompts: [
+      {
+        id: "spec-creation-prompt",
+        label: "The spec prompt",
+        text: `Read this project. Do not change anything.
+
+Here is the evaluation this project just received:
+
+Verdict: [paste the verdict line]
+Evidence: [paste the evidence line]
+First gap: [paste the first-gap line]
+
+Propose up to three candidate features, each a bounded piece of work this project
+could ship next. The first gap from the evaluation is one candidate; find the others
+in the project itself. For each candidate, give me one line: what it is, who would
+use it, and what would prove it done. Then stop and wait for me to choose.
+
+When I choose, draft the spec for that one feature in exactly this form:
+
+Job:  One sentence. The recurring task this feature performs, with its schedule if
+      it has one.
+User: The person or role who depends on the result.
+Done: The steps another person could follow to confirm it works — written as checks
+      a stranger could run, not wishes.
+
+Underneath the three lines, four constraints:
+
+- Source data: where the real records come from in this project.
+- Access rules: who may read what, and who may change what.
+- Failure behavior: what the user sees when an upstream breaks.
+- Non-goals: what this version deliberately does not do.
+
+Every line must come from what this project actually contains. Mark any line you
+could not verify with the word "assumed" so I can correct it. Do not write any code
+and do not propose an implementation — that is the next prompt's job.`,
+        caption:
+          "Works in any project — the starter app or the app you brought. The agent drafts; the Done line is yours to edit.",
       },
     ],
     exercise: {
@@ -1076,6 +1119,8 @@ First gap: <the unmet item that matters most, and the smallest change that would
       placeholder:
         "Job.\nUser.\nDone, written as steps someone else could follow to check it.",
     },
+    footnote: "The spec prompt is in the kit",
+    footnoteHref: "/kit",
     media: { image: genS12Timer, speed: -0.12 },
   },
 
@@ -1169,7 +1214,7 @@ First gap: <the unmet item that matters most, and the smallest change that would
         label: "The plan prompt",
         text: "Inspect the current project. Propose the smallest coherent implementation for this specification. Identify the data model, permissions, environment variables, failure states, tests, and files involved. Do not change anything until I approve the plan.",
         caption:
-          "Open your agent in the starter app folder from the kit — the project it inspects is one screen, the CRM data inside it, and a verification harness. Working on your own app, fire it in your own repository.",
+          "Your own app or the starter app — the same move either way. If the agent drafted your spec, the conversation it drafted it in is the place.",
       },
     ],
     exercise: {

@@ -71,6 +71,11 @@ const DURING_CLASS: Entry[] = [
     use: "The first hands-on: your agent reads a project you built and returns a verdict — prototype, tool, or system — with the evidence that decided it.",
   },
   {
+    href: served("the-spec-prompt.md"),
+    title: "The spec prompt",
+    use: "The step after the verdict, in any project: paste the evaluation's result, pick one of the features the agent proposes, and it drafts your Job, User, Done — the Done is yours to edit.",
+  },
+  {
     href: `${BUCKET}/schema.md`,
     title: "The column guide",
     use: "You need the 36 columns, the values they hold, and where the data lives.",
