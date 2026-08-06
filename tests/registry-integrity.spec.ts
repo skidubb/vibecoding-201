@@ -268,34 +268,65 @@ test("every matrix renders as many rows and columns as it declares", async ({ pa
       ...(matrix.match(/head: \[([^\]]*)\]/)?.[1] ?? "").matchAll(/"([^"]*)"/g),
     ].map((m) => m[1]);
 
+    // `groups` rows parse separately, and the groups block has to come out of
+    // the text before the flat-rows regex runs: that regex is greedy to the
+    // matrix's last `],` and would otherwise swallow every grouped row.
+    const groupsBlock = matrix.match(/groups: \[([\s\S]*)\n {6}\],?/)?.[1] ?? null;
+    const flatMatrix = groupsBlock
+      ? matrix.replace(/groups: \[[\s\S]*\n {6}\],?/, "")
+      : matrix;
+    const groupLabels = [
+      ...(groupsBlock ?? "").matchAll(/label: "((?:[^"\\]|\\.)*)"/g),
+    ].map((m) => m[1]);
+    const groupRows = [
+      ...(groupsBlock ?? "").matchAll(/rows: \[([\s\S]*?)\n {10}\],?/g),
+    ].flatMap((g) =>
+      [...g[1].matchAll(/\[([\s\S]*?)\]/g)].map((m) =>
+        [...m[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((c) => c[1]),
+      ),
+    );
+
     // Rows are `[...]` groups inside `rows: [ … ]`, one per line group.
-    const rowsBlock = matrix.match(/rows: \[([\s\S]*)\n {6}\],?/)?.[1] ?? "";
+    const rowsBlock = flatMatrix.match(/rows: \[([\s\S]*)\n {6}\],?/)?.[1] ?? "";
     const rows = [...rowsBlock.matchAll(/\[([\s\S]*?)\]/g)].map((m) =>
       [...m[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((c) => c[1]),
     );
-    if (rows.length === 0) continue;
+
+    const dataRows = rows.concat(groupRows);
+    if (dataRows.length === 0) continue;
 
     // `string[][]` cannot express "every row has as many cells as the header".
-    const width = head.length || rows[0].length;
-    for (const [i, row] of rows.entries()) {
+    const width = head.length || dataRows[0].length;
+    for (const [i, row] of dataRows.entries()) {
       if (row.length !== width) {
         problems.push(`${id}: row ${i} has ${row.length} cells, expected ${width}`);
       }
     }
 
+    // Each group renders one extra label row above its rows.
+    const expectedRows = dataRows.length + groupLabels.length;
     const renderedRows = await page.locator(`#${id} tbody tr`).count();
-    if (renderedRows !== rows.length) {
+    if (renderedRows !== expectedRows) {
       problems.push(
-        `${id}: ${rows.length} rows in the registry, ${renderedRows} on the page`,
+        `${id}: ${expectedRows} rows expected from the registry, ${renderedRows} on the page`,
       );
     }
 
-    // One `th scope="row"` per row. The leading cell's weight comes from the
-    // markup, so a change to a plain `td` would alter it without failing anything
-    // else.
+    // One `th scope="row"` per data row. The leading cell's weight comes from
+    // the markup, so a change to a plain `td` would alter it without failing
+    // anything else. Group labels are `scope="rowgroup"` and counted apart.
     const labels = await page.locator(`#${id} tbody tr th[scope="row"]`).count();
-    if (labels !== rows.length) {
-      problems.push(`${id}: ${rows.length} rows but ${labels} row labels`);
+    if (labels !== dataRows.length) {
+      problems.push(`${id}: ${dataRows.length} rows but ${labels} row labels`);
+    }
+
+    const renderedGroupLabels = await page
+      .locator(`#${id} tbody tr th[scope="rowgroup"]`)
+      .count();
+    if (renderedGroupLabels !== groupLabels.length) {
+      problems.push(
+        `${id}: ${groupLabels.length} group labels in the registry, ${renderedGroupLabels} on the page`,
+      );
     }
 
     if (head.length > 0) {
