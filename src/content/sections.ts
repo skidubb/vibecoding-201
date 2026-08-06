@@ -22,7 +22,6 @@ import genS25TwoParcels from "@/assets/generated/s25-two-parcels.webp";
 import genS26LedgerAndNote from "@/assets/generated/s26-ledger-and-note.webp";
 import genS27HandsUp2 from "@/assets/generated/s27-hands-up-2.webp";
 import genS36ThreeLines from "@/assets/generated/s36-three-lines.webp";
-import genS38AboutToSend from "@/assets/generated/s38-about-to-send.webp";
 import genS40Council from "@/assets/generated/s40-council.webp";
 import genS09Ring from "@/assets/generated/s09-ring.webp";
 import genS31ThreeDoors from "@/assets/generated/s31-three-doors.webp";
@@ -387,6 +386,11 @@ export type Section = {
   deeper?: Deeper;
   media?: Media;
   cards?: Card[];
+  /**
+   * A labelled gradient under the ladder layout's climb, naming what the two
+   * ends of the rigor scale are called. Left renders dim, right renders accent.
+   */
+  spectrum?: { left: string; right: string };
   timeline?: TimelineStop[];
   chart?: "ladder" | "scurve" | "gap" | "divergence";
   matrix?: Matrix;
@@ -526,17 +530,9 @@ export const sections: Section[] = [
     railLabel: "What changed since 101",
     kicker:
       "A production system means someone depends on it: records that persist, access that is controlled, failures that are handled, behavior that is verified, and an owner with a name.",
-    deeper: {
-      claim:
-        "Google's New SDLC whitepaper draws the same line between vibe coding and agentic engineering.",
-      links: [
-        {
-          label: "The New SDLC With Vibe Coding",
-          href: "https://www.kaggle.com/whitepaper-the-new-SDLC-with-vibe-coding",
-          brand: "google",
-        },
-      ],
-    },
+    // The whitepaper GO DEEPER that sat here was cut on Scott's 2026-08-05
+    // punch list: the same link lives on the harness-engineering section, and
+    // one citation per source is enough.
     // Two office floors separated by an open stairwell void, the near one small
     // and finished, the far one larger and busier. The slide makes the same point
     // about the distance between a prototype and a system people depend on.
@@ -577,9 +573,12 @@ export const sections: Section[] = [
       {
         title: "External facing",
         body: "Evals, release gates, monitoring, and rollback. Repair customer or partner trust.",
-        tone: "bad",
       },
     ],
+    // Scott's 2026-08-05 punch list: no accent treatment on External facing —
+    // the top step is not a failure mode — and a labelled gradient under the
+    // climb naming what the rigor shift is called at each end.
+    spectrum: { left: "Vibe coding", right: "Agentic engineering" },
     footnote:
       "Enterprise is a multiplier: procurement and security review add obligations on top of the reach floor.",
     media: { image: genS19HandsUp, speed: -0.12 },
@@ -700,8 +699,9 @@ export const sections: Section[] = [
       {
         name: "Closed harness",
         badge: "Fast, guided start",
+        // Scott's 2026-08-05 punch list: the platforms appear as their linked
+        // marks only — no Examples row naming them in text a second time.
         rows: [
-          { label: "Examples", value: "Lovable, v0, Replit Agent, Base44" },
           {
             label: "Who configures it",
             value:
@@ -723,7 +723,6 @@ export const sections: Section[] = [
         name: "Open harness",
         badge: "Direct, configurable work",
         rows: [
-          { label: "Examples", value: "Claude Code, Codex, Antigravity, Cursor" },
           {
             label: "Who configures it",
             value:
@@ -762,19 +761,53 @@ export const sections: Section[] = [
     cards: [
       {
         title: "Open your coding agent",
-        body: "In the folder of something you have already built. Nothing to evaluate? Use the starter app from the kit.",
-        href: "/kit/monday-gtm-dashboard-standalone.html",
+        body: "In the folder of something you have already built. Nothing to evaluate? Download the starter app, unzip it, and that folder is your project.",
+        href: "/kit/monday-gtm-dashboard.zip",
         hrefLabel: "Download the starter app",
       },
       {
         title: "Run the evaluation prompt",
-        body: "The agent reads the project and returns a verdict with the evidence that decided it.",
-        href: "/kit/the-bar-prompt.md",
-        hrefLabel: "Open the evaluation prompt",
+        body: "Copy it from the box below. The agent reads the project and returns a verdict with the evidence that decided it.",
       },
       {
         title: "Share the verdict",
         body: "Paste what came back. Share it if you want it in the mix.",
+      },
+    ],
+    // Scott's 2026-08-05 punch list: a prompt the room is about to run is
+    // printed in a copyable box on the slide, never behind a link to another
+    // page. Quoted verbatim from kit/the-bar-prompt.md — an edit there lands
+    // here too, or the room runs a different prompt than the kit carries.
+    prompts: [
+      {
+        id: "bar-eval-prompt",
+        label: "The evaluation prompt",
+        text: `Read this project and evaluate it. Do not change anything.
+
+First, classify it as one of the following, by what you can observe in the
+code and configuration — never by what the interface promises:
+
+- Prototype: demonstrates the idea with sample or temporary inputs.
+- Tool: a defined group reliably completes a real workflow with it.
+- System: it runs across teams, data sources, permissions, time, and failure.
+
+Then score it against each item below, answering met, not met, or cannot tell,
+with one line of evidence per item — a file, a config entry, or the absence of one:
+
+1. Persistent data — records survive a refresh because they live in a real database.
+2. Sign-in — the tool knows who each user is.
+3. Enforced authorization — the database decides what each user may see, not the interface.
+4. Server-side secrets — no credential values appear anywhere in the code.
+5. A tested critical workflow — the main workflow runs under an automated test.
+6. Visible error states — every failure says what happened in words.
+7. Logs and analytics — every run leaves a record someone can read back.
+8. Preview before production — a person promotes each change; saving a file is not shipping.
+9. A named owner — someone answers when it breaks, and can roll it back.
+
+Finish with exactly three lines I can paste into a shared box:
+Verdict: <prototype | tool | system>
+Evidence: <the one observation that decided it>
+First gap: <the unmet item that matters most, and the smallest change that would meet it>`,
       },
     ],
     exercise: {
@@ -806,13 +839,18 @@ export const sections: Section[] = [
     title: "No app, no problem — use this",
     accent: "use this",
     railLabel: "The shared starting line",
-    lede: "The PromptKit is the shared starting line. It gives every harness the same source, working interface, reference material, and verification baseline.",
+    // Scott's 2026-08-05 punch list: the shared starting line is the app, the
+    // data, and the harness — the reference-material card was cut, and the
+    // download is the zip (the whole folder: app, data, verification scripts)
+    // so a coding agent has a real project to open, not one HTML file the
+    // browser renders instead of saving.
+    lede: "The shared starting line. Every harness gets the same source data, the same working app, and the same verification baseline.",
     cards: [
       {
         icon: "grid",
         title: "The starter app",
-        body: "A working GTM dashboard with the CRM data inside it. Download it, double-click the file, and it runs — no server, no account, no key.",
-        href: "/kit/monday-gtm-dashboard-standalone.html",
+        body: "A working GTM dashboard with the CRM data inside it. Download the zip, open the folder, and double-click the standalone file — no server, no account, no key.",
+        href: "/kit/monday-gtm-dashboard.zip",
         hrefLabel: "Download the app",
       },
       {
@@ -826,13 +864,6 @@ export const sections: Section[] = [
         icon: "terminal",
         title: "Your coding harness",
         body: "The open or closed harness you chose. Point it at a copied workspace and keep its connection and evidence visible.",
-      },
-      {
-        icon: "book",
-        title: "PromptKit references",
-        body: "Keep the prompt pack, the CLI reference, and the production readiness checklist open. Use the relevant guidance when the work reaches it.",
-        href: "/kit",
-        hrefLabel: "Open the kit",
       },
     ],
     kicker:
@@ -930,6 +961,21 @@ export const sections: Section[] = [
     ],
     kicker:
       "The agent can propose, implement, and test. A person stays accountable for scope, access, promotion, and operation.",
+    // Moved here from the spec section on Scott's 2026-08-05 punch list: the
+    // toolchain citation belongs on the slide that introduces spec-driven
+    // development, not the one teaching the worked example.
+    deeper: {
+      claim: "GitHub Spec Kit.",
+      note: "Spec-driven development as a full toolchain. A full spec also covers source data, access rules, failure behavior, and non-goals.",
+      links: [
+        {
+          label: "github/spec-kit",
+          href: "https://github.com/github/spec-kit",
+          brand: "github",
+        },
+        { label: "docs", href: "https://github.github.com/spec-kit" },
+      ],
+    },
     media: { image: genS09Ring, speed: -0.12 },
   },
 
@@ -947,8 +993,10 @@ export const sections: Section[] = [
     // The spec the hour works, grounded in the starter app: its went-quiet
     // panel already draws this list without stating a definition, and writing
     // the definition is the exercise. The Done below is the worked example the
-    // deck teaches from; the room writes its own in the next block.
-    lede: "The starter app already draws this list — the panel named Went quiet. The definition the panel never states is what the Done supplies.",
+    // deck teaches from; the room writes its own in the next block. Scott's
+    // 2026-08-05 punch list: the lede has to say plainly that this is an
+    // example.
+    lede: "An example, worked on the starter app: the panel named Went quiet already draws this list, but never says what quiet means. The Done below is that definition, written down.",
     cards: [
       {
         title: "Job",
@@ -977,21 +1025,8 @@ export const sections: Section[] = [
     },
     kicker:
       "If you cannot write the steps, you do not yet know what you are asking for.",
-    // v15 moved "also specify: source data, access rules, failure behavior,
-    // non-goals" off the slide face and into the GO DEEPER note — five
-    // competing elements buried the one teach this slide exists for.
-    deeper: {
-      claim: "GitHub Spec Kit.",
-      note: "Spec-driven development as a full toolchain. A full spec also covers source data, access rules, failure behavior, and non-goals.",
-      links: [
-        {
-          label: "github/spec-kit",
-          href: "https://github.com/github/spec-kit",
-          brand: "github",
-        },
-        { label: "docs", href: "https://github.github.com/spec-kit" },
-      ],
-    },
+    // The Spec Kit GO DEEPER moved to the loop-overview section on Scott's
+    // 2026-08-05 punch list.
     media: { image: genS11TwoSheets, speed: -0.12 },
   },
 
@@ -1010,10 +1045,14 @@ export const sections: Section[] = [
     title: "Write your three-line spec: Job, User, Done",
     accent: "Job, User, Done",
     railLabel: "Write your spec",
+    // Scott's 2026-08-05 punch list: the spec follows from the evaluation the
+    // room already ran — pick a piece of the project the agent evaluated and
+    // spec that. The starter-app example stays as the given path, with Job and
+    // User in the card so nothing depends on an earlier slide.
     cards: [
       {
-        title: "Job and User are given",
-        body: "Job: identify open deals that have gone quiet, and list them by the rep who owns them. User: a RevOps analyst who sends the list to sales managers on Monday morning. On your own app: the job it already does, for the person who depends on it.",
+        title: "Start from your evaluation",
+        body: "Spec one piece of the project your agent evaluated this hour — the first gap it returned is a good candidate. On the starter app, use the worked example: identify open deals that have gone quiet, listed by the rep who owns them, for a RevOps analyst who sends the list to sales managers on Monday morning.",
       },
       {
         title: "The Done is yours",
@@ -1124,8 +1163,10 @@ export const sections: Section[] = [
           "Open your agent in the starter app folder from the kit — the project it inspects is one screen, the CRM data inside it, and a verification harness. Working on your own app, fire it in your own repository.",
       },
     ],
+    // Scott's 2026-08-05 punch list: the plan needs a place. Saving it as a
+    // file in the project is that place, and Build starts from it.
     kicker:
-      "Send it, then leave it generating. Read what comes back before you approve any of it.",
+      "Send it, then leave it generating. Read what comes back before you approve any of it, then have the agent save the approved plan as PLAN.md in the project folder — Build starts from that file.",
     footnote: "No plan came back? Take the pre-generated one from the kit",
     footnoteHref: "/kit",
     media: { image: genS12Timer, speed: -0.15 },
@@ -1159,6 +1200,18 @@ export const sections: Section[] = [
         [".env.example", "The names of every credential. Never the values"],
       ],
     },
+    // Scott's 2026-08-05 punch list: how these files get into a folder was
+    // unclear, especially for a project that already exists. The prompt makes
+    // the agent create them from what is already there.
+    prompts: [
+      {
+        id: "context-files",
+        label: "The context files prompt",
+        text: "Read this project. Create the files above that this tool warrants — PRODUCT.md, ARCHITECTURE.md, DATA_MODEL.md, SECURITY.md, CLAUDE.md or AGENTS.md, and .env.example — describing what is actually here today: the decisions, the data, and who may access what. Do not change any code. If a file is not warranted, say why instead of creating it.",
+        caption:
+          "Works on a project you have already built — the agent documents what exists rather than inventing anything. The kit carries a worked example of every file, written for the starter app.",
+      },
+    ],
     kicker:
       "The assistant you rent is the same one your competitors rent. The edge is what yours is grounded in.",
     deeper: {
@@ -1269,10 +1322,21 @@ export const sections: Section[] = [
     ],
     kicker:
       "A bad response writes tests that pass immediately, or skips the unauthorised-access and duplicate-submission cases. Those two are where real tools break.",
+    // Scott's 2026-08-05 punch list: the testing citation should be canonical
+    // guidance on testing agentic coding, not a pointer back at the kit. The
+    // anchor goes to the verification section of the official Claude Code
+    // best-practices doc; the kit link stays for the prompt pack.
     deeper: {
-      claim: "The full prompt pack,",
-      note: "with this prompt beside the reviews that follow it: security, error handling, and what happens when something runs twice.",
-      links: [{ label: "/kit", href: "/kit" }],
+      claim: "Give the agent a check it can run.",
+      note: "Anthropic's current guidance on verification in agentic coding: tests, builds, screenshots, and evidence over assertion. The full prompt pack is in the kit.",
+      links: [
+        {
+          label: "code.claude.com — verify its work",
+          href: "https://code.claude.com/docs/en/best-practices#give-claude-a-way-to-verify-its-work",
+          brand: "claude",
+        },
+        { label: "/kit", href: "/kit" },
+      ],
     },
     media: { image: genS26LedgerAndNote, speed: -0.15 },
   },
@@ -1503,6 +1567,13 @@ export const sections: Section[] = [
     ],
     footnote: "The starter app, the prompts, and the CRM data are in the kit",
     footnoteHref: "/kit",
-    media: { image: genS38AboutToSend, speed: -0.12 },
+    // A slow circular workflow of connected stations — the loop the class
+    // taught, closing the deck. Scott's 2026-08-05 pick, encoded with the same
+    // ffmpeg chain as the pipeline's clips.
+    media: {
+      video: "/media/circular-workflow.mp4",
+      poster: "/media/circular-workflow-poster.jpg",
+      speed: -0.12,
+    },
   },
 ];

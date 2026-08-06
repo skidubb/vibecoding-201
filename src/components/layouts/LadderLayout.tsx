@@ -67,6 +67,32 @@ export function LadderLayout({ section }: LayoutProps) {
               );
             })}
           </div>
+
+          {/* The rigor scale under the climb: what the low end and the high
+              end of the practice are called. The gradient runs dim to accent
+              in the same direction the steps climb. */}
+          {section.spectrum && (
+            <Reveal delay={0.5}>
+              <div className="mt-10 max-w-[1010px]">
+                <div className="flex items-baseline justify-between font-sans text-[11px] font-medium uppercase tracking-[0.2em]">
+                  <span style={{ color: "var(--text-dim)" }}>
+                    {section.spectrum.left}
+                  </span>
+                  <span style={{ color: "var(--accent)" }}>
+                    {section.spectrum.right}
+                  </span>
+                </div>
+                <div
+                  aria-hidden
+                  className="mt-2 h-[3px] rounded-full"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, color-mix(in srgb, var(--text-faint) 55%, transparent), var(--accent))",
+                  }}
+                />
+              </div>
+            </Reveal>
+          )}
         </div>
 
         <SectionTail section={section} />

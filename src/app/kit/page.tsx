@@ -57,9 +57,13 @@ const served = (file: string) => `/kit/${file}`;
  */
 const DURING_CLASS: Entry[] = [
   {
-    href: served("monday-gtm-dashboard-standalone.html"),
+    // The zip, not the bare HTML: a browser renders an .html link instead of
+    // saving it, and a coding agent needs the whole folder — app, data,
+    // verification scripts — as a project to open (Scott's 2026-08-05 punch
+    // list).
+    href: served("monday-gtm-dashboard.zip"),
     title: "The starter app",
-    use: "The app the hour works in: a working GTM dashboard with the CRM data baked into the file. Download it, double-click it, and it runs — no server, no account, no key.",
+    use: "The app the hour works in: a working GTM dashboard with the CRM data and its verification scripts. Download the zip, open the folder, and double-click monday-gtm-dashboard-standalone.html — no server, no account, no key. The folder is the project your coding agent opens.",
   },
   {
     href: served("the-bar-prompt.md"),

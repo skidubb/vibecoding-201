@@ -61,7 +61,12 @@ const LAYOUTS: Record<LayoutKind, LayoutComponent> = {
  * Interactive layouts never do — they render in normal flow and reserve fixed
  * height for their output so the stop grid stays stable.
  */
-const TALL_LAYOUTS: ReadonlySet<LayoutKind> = new Set<LayoutKind>(["chart"]);
+const TALL_LAYOUTS: ReadonlySet<LayoutKind> = new Set<LayoutKind>([
+  "chart",
+  // The quadrant's two failure cells are scroll-gated on a sticky stage, so it
+  // supplies its own height, centering and clipping the same way chart does.
+  "quadrant",
+]);
 
 export function Deck() {
   return (

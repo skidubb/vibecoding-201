@@ -13,6 +13,7 @@ import {
 import { ExerciseWidget } from "@/components/interactive/ExerciseWidget";
 import { AnswerWidget } from "@/components/interactive/AnswerWidget";
 import { JobPrompt } from "@/components/interactive/JobPrompt";
+import { PromptBlock } from "@/components/interactive/PromptBlock";
 
 /**
  * A hands-on section: the brief, a clock, and somewhere to write.
@@ -98,6 +99,23 @@ export function ExerciseLayout({ section }: LayoutProps) {
             ))}
           </div>
         )}
+
+        {/* A prompt the exercise asks the room to run, in a copyable box on
+            the slide itself — never behind a link to another page (Scott's
+            2026-08-05 punch list). Capped so a long prompt does not push the
+            timer and the writing box off screen; Copy takes the whole text. */}
+        {section.prompts?.map((prompt) => (
+          <Reveal key={prompt.id} delay={0.16}>
+            <div className="mt-8">
+              <PromptBlock
+                label={prompt.label}
+                text={prompt.text}
+                caption={prompt.caption}
+                maxBodyHeight="16rem"
+              />
+            </div>
+          </Reveal>
+        ))}
 
         {/* Above the box, because it is what fills the box: the prompt for the
             job this reader picked, carrying the Done they wrote. */}

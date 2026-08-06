@@ -4,6 +4,7 @@ import { Glow } from "@/components/core/ParallaxLayer";
 import { Reveal } from "@/components/neu/Neu";
 import { Logo } from "@/components/layouts/Logo";
 import { EventFeed } from "@/components/interactive/EventFeed";
+import { PromptBlock } from "@/components/interactive/PromptBlock";
 import {
   CONTAINER,
   FlatCard,
@@ -187,6 +188,22 @@ export function MatrixLayout({ section }: LayoutProps) {
             </div>
           </Reveal>
         )}
+
+        {/* A prompt the slide asks the reader to run against the table above
+            — the context-files slide prints how its files actually get made.
+            In a copyable box, never behind a link (Scott's 2026-08-05 punch
+            list). */}
+        {section.prompts?.map((prompt) => (
+          <Reveal key={prompt.id} delay={0.18}>
+            <div className="mt-10">
+              <PromptBlock
+                label={prompt.label}
+                text={prompt.text}
+                caption={prompt.caption}
+              />
+            </div>
+          </Reveal>
+        ))}
 
         {/* The Run section argues that a tool needs a log. Rather than say so
             and move on, it shows this page's own. Moved here with the section

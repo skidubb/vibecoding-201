@@ -24,11 +24,18 @@ export function PromptBlock({
   text,
   caption,
   onCopy,
+  maxBodyHeight,
 }: {
   label: string;
   text: string;
   caption?: string;
   onCopy?: (label: string) => void;
+  /**
+   * Caps the visible body and scrolls the rest. For a long prompt printed on
+   * a slide that also carries cards and a widget — the copy button still
+   * copies the whole text, so the cap costs nothing but scrolling.
+   */
+  maxBodyHeight?: string;
 }) {
   const [state, setState] = useState<CopyState>("idle");
   const bodyRef = useRef<HTMLPreElement>(null);
@@ -93,8 +100,10 @@ export function PromptBlock({
 
         <pre
           ref={bodyRef}
-          className="overflow-x-auto px-6 py-5 font-mono text-[clamp(0.8rem,1vw,0.92rem)] leading-relaxed whitespace-pre-wrap"
-          style={{ color: "var(--text)" }}
+          className={`overflow-x-auto px-6 py-5 font-mono text-[clamp(0.8rem,1vw,0.92rem)] leading-relaxed whitespace-pre-wrap ${
+            maxBodyHeight ? "overflow-y-auto" : ""
+          }`}
+          style={{ color: "var(--text)", maxHeight: maxBodyHeight }}
         >
           {text}
         </pre>
