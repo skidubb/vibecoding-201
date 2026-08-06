@@ -61,11 +61,15 @@ export function ProgressRail() {
                   and the claim slides' titles are whole sentences — the breach
                   test printed its entire headline across the slide in magenta
                   caps beside the rail. */}
+              {/* Hover-only. The active label used to stay visible, which laid
+                  a permanent caption over whatever content ran under the rail
+                  (Scott's 2026-08-05 punch list). Position lives in the
+                  bottom-left readout; the label answers a pointer asking. */}
               <span
                 className="pointer-events-none absolute right-full top-1/2 mr-3 max-w-[16rem] truncate font-sans text-[11px] uppercase tracking-[0.14em] transition-all duration-300"
                 style={{
-                  opacity: isHovered || isActive ? 1 : 0,
-                  transform: `translate(${isHovered || isActive ? 0 : 8}px, -50%)`,
+                  opacity: isHovered ? 1 : 0,
+                  transform: `translate(${isHovered ? 0 : 8}px, -50%)`,
                   color: isActive ? "var(--accent)" : "var(--text-dim)",
                 }}
               >

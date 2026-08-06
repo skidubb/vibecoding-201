@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Glow, ImageBackdrop } from "@/components/core/ParallaxLayer";
+import { Glow } from "@/components/core/ParallaxLayer";
 import { NeuBadge, NeuButton } from "@/components/neu/Neu";
 import { useDeck } from "@/lib/deck-context";
 import { LinkChips } from "./LinkChips";
-import { CONTAINER, Deeper, type LayoutProps } from "./shared";
+import { CONTAINER, Deeper, SectionBackdrop, type LayoutProps } from "./shared";
 
 /** The three-line close, delivered one line at a time. */
 export function CtaLayout({ section }: LayoutProps) {
@@ -14,13 +14,10 @@ export function CtaLayout({ section }: LayoutProps) {
 
   return (
     <>
-      {section.media?.image && (
-        <ImageBackdrop
-          src={section.media.image}
-          speed={section.media.speed}
-          opacity={0.3}
-        />
-      )}
+      {/* SectionBackdrop, not a bare ImageBackdrop: this layout used to be
+          one of the ones that silently ignored a video, and the closing slide
+          now carries one. */}
+      <SectionBackdrop section={section} opacity={0.3} />
       <Glow className="left-1/2 top-1/3 -translate-x-1/2" tone="magenta" size={64} />
 
       <div className={`${CONTAINER} mx-auto max-w-3xl text-center`}>

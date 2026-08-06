@@ -55,6 +55,27 @@ export function PresenterBar() {
   const [shared, setShared] = useState<Shared[]>([]);
   const [open, setOpen] = useState(false);
 
+  // Whether a real (non-anonymous) account is signed in. The corner pill kept
+  // saying "Sign in" to someone who had just signed in (Scott's 2026-08-05
+  // punch list) — an anonymous poll session deliberately does not count, or
+  // the pill would flip for someone who only tapped a vote and hide the way
+  // to an actual account.
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    const client = supabase();
+    if (!client) return;
+    void client.auth
+      .getSession()
+      .then(
+        (result: {
+          data: { session: { user?: { is_anonymous?: boolean } } | null };
+        }) => {
+          const user = result.data.session?.user;
+          setSignedIn(!!user && !user.is_anonymous);
+        },
+      );
+  }, []);
+
   const section = sections[activeIndex];
   const slug = section?.poll?.slug ?? null;
 
@@ -204,6 +225,21 @@ export function PresenterBar() {
   // attendee lands on the page that already explains they do not need it.
   if (!isAdmin) {
     if (!backendConfigured) return null; // kill-switch deck carries no doors
+    // Signed in without the admin role, the pill states the fact and leads to
+    // the page that holds this account's own submissions.
+    if (signedIn) {
+      return (
+        <a
+          href="/yours"
+          data-account-chip
+          data-deck-keys="off"
+          className="fixed bottom-6 right-6 z-50 rounded-full px-5 py-2.5 font-sans text-[12px] font-semibold uppercase tracking-[0.16em]"
+          style={{ background: CHROME_BG, border: CHROME_EDGE, color: CHROME_TEXT }}
+        >
+          Signed in · Yours
+        </a>
+      );
+    }
     return (
       <a
         href="/signin"
