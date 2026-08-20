@@ -14,6 +14,10 @@ code and configuration — never by what the interface promises:
 - Tool: a defined group reliably completes a real workflow with it.
 - System: it runs across teams, data sources, permissions, time, and failure.
 
+Classify by what runs today, not by intent: if the data is sample or synthetic,
+or ships inside the code, the verdict is prototype no matter how finished the
+interface looks.
+
 Then score it against each item below, answering met, not met, or cannot tell,
 with one line of evidence per item — a file, a config entry, or the absence of one:
 
@@ -26,6 +30,10 @@ with one line of evidence per item — a file, a config entry, or the absence of
 7. Logs and analytics — every run leaves a record someone can read back.
 8. Preview before production — a person promotes each change; saving a file is not shipping.
 9. A named owner — someone answers when it breaks, and can roll it back.
+
+Check the verdict against the scores before you answer: mostly unmet items means
+prototype, unless a defined group already depends on it in real work — and then
+the Evidence line must say who.
 
 Finish with exactly three lines I can paste into a shared box:
 Verdict: <prototype | tool | system>
@@ -41,6 +49,8 @@ users — including the one where you are the only user so far.
 **A bad response** classifies by ambition ("this is meant to be a system") or scores
 an item met because the interface looks finished. Every answer has to point at a
 file. "Cannot tell" is a real answer and usually means the evidence does not exist.
+A verdict that disagrees with its own scores — seven items unmet and still "tool" —
+has classified the ambition rather than the code. Send it back.
 
 The items are the same standard as the [production readiness
 checklist](production-readiness-checklist.md), so the score your agent returns here

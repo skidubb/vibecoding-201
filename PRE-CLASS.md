@@ -81,6 +81,25 @@ to `exercise_id = 'smoke'`, neither of which the deck renders.
       This is the one check with no automated equivalent — smoke proves the
       database refuses, but only a second browser proves the panel draws it.
 
+## The two content gates
+
+Neither of these checks the software. Both exist because on 6 August every
+automated gate was green while the content failed: the spec slide printed
+nothing to paste, and the data contradicted the class narrative.
+
+- [ ] **The naive-reader walk.** Open every hands-on section cold — no memory
+      of the deck — and ask two questions per screen: what would a stranger
+      paste from this, and what are they holding when the timer ends? A slide
+      that cannot answer both fails. The blank spec slide fails this walk in
+      90 seconds.
+- [ ] **The fixture-integrity gate.** Run
+      `python3 ../kit/monday-gtm-dashboard/verification/verify_fixtures.py`.
+      It asserts every published number — the quiet-deal counts, the
+      loss-reason disagreements, the territory digest, the single seller, the
+      114 self-deal rows — against the shipped CSVs and exits 1 on any drift.
+      If it fails, either the data or the answer key changed without the
+      other; fix that before anything else on this list.
+
 ## Things that have bitten before
 
 - The deck's presenter keys are arrows and space. Space is kept by a focused

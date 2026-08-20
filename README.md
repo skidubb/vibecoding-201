@@ -3,19 +3,23 @@
 A neumorphic, parallax-scrolling presentation of *Vibecoding 201: Building Production
 GTM Tools* (Pavilion AI in GTM School) — the polls, the copyable prompts, and the tool
 the class is about, deployed for real. The site is the presentation surface, not a
-companion: 27 sections are on the page, quoted from `Vibecoding-201-Edit1.pptx`,
+companion: 25 sections are on the page, quoted from `Vibecoding-201-Edit1.pptx`,
 Scott's 2026-08-05 re-cut of the class (see CLAUDE.md — Edit1 outranks every older
-deck file, and the v15-only sections were cut on his ruling, not lost). See `SPEC.md`
-for what this is meant to do and `ARCHITECTURE.md` for why it is built this way.
+deck file, and the v15-only sections were cut on his ruling, not lost), plus the
+2026-08-20 nine-fix pass (`../delivery/site-fix-plan-2026-08-20.md`), which restored
+the Done-count beat, added the Ship step, and moved the trends chart to the opening.
+See `SPEC.md` for what this is meant to do and `ARCHITECTURE.md` for why it is built
+this way.
 
 **The class runs against shared CRM data.** `../data/kit/` publishes a 10,000-row
-synthetic CRM data set (courtesy of Andy's Class 0 data, deliberately uncleaned) to a
-public bucket, and it rides pre-baked inside the starter app in `/kit`. Attendees
-choose the starter app or their own app at `#pick-your-job`, and the choice is stored
-on their profile so every later exercise runs against it. Two exercises store text an
+synthetic CRM data set — one company's pipeline: Pavilion Software selling to its
+100 customers (courtesy of Andy's Class 0 data, deliberately uncleaned; rewritten to
+the single seller 2026-08-20) — to a public bucket, and it rides pre-baked inside
+the starter app in `/kit`. An attendee's starter-or-own choice is stored on their
+profile so every later exercise runs against it. Two exercises store text an
 author can share to the room's screen — the three-line spec, and the verdict their
-agent returned on their own project — and one submits a number: what your plan
-invented, aggregated into `answer_tallies` by trigger and shown back as the room's
+agent returned on their own project — and one submits a number: the rows their Done
+returns, aggregated into `answer_tallies` by trigger and shown back as the room's
 distribution. `/yours` is where one attendee's own choices, submissions, numbers and
 unchecked items live; it needs a session, which is exactly what `/report` does not.
 
