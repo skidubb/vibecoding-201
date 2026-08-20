@@ -52,8 +52,11 @@ test("the kit is served without an account, and the files are real", async ({
   // Bucket entries are absent deliberately — a cross-origin `download`
   // attribute is ignored, so those render as Open links and are not counted
   // here.
+  // 18 since 2026-08-20: the pre-generated verdict and spec joined the
+  // pre-generated plan, and the nine-checks provenance file joined the
+  // checklist it defends.
   const links = page.locator("a[download]");
-  await expect(links).toHaveCount(15);
+  await expect(links).toHaveCount(18);
 
   // Every listed file resolves and carries content. A kit page that 404s on
   // the download is worse than no kit page: the room leaves believing they

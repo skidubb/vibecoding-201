@@ -13,7 +13,10 @@ invisible system, written down. It holds the artifacts rather than the theory.
 | --- | --- |
 | `monday-gtm-dashboard-standalone.html` | The starter app — the app the class hour works in unless you brought your own. Double-click it and it runs, with the CRM data inside it. |
 | `the-bar-prompt.md` | Your agent reads a project you built and returns a verdict — prototype, tool, or system — with evidence. The class hour opens with it. |
+| `the-spec-prompt.md` | The step after the verdict, in any project: paste the evaluation's result, pick one of the features the agent proposes, and it drafts your Job, User, Done. |
 | `no-account-path.md` | Nothing installed and no accounts — the whole class hour with a browser and whatever assistant you already use. |
+| `pregenerated-verdict.md` | Your agent has not answered the evaluation prompt and the clock is running. |
+| `pregenerated-spec.md` | The spec prompt returned nothing usable and the clock is running. |
 | `pregenerated-plan.md` | Your plan prompt returned nothing usable and the exercise clock is running. |
 | `prompt-pack.md` | You are directing an agent and want the request to produce something you can review. |
 | `tdd-prompt.md` | You are about to build and want the tests written first, seen failing, and turned green one at a time. |
@@ -21,6 +24,7 @@ invisible system, written down. It holds the artifacts rather than the theory.
 | `free-apis.md` | Your tool needs live data and you want an endpoint that costs nothing to start against. |
 | `agent-instructions.md` | You are starting a repository and want the agent to know your rules from day one. |
 | `production-readiness-checklist.md` | You are deciding whether a tool is safe for colleagues to depend on. |
+| `nine-checks-provenance.md` | Someone asks whether the nine production checks are an industry standard or ours. Per-item citations, and where the list is genuinely ours. |
 | `ownership-card.md` | A tool is about to go live and needs a human whose name is on it. |
 | `cli-reference.md` | You are installing the tools, or you have forgotten what a command does. |
 | `four-ways-to-cross-the-gap.md` | You are choosing a route to production, or making the case to buy instead of build. |

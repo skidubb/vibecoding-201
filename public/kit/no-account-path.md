@@ -25,7 +25,7 @@ the file's. Open the link in your own browser, then paste or attach the sample.
 Three lines, by hand: Job, User, Done. `prompt-pack.md` opens with this. No tool is
 involved; this exercise was never going to touch one.
 
-### 2. Run your Done — 2 minutes
+### 2. Count the rows your Done returns — 2 minutes
 
 Paste the sample into your assistant with:
 

@@ -47,9 +47,10 @@ const served = (file: string) => `/kit/${file}`;
 
 /**
  * The hour itself: the starter app the exercises run from, the data it
- * carries, then the two fallbacks the deck names — the pre-generated plan the
- * *Fire the plan prompt* slide promises, and the no-account path for the
- * attendee whose workspace blocks everything.
+ * carries, then the fallbacks the deck names — a pre-generated verdict, spec,
+ * and plan so a stalled agent locks nobody out of the chain, and the
+ * no-account path for the attendee whose workspace blocks everything. Each
+ * pre-generated file sits directly under the prompt it rescues.
  *
  * The CSV entries carry their row count because choosing between them is a
  * decision about the reader's tool, not about the data: one pastes into a
@@ -71,9 +72,19 @@ const DURING_CLASS: Entry[] = [
     use: "The first hands-on: your agent reads a project you built and returns a verdict — prototype, tool, or system — with the evidence that decided it.",
   },
   {
+    href: served("pregenerated-verdict.md"),
+    title: "The pre-generated verdict",
+    use: "Your agent has not answered the evaluation prompt and the clock is running — take this one and keep moving.",
+  },
+  {
     href: served("the-spec-prompt.md"),
     title: "The spec prompt",
     use: "The step after the verdict, in any project: paste the evaluation's result, pick one of the features the agent proposes, and it drafts your Job, User, Done — the Done is yours to edit.",
+  },
+  {
+    href: served("pregenerated-spec.md"),
+    title: "The pre-generated spec",
+    use: "The spec prompt returned nothing usable and the clock is running — fire the plan prompt above this one instead.",
   },
   {
     href: `${BUCKET}/schema.md`,
@@ -131,6 +142,11 @@ const HOMEWORK: Entry[] = [
     href: served("production-readiness-checklist.md"),
     title: "Production readiness checklist",
     use: "You are deciding whether a tool is safe for colleagues to depend on.",
+  },
+  {
+    href: served("nine-checks-provenance.md"),
+    title: "Where the nine checks come from",
+    use: "Someone asks whether the production checks are an industry standard or ours. Per-item citations — OWASP, Twelve-Factor, DORA, Google's SRE checklist — and where the list is genuinely ours.",
   },
   {
     href: served("ownership-card.md"),
@@ -249,7 +265,7 @@ export default function KitPage() {
 
         <TierHeading
           title="During class"
-          note="The starter app the exercises run from, the CRM data it carries — a synthetic set of 10,000 sales transactions, no account needed, and nothing you run can change it — plus the two fallbacks the deck names."
+          note="The starter app the exercises run from, the CRM data it carries — one company's pipeline, 10,000 synthetic sales transactions, no account needed, and nothing you run can change it — plus the fallbacks the deck names, so a stalled agent locks nobody out of the next exercise."
         />
         <KitList entries={DURING_CLASS} />
 

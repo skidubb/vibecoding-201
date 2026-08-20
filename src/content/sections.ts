@@ -551,6 +551,42 @@ export const sections: Section[] = [
   },
 
   {
+    // Moved from second-to-last to here on Scott's 2026-08-20 nine-fix ruling
+    // (../delivery/site-fix-plan-2026-08-20.md): at the close it stacked a new
+    // argument on top of the production standard, so the bar now runs straight
+    // into the close and this chart sits with the rest of the what-changed
+    // opening, which is its subject. No media on purpose — the chart layout
+    // renders no image backdrop, and a media block here would fail the
+    // backdrop check in tests/registry-integrity.spec.ts.
+    id: "evolution",
+    theme: "light",
+    layout: "chart",
+    chart: "divergence",
+    eyebrow: "Trends in AI development",
+    title:
+      "Frontier models require less step-by-step instruction. This continues to change how we prompt and how we guide agents to develop.",
+    accent: "how we prompt and how we guide agents to develop.",
+    railLabel: "Trends in AI development",
+    kicker:
+      "What follows is the best of our knowledge - August 6, 2026.",
+    deeper: {
+      claim: "Boris Cherny, who built Claude Code,",
+      note: "deleted instructions, plan mode, and prompts release by release and never walked back verification.",
+      links: [
+        {
+          label: "ycrootaccess.com",
+          href: "https://www.ycrootaccess.com/p/boris-cherny-building-claude-code",
+        },
+        {
+          label: "claude.com/blog",
+          href: "https://claude.com/blog/running-an-ai-native-engineering-org",
+          brand: "claude",
+        },
+      ],
+    },
+  },
+
+  {
     // Edit1 slide 4. The reach table is the deck's first new argument: the
     // rigor owed to a piece of work is set by who sees its output, not by how
     // hard it was to build.
@@ -679,11 +715,20 @@ export const sections: Section[] = [
       "When two products can swap models and still behave like themselves, the durable product is the harness.",
     deeper: {
       claim: "Model + harness is the practical architecture in Google's New SDLC paper.",
+      // The ~90/10 split above is a rough heuristic, not a measured figure —
+      // the note says so and the second link is the paper's coauthor
+      // presenting it that way (both external reviews flagged the bare
+      // number, 2026-08-20).
+      note: "The split is a rough heuristic, presented that way by the paper's coauthor.",
       links: [
         {
           label: "The New SDLC With Vibe Coding",
           href: "https://www.kaggle.com/whitepaper-the-new-SDLC-with-vibe-coding",
           brand: "google",
+        },
+        {
+          label: "addyosmani.com",
+          href: "https://addyosmani.com/blog/new-sdlc-vibe-coding/",
         },
       ],
     },
@@ -765,6 +810,10 @@ export const sections: Section[] = [
     title: "Evaluate one of your projects: is it a prototype, a tool, or a system?",
     accent: "a prototype, a tool, or a system?",
     railLabel: "Evaluate your project",
+    // The contract before the clock (2026-08-20): on class day people ran the
+    // prompts and still asked what the exercise was for. One sentence, stating
+    // what the timer ends with.
+    lede: "When the timer ends you are holding a verdict, the evidence that decided it, and the first gap to fix — the next exercise builds on those three lines.",
     cards: [
       {
         title: "Open your coding agent",
@@ -798,6 +847,10 @@ code and configuration — never by what the interface promises:
 - Tool: a defined group reliably completes a real workflow with it.
 - System: it runs across teams, data sources, permissions, time, and failure.
 
+Classify by what runs today, not by intent: if the data is sample or synthetic,
+or ships inside the code, the verdict is prototype no matter how finished the
+interface looks.
+
 Then score it against each item below, answering met, not met, or cannot tell,
 with one line of evidence per item — a file, a config entry, or the absence of one:
 
@@ -811,10 +864,21 @@ with one line of evidence per item — a file, a config entry, or the absence of
 8. Preview before production — a person promotes each change; saving a file is not shipping.
 9. A named owner — someone answers when it breaks, and can roll it back.
 
+Check the verdict against the scores before you answer: mostly unmet items means
+prototype, unless a defined group already depends on it in real work — and then
+the Evidence line must say who.
+
 Finish with exactly three lines I can paste into a shared box:
 Verdict: <prototype | tool | system>
 Evidence: <the one observation that decided it>
 First gap: <the unmet item that matters most, and the smallest change that would meet it>`,
+        // The consistency guard was added 2026-08-20: on class day the prompt
+        // returned "a whole bunch of things wrong with it, and then said it was
+        // a tool" against the starter app (Jason Hochman, on air). The verdict
+        // must agree with the item scores, and the classification must read
+        // what runs today rather than the ambition.
+        caption:
+          "Working in Lovable, Base44, Replit, or v0? Paste the same prompt into its chat, on a project you built there — no folder or terminal involved. No agent at all? The kit's no-account path runs the whole hour in a browser.",
       },
     ],
     exercise: {
@@ -823,8 +887,9 @@ First gap: <the unmet item that matters most, and the smallest change that would
       placeholder:
         "Prototype, tool, or system — and the one piece of evidence that decided it.",
     },
-    footnote: "The evaluation prompt is in the kit",
-    footnoteHref: "/kit",
+    footnote:
+      "Agent still thinking when the clock runs out? Take the pre-generated verdict from the kit and keep moving",
+    footnoteHref: "/kit/pregenerated-verdict.md",
     media: { image: genS17OverShoulder, speed: -0.12 },
   },
 
@@ -1052,6 +1117,9 @@ First gap: <the unmet item that matters most, and the smallest change that would
     title: "Write your three-line spec: Job, User, Done",
     accent: "Job, User, Done",
     railLabel: "Write your spec",
+    // The contract before the clock (2026-08-20), same reason as the
+    // evaluation slide's lede.
+    lede: "When the timer ends you are holding three lines for one feature of the project you evaluated — and the Done is the line the next exercise checks.",
     // Scott's 2026-08-06 post-class ruling: the spec step must be copy, paste,
     // go — in any project, on this slide, never behind a link. On class day the
     // only worked spec was one starter-app feature, and attendees on their own
@@ -1110,7 +1178,7 @@ Every line must come from what this project actually contains. Mark any line you
 could not verify with the word "assumed" so I can correct it. Do not write any code
 and do not propose an implementation — that is the next prompt's job.`,
         caption:
-          "Works in any project — the starter app or the app you brought. The agent drafts; the Done line is yours to edit.",
+          "Works in any project — the starter app or the app you brought. The agent drafts; the Done line is yours to edit. In Lovable, Base44, Replit, or v0, the same paste goes into the chat of the app you built there.",
       },
     ],
     exercise: {
@@ -1119,9 +1187,47 @@ and do not propose an implementation — that is the next prompt's job.`,
       placeholder:
         "Job.\nUser.\nDone, written as steps someone else could follow to check it.",
     },
-    footnote: "The spec prompt is in the kit",
-    footnoteHref: "/kit",
+    footnote:
+      "Nothing usable back before the clock? Take the pre-generated spec from the kit",
+    footnoteHref: "/kit/pregenerated-spec.md",
     media: { image: genS12Timer, speed: -0.12 },
+  },
+
+  {
+    // Restored 2026-08-20 on Scott's nine-fix ruling
+    // (../delivery/site-fix-plan-2026-08-20.md). This is deck-content-v16.md
+    // §12, the count beat: two defensible readings of the same Done return 634
+    // and 834 against the CRM data, and the room's histogram prints the
+    // disagreement — the class's argument made by the room instead of the
+    // presenter. `JobPrompt` and the `count` exercise mode were built for this
+    // section and survived the class-day cut; this entry rewires them. The
+    // title is v16's, reworded per the 2026-08-04 QA edict that the
+    // instruction is to run the prompt, never to "run your Done".
+    id: "done-count",
+    theme: "light",
+    layout: "exercise",
+    eyebrow: "Hands on · 2 minutes",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Spec"],
+    },
+    title: "Run the prompt and submit the rows it returns",
+    accent: "the rows it returns",
+    railLabel: "What your Done returns",
+    lede: "The prompt below is built for the went-quiet list and carries the Done you wrote. When the timer ends you are holding one number — and the room's spread of that number is the lesson.",
+    jobPrompt: true,
+    exercise: {
+      id: "done-count",
+      seconds: 120,
+      mode: "count",
+      question: "Rows your Done returns",
+      unit: "rows",
+    },
+    kicker:
+      "A different number than your neighbor means your Done and theirs are not asking the same question. That difference is the exercise, not a mistake.",
+    footnote:
+      "Working from the 200-row sample, or from your own app? Submit the number your Done returns there — on your own data the check is that a second run returns the same number",
+    media: { image: genS36ThreeLines, speed: -0.12 },
   },
 
   {
@@ -1214,7 +1320,7 @@ and do not propose an implementation — that is the next prompt's job.`,
         label: "The plan prompt",
         text: "Inspect the current project. Propose the smallest coherent implementation for this specification. Identify the data model, permissions, environment variables, failure states, tests, and files involved. Do not change anything until I approve the plan.",
         caption:
-          "Your own app or the starter app — the same move either way. If the agent drafted your spec, the conversation it drafted it in is the place.",
+          "Your own app or the starter app — the same move either way. If the agent drafted your spec, the conversation it drafted it in is the place. In Lovable, Base44, Replit, or v0, paste it into that same chat: the plan comes back before anything changes there too.",
       },
     ],
     exercise: {
@@ -1313,7 +1419,9 @@ and do not propose an implementation — that is the next prompt's job.`,
     id: "data-doors",
     theme: "dark",
     layout: "flow",
-    eyebrow: "Build · connections",
+    // "Step 3" carried through (2026-08-20): the step numbering used to fall
+    // off here and on the tdd section, so the six-step promise read as four.
+    eyebrow: "Step 3 · Build · connections",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Build"],
@@ -1386,7 +1494,7 @@ and do not propose an implementation — that is the next prompt's job.`,
     id: "tdd",
     theme: "dark",
     layout: "prompt",
-    eyebrow: "Test · test-driven development",
+    eyebrow: "Step 4 · Test · test-driven development",
     steps: {
       all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
       current: ["Test"],
@@ -1423,6 +1531,58 @@ and do not propose an implementation — that is the next prompt's job.`,
       ],
     },
     media: { image: genS26LedgerAndNote, speed: -0.15 },
+  },
+
+  {
+    // Added 2026-08-20 on Scott's nine-fix ruling
+    // (../delivery/site-fix-plan-2026-08-20.md): Ship was the one step of the
+    // six with no slide — preview-before-production existed only as a
+    // bar-checklist item, and shipping is the step this audience fears most
+    // because it is where IT and security review live. Copy quoted from
+    // deck-content-v16.md §24 (Test and ship), the ship half.
+    id: "ship",
+    theme: "light",
+    layout: "cards",
+    eyebrow: "Step 5 · Ship",
+    steps: {
+      all: ["Spec", "Plan", "Build", "Test", "Ship", "Run"],
+      current: ["Ship"],
+    },
+    title: "You decide when it ships",
+    accent: "when it ships",
+    railLabel: "Ship",
+    lede: "Break things in a local copy and prove the fix on a preview link. Production is the version other people depend on.",
+    cards: [
+      {
+        title: "Preview",
+        body: "Every change gets its own link before production. Verify the finished work as a user there.",
+      },
+      {
+        title: "Promote",
+        body: "Promotion is a decision someone makes, never a side effect of saving a file.",
+      },
+      {
+        title: "Roll back",
+        body: "The previous version stays available, so a bad promotion is undone in one step rather than debugged live.",
+      },
+    ],
+    deeper: {
+      claim: "Agents now run this step's guardrails:",
+      note: "promoting a preview as an explicit step, and an agent that tests apps in a real browser.",
+      links: [
+        {
+          label: "vercel.com — promote a preview",
+          href: "https://vercel.com/docs/deployments/promote-preview-to-production",
+          brand: "vercel",
+        },
+        {
+          label: "replit.com — Agent 3",
+          href: "https://replit.com/blog/introducing-agent-3-our-most-autonomous-agent-yet",
+          brand: "replit",
+        },
+      ],
+    },
+    media: { image: genS10PagePassed, speed: -0.12 },
   },
 
   {
@@ -1574,12 +1734,16 @@ and do not propose an implementation — that is the next prompt's job.`,
       "Score a tool you have built, or score the starter app you worked in this hour. Check what it passes, leave the rest blank. The blanks are your homework.",
     deeper: {
       claim: "This site scored against all nine,",
-      note: "with every link going to the thing itself, including the one it fails.",
+      note: "with every link going to the thing itself, including the one it fails. The list is ours; each item traces to an established framework.",
       links: [
         {
           label: "github.com/skidubb/vibecoding-201",
           href: "https://github.com/skidubb/vibecoding-201",
           brand: "github",
+        },
+        {
+          label: "Where the nine come from",
+          href: "/kit/nine-checks-provenance.md",
         },
       ],
     },
@@ -1590,40 +1754,6 @@ and do not propose an implementation — that is the next prompt's job.`,
       video: "/media/three-environments.mp4",
       poster: "/media/three-environments-poster.jpg",
       speed: -0.15,
-    },
-  },
-
-  {
-    // Edit1 slide 22, moved from the front of the deck to the close: the
-    // trends chart now lands after the method has been practised, as the
-    // reason the method is verification-shaped. No media on purpose — the
-    // chart layout renders no image backdrop, and a media block here would
-    // fail the backdrop check in tests/registry-integrity.spec.ts.
-    id: "evolution",
-    theme: "light",
-    layout: "chart",
-    chart: "divergence",
-    eyebrow: "Trends in AI development",
-    title:
-      "Frontier models require less step-by-step instruction. This continues to change how we prompt and how we guide agents to develop.",
-    accent: "how we prompt and how we guide agents to develop.",
-    railLabel: "Trends in AI development",
-    kicker:
-      "What follows is the best of our knowledge - August 6, 2026.",
-    deeper: {
-      claim: "Boris Cherny, who built Claude Code,",
-      note: "deleted instructions, plan mode, and prompts release by release and never walked back verification.",
-      links: [
-        {
-          label: "ycrootaccess.com",
-          href: "https://www.ycrootaccess.com/p/boris-cherny-building-claude-code",
-        },
-        {
-          label: "claude.com/blog",
-          href: "https://claude.com/blog/running-an-ai-native-engineering-org",
-          brand: "claude",
-        },
-      ],
     },
   },
 
