@@ -1734,12 +1734,16 @@ and do not propose an implementation — that is the next prompt's job.`,
       "Score a tool you have built, or score the starter app you worked in this hour. Check what it passes, leave the rest blank. The blanks are your homework.",
     deeper: {
       claim: "This site scored against all nine,",
-      note: "with every link going to the thing itself, including the one it fails.",
+      note: "with every link going to the thing itself, including the one it fails. The list is ours; each item traces to an established framework.",
       links: [
         {
           label: "github.com/skidubb/vibecoding-201",
           href: "https://github.com/skidubb/vibecoding-201",
           brand: "github",
+        },
+        {
+          label: "Where the nine come from",
+          href: "/kit/nine-checks-provenance.md",
         },
       ],
     },
